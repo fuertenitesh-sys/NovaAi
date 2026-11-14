@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 366 96" width="366" height="96">
+  <defs>
+    <style>
+      .cls-brand { font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 800; font-size: 62px; fill: #1b1c1e; letter-spacing: -1.5px; }
+      .cls-ai { font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 800; font-size: 62px; fill: #2563eb; letter-spacing: -1.5px; }
+    </style>
+  </defs>
+
+  <!-- Cobalt Blue Rounded Square Badge -->
+  <rect x="4" y="4" width="88" height="88" rx="22" fill="#2563eb" />
+
+  <!-- Geometric Nova Star / Diamond inside Badge -->
+  <g fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="48,16 74,48 48,80 22,48" stroke="#ffffff" stroke-width="4.5" fill="none" />
+    <circle cx="34" cy="48" r="4" fill="#ffffff" stroke="none" />
+    <circle cx="48" cy="48" r="5" fill="#ffffff" stroke="none" />
+    <circle cx="62" cy="48" r="4" fill="#ffffff" stroke="none" />
+    <line x1="48" y1="24" x2="48" y2="72" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" />
+  </g>
+
+  <!-- Wordmark Nova.ai -->
+  <text x="108" y="69" class="cls-brand">Nova<tspan class="cls-ai">.ai</tspan></text>
+</svg>

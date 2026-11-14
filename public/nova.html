@@ -1,0 +1,6201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova.ai — Agni Voice Intelligence Platform</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=nova3" />
+    <meta
+      name="description"
+      content="Real speech-to-speech with emotional intelligence by Nova.ai. Sub-300ms latency across 100+ languages. One flat retainer from $29/month."
+    />
+    <meta name="theme-color" content="#060606" />
+    <script src="/assets/livekit-client.umd.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://prod.spline.design" />
+    <link rel="preconnect" href="https://unpkg.com" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #060606;
+        --text: #f2ede6;
+        --text-mid: #b5ab9d;
+        --text-dim: #746b60;
+        --text-muted: #3d3830;
+        --accent: #2563eb;
+        --accent-glow: #60a5fa;
+        --serif: "Instrument Serif", Georgia, serif;
+        --sans: "DM Sans", system-ui, sans-serif;
+        --mono: "JetBrains Mono", monospace;
+        --card-bg: #0f172a;
+        --card-border: #1e293b;
+        --ember: #2563eb;
+        --fire-gold: #38bdf8;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        scrollbar-color: var(--text-muted) transparent;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        font-weight: 300;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      ::selection {
+        background: var(--accent);
+        color: var(--bg);
+      }
+
+      #flame-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        opacity: 0.6;
+        pointer-events: none;
+        will-change: contents;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle at 50% 50%,
+          transparent 0%,
+          rgba(6, 6, 6, 0.8) 80%
+        );
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .blackout {
+        position: relative;
+        z-index: 3;
+        background: var(--bg);
+      }
+
+      #voice-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 50;
+        pointer-events: none;
+      }
+
+      .scanlines {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 55;
+        pointer-events: none;
+        opacity: 0.035;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 1px,
+          rgba(0, 0, 0, 0.3) 1px,
+          rgba(0, 0, 0, 0.3) 2px
+        );
+      }
+
+      .grain {
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        z-index: 55;
+        pointer-events: none;
+        opacity: 0.025;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        animation: grain-shift 0.4s steps(1) infinite;
+      }
+
+      @keyframes grain-shift {
+        0% {
+          transform: translate(0, 0);
+        }
+
+        25% {
+          transform: translate(-2%, -1%);
+        }
+
+        50% {
+          transform: translate(1%, 2%);
+        }
+
+        75% {
+          transform: translate(-1%, -2%);
+        }
+
+        100% {
+          transform: translate(2%, 1%);
+        }
+      }
+
+      .flicker {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 55;
+        pointer-events: none;
+        animation: screen-flicker 0.15s infinite;
+        background: transparent;
+      }
+
+      @keyframes screen-flicker {
+        0% {
+          opacity: 0;
+        }
+
+        5% {
+          opacity: 0.012;
+          background: rgba(232, 87, 42, 0.008);
+        }
+
+        10% {
+          opacity: 0;
+        }
+
+        92% {
+          opacity: 0;
+        }
+
+        93% {
+          opacity: 0.008;
+          background: rgba(255, 255, 255, 0.004);
+        }
+
+        94% {
+          opacity: 0;
+        }
+
+        100% {
+          opacity: 0;
+        }
+      }
+
+      /* ═══ NAV ═══ */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        padding: 24px 48px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        background: rgba(6, 6, 6, 0.5);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      .nav-logo {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+
+      .nav-logo .name {
+        font-family: var(--serif);
+        font-size: 24px;
+        font-style: italic;
+        color: var(--text);
+      }
+
+      .nav-logo .by {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--text-dim);
+        letter-spacing: 0.5px;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+      }
+
+      .nav-links a {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--text-dim);
+        text-decoration: none;
+        letter-spacing: 1px;
+        text-transform: lowercase;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: var(--text-mid);
+      }
+
+      .nav-cta {
+        color: var(--accent) !important;
+        border: 1px solid rgba(232, 87, 42, 0.3);
+        padding: 7px 18px;
+        border-radius: 100px;
+        transition: all 0.3s;
+      }
+
+      .nav-cta:hover {
+        background: var(--accent);
+        color: var(--bg) !important;
+        border-color: var(--accent);
+      }
+
+      /* ═══ HERO ═══ */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 160px 48px 100px;
+        position: relative;
+        z-index: 10;
+      }
+
+      .hero-tag {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--accent);
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        margin-bottom: 40px;
+        opacity: 0;
+        animation: fade-up 0.8s ease 0.3s forwards;
+      }
+
+      .hero h1 {
+        font-family: var(--serif);
+        font-weight: 400;
+        font-size: clamp(46px, 7.5vw, 108px);
+        line-height: 1.02;
+        letter-spacing: -3px;
+        max-width: 920px;
+        opacity: 0;
+        animation: fade-up 0.8s ease 0.5s forwards;
+      }
+
+      .hero h1 em {
+        font-style: italic;
+        color: var(--accent);
+      }
+
+      .hero-sub {
+        font-family: var(--sans);
+        font-size: 18px;
+        font-weight: 300;
+        color: var(--text-mid);
+        max-width: 480px;
+        line-height: 1.7;
+        margin: 40px auto 0;
+        opacity: 0;
+        animation: fade-up 0.8s ease 0.7s forwards;
+      }
+
+      .hero-cta-row {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-top: 48px;
+        opacity: 0;
+        animation: fade-up 0.8s ease 0.9s forwards;
+      }
+
+      .listening-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--accent);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-top: 56px;
+        opacity: 0;
+        animation: fade-up 0.8s ease 1.1s forwards;
+      }
+
+      .listening-bars {
+        display: flex;
+        gap: 2px;
+        align-items: center;
+        height: 12px;
+      }
+
+      .listening-bars span {
+        display: block;
+        width: 2px;
+        background: var(--accent);
+        border-radius: 1px;
+        animation: bar-dance 1.2s ease-in-out infinite;
+      }
+
+      .listening-bars span:nth-child(1) {
+        height: 4px;
+        animation-delay: 0s;
+      }
+
+      .listening-bars span:nth-child(2) {
+        height: 8px;
+        animation-delay: 0.15s;
+      }
+
+      .listening-bars span:nth-child(3) {
+        height: 12px;
+        animation-delay: 0.3s;
+      }
+
+      .listening-bars span:nth-child(4) {
+        height: 6px;
+        animation-delay: 0.45s;
+      }
+
+      .listening-bars span:nth-child(5) {
+        height: 10px;
+        animation-delay: 0.6s;
+      }
+
+      @keyframes bar-dance {
+        0%,
+        100% {
+          transform: scaleY(0.3);
+        }
+
+        50% {
+          transform: scaleY(1);
+        }
+      }
+
+      .hero-scroll {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: var(--mono);
+        font-size: 9px;
+        color: var(--text-muted);
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        opacity: 0;
+        animation: fade-up 0.8s ease 1.4s forwards;
+        z-index: 4;
+      }
+
+      .hero-scroll .scroll-line {
+        display: block;
+        width: 1px;
+        height: 28px;
+        margin: 10px auto 0;
+        background: linear-gradient(to bottom, var(--text-muted), transparent);
+        animation: scroll-pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes scroll-pulse {
+        0%,
+        100% {
+          opacity: 1;
+          height: 28px;
+        }
+
+        50% {
+          opacity: 0.3;
+          height: 20px;
+        }
+      }
+
+      @keyframes fade-up {
+        from {
+          opacity: 0;
+          transform: translateY(28px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ═══ STATS MARQUEE ═══ */
+      .stats-marquee {
+        overflow: hidden;
+        padding: 44px 0;
+        position: relative;
+        z-index: 10;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      .stats-track {
+        display: flex;
+        gap: 72px;
+        animation: scroll-left 22s linear infinite;
+        width: max-content;
+      }
+
+      .stat-item {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        white-space: nowrap;
+      }
+
+      .stat-val {
+        font-family: var(--serif);
+        font-size: 38px;
+        font-style: italic;
+        color: var(--text);
+        letter-spacing: -2px;
+      }
+
+      .stat-lbl {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--text-dim);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+      }
+
+      .stat-sep {
+        color: var(--text-muted);
+        font-size: 20px;
+        padding: 0 16px;
+        opacity: 0.4;
+      }
+
+      @keyframes scroll-left {
+        0% {
+          transform: translateX(0);
+        }
+
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* ═══ DEMO ═══ */
+      .demo-section {
+        padding: 140px 48px 160px;
+        position: relative;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        background: transparent;
+      }
+
+      .demo-eyebrow {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--accent);
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+      }
+
+      .demo-headline {
+        font-family: var(--serif);
+        font-size: clamp(32px, 5vw, 60px);
+        font-weight: 400;
+        font-style: italic;
+        letter-spacing: -1.5px;
+        color: var(--text);
+        margin-bottom: 16px;
+      }
+
+      .demo-body {
+        font-family: var(--sans);
+        font-size: 16px;
+        color: var(--text-mid);
+        font-weight: 300;
+        max-width: 440px;
+        line-height: 1.7;
+        margin-bottom: 64px;
+      }
+
+      /* ═══ WIDGET ═══ */
+      /* two demo cards (Premium + Duplex): side by side on desktop, stacked on mobile */
+      .widget-pair {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 32px;
+        width: 100%;
+        max-width: 904px;
+      }
+
+      .widget-pair .widget-card {
+        flex: 0 1 420px;
+      }
+
+      .widget-card--duplex::before {
+        background: linear-gradient(
+          225deg,
+          rgba(245, 166, 35, 0.4) 0%,
+          transparent 30%,
+          transparent 70%,
+          rgba(232, 83, 30, 0.3) 100%
+        );
+      }
+
+      .widget-card {
+        position: relative;
+        z-index: 1;
+        width: 420px;
+        max-width: 94vw;
+        aspect-ratio: 1 / 1.05;
+        background: var(--card-bg);
+        border-radius: 24px;
+        border: 1px solid var(--card-border);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        box-shadow:
+          0 0 80px rgba(232, 83, 30, 0.08),
+          0 30px 60px rgba(0, 0, 0, 0.5),
+          inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      }
+
+      .widget-card::before {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: 26px;
+        background: linear-gradient(
+          135deg,
+          rgba(232, 83, 30, 0.4) 0%,
+          transparent 30%,
+          transparent 70%,
+          rgba(245, 166, 35, 0.3) 100%
+        );
+        z-index: -1;
+        opacity: 0.6;
+      }
+
+      .widget-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 24px;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      .widget-card.connected .orb-glow {
+        animation: glowBreathActive 2s ease-in-out infinite;
+      }
+
+      @keyframes glowBreathActive {
+        0%,
+        100% {
+          opacity: 0.7;
+          transform: scale(1);
+        }
+
+        50% {
+          opacity: 1;
+          transform: scale(1.12);
+        }
+      }
+
+      .version-label {
+        position: absolute;
+        top: 24px;
+        left: 28px;
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 500;
+        font-size: 13px;
+        letter-spacing: 3px;
+        color: var(--text-dim);
+        text-transform: uppercase;
+      }
+
+      .live-badge {
+        position: absolute;
+        bottom: 24px;
+        right: 28px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 500;
+        font-size: 13px;
+        letter-spacing: 3px;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      .live-badge.visible {
+        opacity: 1;
+      }
+
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #e53935;
+        box-shadow: 0 0 8px #e53935;
+        animation: livePulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes livePulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        50% {
+          opacity: 0.5;
+          transform: scale(0.85);
+        }
+      }
+
+      .orb-container {
+        position: relative;
+        width: 220px;
+        height: 220px;
+        cursor: pointer;
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .orb-container:hover {
+        transform: scale(1.04);
+      }
+
+      .orb-container:active {
+        transform: scale(0.97);
+      }
+
+      .orb-shell {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 35% 30%,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(255, 255, 255, 0.02) 40%,
+          transparent 70%
+        );
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow:
+          inset 0 0 40px rgba(232, 83, 30, 0.15),
+          0 0 60px rgba(232, 83, 30, 0.12),
+          0 0 120px rgba(232, 83, 30, 0.06);
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .fire-image {
+        position: absolute;
+        inset: 15px;
+        border-radius: 50%;
+        overflow: hidden;
+        z-index: 1;
+      }
+
+      .fire-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      .video-container {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        overflow: hidden;
+        z-index: 3;
+        opacity: 0;
+        transition: opacity 0.6s ease;
+        pointer-events: none;
+      }
+
+      .video-container.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .video-container video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .orb-glow {
+        position: absolute;
+        inset: -30px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(232, 83, 30, 0.18) 0%,
+          transparent 70%
+        );
+        z-index: 0;
+        animation: glowBreath 3s ease-in-out infinite;
+      }
+
+      @keyframes glowBreath {
+        0%,
+        100% {
+          opacity: 0.6;
+          transform: scale(1);
+        }
+
+        50% {
+          opacity: 1;
+          transform: scale(1.08);
+        }
+      }
+
+      .tap-text {
+        margin-top: 32px;
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 400;
+        font-size: 20px;
+        letter-spacing: 6px;
+        color: var(--text-light);
+        text-transform: lowercase;
+        transition: all 0.4s ease;
+      }
+
+      .tagline {
+        margin-top: 10px;
+        font-family: "Outfit", sans-serif;
+        font-weight: 300;
+        font-size: 13px;
+        letter-spacing: 1.5px;
+        color: var(--text-dim);
+        transition: all 0.4s ease;
+      }
+
+      .loading-ring {
+        position: absolute;
+        inset: -6px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-top-color: var(--ember);
+        border-right-color: var(--fire-gold);
+        z-index: 5;
+        opacity: 0;
+        animation: none;
+        pointer-events: none;
+      }
+
+      .loading-ring.active {
+        opacity: 1;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .audio-ring {
+        position: absolute;
+        inset: -12px;
+        border-radius: 50%;
+        z-index: 4;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      .audio-ring.active {
+        opacity: 1;
+      }
+
+      .audio-ring canvas {
+        width: 100%;
+        height: 100%;
+      }
+
+      .call-controls {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.4s ease;
+        z-index: 11;
+      }
+
+      .call-controls.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .mute-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-mid);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+      }
+
+      .mute-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: var(--text);
+      }
+
+      .mute-btn.muted {
+        background: rgba(229, 57, 53, 0.15);
+        border-color: rgba(229, 57, 53, 0.4);
+        color: #e53935;
+      }
+
+      .mute-btn.muted:hover {
+        background: rgba(229, 57, 53, 0.25);
+        box-shadow: 0 0 16px rgba(229, 57, 53, 0.15);
+      }
+
+      .mute-btn svg {
+        width: 16px;
+        height: 16px;
+        transition: all 0.25s ease;
+      }
+
+      .mute-btn .mic-on {
+        display: block;
+      }
+
+      .mute-btn .mic-off {
+        display: none;
+      }
+
+      .mute-btn.muted .mic-on {
+        display: none;
+      }
+
+      .mute-btn.muted .mic-off {
+        display: block;
+      }
+
+      .mute-btn .mic-off .slash-line {
+        stroke-dasharray: 28;
+        stroke-dashoffset: 28;
+        transition: stroke-dashoffset 0.3s ease;
+      }
+
+      .mute-btn.muted .mic-off .slash-line {
+        stroke-dashoffset: 0;
+      }
+
+      .end-call-btn {
+        background: rgba(229, 57, 53, 0.15);
+        border: 1px solid rgba(229, 57, 53, 0.3);
+        color: #e53935;
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 500;
+        font-size: 12px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        padding: 8px 24px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.4s ease;
+      }
+
+      .end-call-btn:hover {
+        background: rgba(229, 57, 53, 0.25);
+        box-shadow: 0 0 20px rgba(229, 57, 53, 0.2);
+      }
+
+      .status-text {
+        position: absolute;
+        bottom: 60px;
+        font-family: "Outfit", sans-serif;
+        font-size: 12px;
+        color: var(--text-dim);
+        letter-spacing: 1px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 11;
+      }
+
+      .status-text.visible {
+        opacity: 1;
+      }
+
+      /* ═══ DIVIDER ═══ */
+      .divider {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent 10%,
+          rgba(232, 87, 42, 0.12) 50%,
+          transparent 90%
+        );
+        position: relative;
+        z-index: 11;
+      }
+
+      /* ═══ FEATURES ═══ */
+      .features-section {
+        padding: 140px 48px;
+        max-width: 1100px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 10;
+      }
+
+      .features-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 80px;
+        flex-wrap: wrap;
+        gap: 24px;
+      }
+
+      .features-header h2 {
+        font-family: var(--serif);
+        font-size: clamp(36px, 5vw, 56px);
+        font-weight: 400;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
+      }
+
+      .features-header h2 em {
+        font-style: italic;
+        color: var(--accent);
+      }
+
+      .features-header p {
+        font-family: var(--sans);
+        font-size: 14px;
+        color: var(--text-dim);
+        max-width: 280px;
+        line-height: 1.7;
+        font-weight: 300;
+        text-align: right;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2px;
+      }
+
+      .feature-card {
+        padding: 48px 40px;
+        background: rgba(10, 10, 10, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s ease;
+      }
+
+      .feature-card:first-child {
+        border-radius: 20px 0 0 0;
+      }
+
+      .feature-card:nth-child(2) {
+        border-radius: 0 20px 0 0;
+      }
+
+      .feature-card:nth-child(3) {
+        border-radius: 0 0 0 20px;
+      }
+
+      .feature-card:last-child {
+        border-radius: 0 0 20px 0;
+      }
+
+      .feature-card:hover {
+        background: rgba(232, 87, 42, 0.04);
+        border-color: rgba(232, 87, 42, 0.1);
+      }
+
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(232, 87, 42, 0.25),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
+
+      .feature-card:hover::before {
+        opacity: 1;
+      }
+
+      .feature-num {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--accent);
+        letter-spacing: 2px;
+        margin-bottom: 24px;
+        display: block;
+      }
+
+      .feature-card h3 {
+        font-family: var(--serif);
+        font-size: 24px;
+        font-weight: 400;
+        color: var(--text);
+        margin-bottom: 14px;
+        letter-spacing: -0.3px;
+      }
+
+      .feature-card p {
+        font-family: var(--sans);
+        font-size: 14px;
+        color: var(--text-mid);
+        line-height: 1.8;
+        font-weight: 300;
+      }
+
+      /* ═══ SPLINE VISUAL BREAK ═══ */
+      .spline-break {
+        position: relative;
+        z-index: 10;
+        overflow: hidden;
+        height: 70vh;
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+      }
+
+      .spline-break-inner {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        mask-image: radial-gradient(
+          ellipse 80% 80% at center,
+          black 30%,
+          transparent 70%
+        );
+        -webkit-mask-image: radial-gradient(
+          ellipse 80% 80% at center,
+          black 30%,
+          transparent 70%
+        );
+      }
+
+      .spline-break-inner spline-viewer {
+        width: 100%;
+        height: 100%;
+        --spline-viewer-background: transparent;
+      }
+
+      @media (max-width: 768px) {
+        .spline-break {
+          height: 50vh;
+          min-height: 320px;
+          background: #000;
+        }
+
+        .spline-break-inner {
+          inset: -30% -50%;
+          transform: scale(0.5);
+          transform-origin: center center;
+        }
+      }
+
+      /* ═══ PRICING ═══ */
+      .pricing-section {
+        padding: 140px 48px;
+        position: relative;
+        z-index: 10;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .pricing-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 24px;
+        margin-bottom: 80px;
+        flex-wrap: wrap;
+      }
+
+      .pricing-header h2 {
+        font-family: var(--serif);
+        font-size: clamp(36px, 5vw, 56px);
+        font-weight: 400;
+        color: var(--text);
+        line-height: 1.1;
+        letter-spacing: -1.5px;
+      }
+
+      .pricing-header h2 em {
+        color: var(--accent);
+        font-style: italic;
+      }
+
+      .pricing-header p {
+        max-width: 280px;
+        font-family: var(--sans);
+        font-size: 14px;
+        color: var(--text-dim);
+        font-weight: 300;
+        line-height: 1.7;
+        text-align: right;
+      }
+
+      .pricing-hero {
+        text-align: center;
+        margin-bottom: 80px;
+      }
+
+      .pricing-hero-label {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--accent);
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 28px;
+      }
+
+      .pricing-hero-big {
+        font-family: var(--serif);
+        font-size: clamp(64px, 12vw, 140px);
+        font-style: italic;
+        color: var(--text);
+        letter-spacing: -5px;
+        line-height: 1;
+      }
+
+      .pricing-hero-big span {
+        color: var(--accent);
+      }
+
+      .pricing-hero-sub {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--text-mid);
+        letter-spacing: 1.5px;
+        margin-top: 20px;
+        text-transform: lowercase;
+      }
+
+      .pricing-hero-note {
+        font-family: var(--sans);
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 300;
+        margin-top: 8px;
+      }
+
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2px;
+      }
+
+      .p-card {
+        padding: 48px 40px;
+        background: rgba(10, 10, 10, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .p-card:first-child {
+        border-radius: 20px 0 0 0;
+      }
+
+      .p-card:nth-child(2) {
+        border-radius: 0 20px 0 0;
+      }
+
+      .p-card:last-child {
+        border-radius: 0 0 20px 20px;
+      }
+
+      /* Enterprise spans the full row under the four self-serve plans */
+      .p-card.p-wide {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        align-items: center;
+        gap: 56px;
+      }
+
+      .p-wide-head {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .p-wide .p-features {
+        flex: 1.2;
+        margin: 0;
+      }
+
+      /* Pricing hero big"As low as" label above price */
+      .pricing-hero-big {
+        position: relative;
+      }
+
+      .pricing-hero-big .aslowas {
+        position: absolute;
+        top: -28px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: block;
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-weight: 400;
+        font-style: normal;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .p-card:hover {
+        background: rgba(232, 87, 42, 0.04);
+        border-color: rgba(232, 87, 42, 0.1);
+      }
+
+      .p-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(232, 87, 42, 0.25),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
+
+      .p-card:hover::before {
+        opacity: 1;
+      }
+
+      /* Popular card */
+      .p-card.p-pop {
+        background: rgba(232, 87, 42, 0.06);
+        border-color: rgba(232, 87, 42, 0.4);
+        box-shadow:
+          0 0 70px rgba(232, 87, 42, 0.14),
+          0 24px 60px rgba(0, 0, 0, 0.45);
+        transform: scale(1.04);
+        z-index: 2;
+      }
+
+      .p-card.p-pop::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--accent);
+      }
+
+      .p-badge {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--bg);
+        background: var(--accent);
+        padding: 5px 14px;
+        border-radius: 100px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 26px rgba(232, 87, 42, 0.5);
+      }
+
+      .p-name {
+        font-family: var(--serif);
+        font-size: 24px;
+        font-weight: 400;
+        color: var(--text);
+        margin-bottom: 8px;
+        letter-spacing: -0.3px;
+      }
+
+      .p-desc {
+        font-family: var(--sans);
+        font-size: 13px;
+        color: var(--text-dim);
+        font-weight: 300;
+        line-height: 1.5;
+        margin-bottom: 32px;
+        min-height: 36px;
+      }
+
+      .p-price-wrap {
+        margin-bottom: 6px;
+      }
+
+      .p-currency {
+        font-family: var(--serif);
+        font-size: 20px;
+        color: var(--text-mid);
+        vertical-align: top;
+        position: relative;
+        top: 8px;
+      }
+
+      .p-amount {
+        font-family: var(--serif);
+        font-size: 56px;
+        font-style: italic;
+        color: var(--text);
+        letter-spacing: -3px;
+        line-height: 1;
+      }
+
+      .p-amount-accent {
+        color: var(--accent);
+      }
+
+      .p-period {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--text-dim);
+        letter-spacing: 0.5px;
+      }
+
+      .p-rate {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--accent);
+        letter-spacing: 0.5px;
+        margin-top: 6px;
+        margin-bottom: 32px;
+        display: block;
+      }
+
+      .p-features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 36px;
+      }
+
+      .p-features li {
+        font-family: var(--sans);
+        font-size: 13px;
+        color: var(--text-mid);
+        font-weight: 300;
+        padding: 9px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        line-height: 1.4;
+      }
+
+      .p-features li:last-child {
+        border-bottom: none;
+      }
+
+      .p-check {
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
+      }
+
+      .p-check-y {
+        stroke: #5cd9a4;
+      }
+
+      .p-check-a {
+        stroke: var(--accent);
+      }
+
+      .p-cta {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        border-radius: 100px;
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 1px;
+        text-transform: lowercase;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        border: none;
+        margin-top: auto;
+      }
+
+      .p-cta-primary {
+        background: var(--accent);
+        color: var(--bg);
+      }
+
+      .p-cta-primary:hover {
+        background: var(--accent-glow);
+        box-shadow: 0 0 30px rgba(232, 87, 42, 0.25);
+      }
+
+      .p-cta-ghost {
+        background: transparent;
+        color: var(--text-mid);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .p-cta-ghost:hover {
+        border-color: rgba(255, 255, 255, 0.2);
+        color: var(--text);
+      }
+
+      .p-cta-ent {
+        background: transparent;
+        color: var(--accent);
+        border: 1px solid rgba(232, 87, 42, 0.2);
+      }
+
+      .p-cta-ent:hover {
+        background: rgba(232, 87, 42, 0.06);
+        border-color: rgba(232, 87, 42, 0.35);
+      }
+
+      .pricing-note {
+        text-align: center;
+        margin-top: 40px;
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+      }
+
+      @media (max-width: 900px) {
+        .pricing-grid {
+          gap: 10px;
+        }
+
+        .p-card {
+          padding: 36px 28px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .pricing-grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .p-card,
+        .p-card:first-child,
+        .p-card:last-child,
+        .p-card:nth-child(2),
+        .p-card:nth-child(3) {
+          border-radius: 18px;
+        }
+
+        .pricing-section {
+          padding: 80px 20px;
+        }
+
+        .pricing-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .pricing-header p {
+          text-align: left;
+        }
+
+        .p-card {
+          padding: 32px 22px;
+        }
+
+        .p-name {
+          font-size: 1.05rem;
+        }
+
+        .p-desc {
+          font-size: 0.75rem;
+        }
+
+        .p-amount {
+          font-size: 48px;
+        }
+
+        .p-rate {
+          font-size: 0.72rem;
+        }
+
+        .p-features li {
+          font-size: 0.78rem;
+        }
+
+        .p-cta {
+          min-height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .p-card.p-wide {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0;
+        }
+
+        .p-wide-head {
+          display: contents;
+        }
+
+        .p-wide .p-cta {
+          order: 1;
+        }
+
+        .p-wide .p-features {
+          margin: 0 0 36px;
+        }
+      }
+
+      /* ═══ BENCHMARK CHART ═══ */
+      .bench-section {
+        padding: 140px 48px;
+        position: relative;
+        z-index: 10;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .bench-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 24px;
+        margin-bottom: 80px;
+        flex-wrap: wrap;
+      }
+
+      .bench-header h2 {
+        font-family: var(--serif);
+        font-size: clamp(36px, 5vw, 56px);
+        font-weight: 400;
+        color: var(--text);
+        line-height: 1.1;
+        letter-spacing: -1.5px;
+      }
+
+      .bench-header h2 em {
+        color: var(--accent);
+        font-style: italic;
+      }
+
+      .bench-header p {
+        max-width: 280px;
+        font-family: var(--sans);
+        font-size: 14px;
+        color: var(--text-dim);
+        font-weight: 300;
+        line-height: 1.7;
+        text-align: right;
+      }
+
+      .bench-tabs {
+        display: flex;
+        gap: 2px;
+        border-radius: 20px 20px 0 0;
+        overflow: hidden;
+      }
+
+      .bench-tab {
+        flex: 1;
+        padding: 15px 20px;
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        background: rgba(10, 10, 10, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        border-bottom: none;
+        cursor: pointer;
+        transition: all 0.4s ease;
+      }
+
+      .bench-tab:first-child {
+        border-radius: 20px 0 0 0;
+      }
+
+      .bench-tab:last-child {
+        border-radius: 0 20px 0 0;
+      }
+
+      .bench-tab.active {
+        background: rgba(232, 87, 42, 0.04);
+        color: var(--text);
+        border-color: rgba(232, 87, 42, 0.1);
+        border-top: 2px solid var(--accent);
+      }
+
+      .bench-tab:hover:not(.active) {
+        background: rgba(232, 87, 42, 0.02);
+        color: var(--text-mid);
+      }
+
+      .bench-card {
+        background: rgba(10, 10, 10, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        border-top: none;
+        border-radius: 0 0 20px 20px;
+        padding: 40px;
+        position: relative;
+      }
+
+      .bench-canvas-wrap {
+        position: relative;
+        width: 100%;
+        height: 440px;
+      }
+
+      .bench-canvas-wrap canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .bench-panel {
+        display: none;
+      }
+
+      .bench-panel.bp-active {
+        display: block;
+      }
+
+      .bench-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        justify-content: center;
+        margin-top: 28px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.03);
+      }
+
+      .bench-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        color: var(--text-dim);
+        font-family: var(--sans);
+        font-weight: 300;
+      }
+
+      .bench-legend-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+      }
+
+      .bench-ql {
+        position: absolute;
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        opacity: 0.4;
+      }
+
+      .bench-ql-tl {
+        top: 10px;
+        left: 12px;
+      }
+
+      .bench-ql-tr {
+        top: 10px;
+        right: 12px;
+      }
+
+      .bench-ql-bl {
+        bottom: 10px;
+        left: 12px;
+      }
+
+      .bench-ql-br {
+        bottom: 10px;
+        right: 12px;
+      }
+
+      .bench-tooltip {
+        position: absolute;
+        z-index: 100;
+        background: rgba(10, 10, 10, 0.95);
+        border: 1px solid rgba(232, 87, 42, 0.15);
+        border-radius: 12px;
+        padding: 16px 20px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+        backdrop-filter: blur(16px);
+        min-width: 190px;
+      }
+
+      .bench-tooltip.btt-show {
+        opacity: 1;
+      }
+
+      .btt-name {
+        font-family: var(--serif);
+        font-size: 18px;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+
+      .btt-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        font-size: 11px;
+        color: var(--text-dim);
+        margin-top: 4px;
+        font-family: var(--sans);
+        font-weight: 300;
+      }
+
+      .btt-val {
+        color: var(--text-mid);
+        font-family: var(--mono);
+        font-weight: 400;
+      }
+
+      .bench-source {
+        text-align: center;
+        margin-top: 20px;
+        font-family: var(--mono);
+        font-size: 9px;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+      }
+
+      @media (max-width: 768px) {
+        .bench-section {
+          padding: 80px 24px;
+        }
+
+        .bench-card {
+          padding: 20px 14px;
+        }
+
+        .bench-canvas-wrap {
+          height: 340px;
+        }
+
+        .bench-tab {
+          padding: 11px 6px;
+          font-size: 8px;
+          letter-spacing: 0.8px;
+        }
+
+        .bench-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .bench-header p {
+          text-align: left;
+        }
+      }
+
+      /* ═══ COMPARE TABLE V2 ═══ */
+      .compare-section {
+        padding: 140px 48px;
+        position: relative;
+        z-index: 10;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .compare-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 24px;
+        margin-bottom: 80px;
+        flex-wrap: wrap;
+      }
+
+      .compare-header h2 {
+        font-family: var(--serif);
+        font-size: clamp(36px, 5vw, 56px);
+        font-weight: 400;
+        color: var(--text);
+        line-height: 1.1;
+        letter-spacing: -1.5px;
+      }
+
+      .compare-header h2 em {
+        color: var(--accent);
+        font-style: italic;
+      }
+
+      .compare-header p {
+        max-width: 280px;
+        font-family: var(--sans);
+        font-size: 14px;
+        color: var(--text-dim);
+        font-weight: 300;
+        line-height: 1.7;
+        text-align: right;
+      }
+
+      .ct-wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(232, 87, 42, 0.2) transparent;
+        position: relative;
+      }
+
+      .ct-wrap::-webkit-scrollbar {
+        height: 4px;
+      }
+
+      .ct-wrap::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .ct-wrap::-webkit-scrollbar-thumb {
+        background: rgba(232, 87, 42, 0.2);
+        border-radius: 4px;
+      }
+
+      /* Scroll hint gradient on mobile */
+      .ct-scroll-hint {
+        display: none;
+      }
+
+      .ct {
+        width: 100%;
+        min-width: 900px;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: rgba(10, 10, 10, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        border-radius: 20px;
+        overflow: hidden;
+      }
+
+      .ct thead th {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        padding: 20px 22px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(6, 6, 6, 0.6);
+      }
+
+      .ct thead th.cth-a {
+        color: var(--accent);
+        background: rgba(232, 87, 42, 0.04);
+        border-left: 1px solid rgba(232, 87, 42, 0.06);
+        border-right: 1px solid rgba(232, 87, 42, 0.06);
+        position: relative;
+      }
+
+      .ct thead th.cth-a::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--accent);
+        opacity: 0.5;
+      }
+
+      .ct tbody tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        transition: background 0.3s ease;
+      }
+
+      .ct tbody tr:last-child {
+        border-bottom: none;
+      }
+
+      .ct tbody tr:hover {
+        background: rgba(232, 87, 42, 0.02);
+      }
+
+      .ct td {
+        padding: 24px 22px;
+        vertical-align: top;
+        font-family: var(--sans);
+        font-size: 13px;
+        color: var(--text-dim);
+        line-height: 1.5;
+      }
+
+      .ct td:first-child {
+        width: 210px;
+        min-width: 190px;
+      }
+
+      .ct td.ctd-a {
+        background: rgba(232, 87, 42, 0.025);
+        border-left: 1px solid rgba(232, 87, 42, 0.04);
+        border-right: 1px solid rgba(232, 87, 42, 0.04);
+      }
+
+      .ct-feat {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .ct-ico {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .ct-ico svg {
+        width: 14px;
+        height: 14px;
+        stroke: var(--text-dim);
+        fill: none;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .ct-fn {
+        font-family: var(--sans);
+        font-weight: 500;
+        font-size: 13.5px;
+        color: var(--text);
+        line-height: 1.3;
+        display: block;
+      }
+
+      .ct-fs {
+        font-family: var(--sans);
+        font-size: 11px;
+        color: var(--text-dim);
+        font-weight: 300;
+        display: block;
+        margin-top: 2px;
+        opacity: 0.7;
+      }
+
+      .ct-tag {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 4px;
+      }
+
+      .ct-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .ct-g {
+        color: #5cd9a4;
+      }
+
+      .ct-g .ct-dot {
+        background: #5cd9a4;
+        box-shadow: 0 0 5px rgba(92, 217, 164, 0.25);
+      }
+
+      .ct-y {
+        color: #f5a623;
+      }
+
+      .ct-y .ct-dot {
+        background: #f5a623;
+        box-shadow: 0 0 5px rgba(245, 166, 35, 0.2);
+      }
+
+      .ct-r {
+        color: #e87461;
+      }
+
+      .ct-r .ct-dot {
+        background: #e87461;
+        box-shadow: 0 0 5px rgba(232, 116, 97, 0.2);
+      }
+
+      .ct-d {
+        color: var(--text-dim);
+      }
+
+      .ct-d .ct-dot {
+        background: var(--text-dim);
+      }
+
+      .ct-ac {
+        color: var(--accent);
+      }
+
+      .ct-ac .ct-dot {
+        background: var(--accent);
+      }
+
+      .ct-desc {
+        font-size: 12px;
+        color: var(--text-dim);
+        font-weight: 300;
+        line-height: 1.45;
+        display: block;
+      }
+
+      .ctd-a .ct-desc {
+        color: var(--text-mid);
+      }
+
+      .ct-price {
+        font-family: var(--serif);
+        font-size: 28px;
+        font-style: italic;
+        color: var(--accent);
+        display: block;
+        margin-bottom: 2px;
+        letter-spacing: -1px;
+      }
+
+      .ct-price-sub {
+        font-family: var(--mono);
+        font-size: 9px;
+        color: var(--text-dim);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        display: block;
+      }
+
+      .ct-strike {
+        text-decoration: line-through;
+        opacity: 0.5;
+        font-size: 11px;
+      }
+
+      .ct-arrow {
+        font-size: 12px;
+        color: var(--text-mid);
+      }
+
+      .compare-footer {
+        margin-top: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .compare-footer-note {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+      }
+
+      /* ═══ COMPARE MOBILE CARDS ═══ */
+      .ct-mobile {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .ct-wrap,
+        .ct-scroll-hint {
+          display: none !important;
+        }
+
+        .ct-mobile {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .ctm-card {
+          background: rgba(10, 10, 10, 0.85);
+          border: 1px solid rgba(255, 255, 255, 0.03);
+          border-radius: 16px;
+          overflow: hidden;
+        }
+
+        .ctm-header {
+          padding: 18px 20px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+          cursor: pointer;
+        }
+
+        .ctm-header .ct-ico {
+          width: 28px;
+          height: 28px;
+          border-radius: 7px;
+          flex-shrink: 0;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .ctm-header .ct-ico svg {
+          width: 13px;
+          height: 13px;
+          stroke: var(--text-dim);
+          fill: none;
+          stroke-width: 1.6;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
+        .ctm-title {
+          font-family: var(--sans);
+          font-weight: 500;
+          font-size: 13px;
+          color: var(--text);
+          flex: 1;
+        }
+
+        .ctm-chevron {
+          width: 16px;
+          height: 16px;
+          stroke: var(--text-muted);
+          fill: none;
+          stroke-width: 1.5;
+          transition: transform 0.3s;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
+        .ctm-card.open .ctm-chevron {
+          transform: rotate(180deg);
+        }
+
+        .ctm-body {
+          display: none;
+          padding: 0;
+        }
+
+        .ctm-card.open .ctm-body {
+          display: block;
+        }
+
+        .ctm-row {
+          padding: 14px 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 12px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.025);
+        }
+
+        .ctm-row:last-child {
+          border-bottom: none;
+        }
+
+        .ctm-row-a {
+          background: rgba(232, 87, 42, 0.03);
+          border-bottom-color: rgba(232, 87, 42, 0.04);
+        }
+
+        .ctm-vendor {
+          font-family: var(--mono);
+          font-size: 9px;
+          letter-spacing: 1.2px;
+          text-transform: uppercase;
+          color: var(--text-dim);
+          min-width: 70px;
+          padding-top: 2px;
+        }
+
+        .ctm-vendor-a {
+          color: var(--accent);
+        }
+
+        .ctm-content {
+          flex: 1;
+          text-align: right;
+        }
+
+        .ctm-content .ct-tag {
+          font-size: 9px;
+          letter-spacing: 1.2px;
+        }
+
+        .ctm-content .ct-desc {
+          font-size: 11px;
+          margin-top: 2px;
+        }
+
+        .ctm-content .ct-price {
+          font-size: 22px;
+        }
+
+        .ctm-content .ct-price-sub {
+          font-size: 8px;
+        }
+      }
+
+      /* ═══ CTA ═══ */
+      .final-cta {
+        padding: 160px 48px 120px;
+        text-align: center;
+        position: relative;
+        z-index: 10;
+        background: transparent;
+      }
+
+      .final-cta h2 {
+        font-family: var(--serif);
+        font-size: clamp(36px, 6vw, 72px);
+        font-weight: 400;
+        font-style: italic;
+        letter-spacing: -2px;
+        line-height: 1.1;
+        margin-bottom: 20px;
+      }
+
+      .final-cta h2 em {
+        color: var(--accent);
+      }
+
+      .final-cta p {
+        font-family: var(--sans);
+        font-size: 16px;
+        color: var(--text-mid);
+        font-weight: 300;
+        margin-bottom: 48px;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn-primary {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: var(--bg);
+        background: var(--accent);
+        border: none;
+        padding: 16px 44px;
+        border-radius: 100px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s;
+        display: inline-block;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-glow);
+        box-shadow: 0 0 50px rgba(232, 87, 42, 0.35);
+        transform: translateY(-2px);
+      }
+
+      .btn-ghost {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: var(--text-mid);
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 16px 44px;
+        border-radius: 100px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s;
+        display: inline-block;
+      }
+
+      .btn-ghost:hover {
+        border-color: rgba(255, 255, 255, 0.15);
+        color: var(--text);
+      }
+
+      /* ═══ FOOTER ═══ */
+      footer {
+        padding: 40px 48px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        flex-wrap: wrap;
+        gap: 24px;
+        position: relative;
+        z-index: 10;
+      }
+
+      footer .left {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 16px;
+        color: var(--text-dim);
+      }
+
+      footer .right {
+        display: flex;
+        gap: 28px;
+      }
+
+      footer .right a {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--text-muted);
+        text-decoration: none;
+        letter-spacing: 1px;
+        text-transform: lowercase;
+        transition: color 0.3s;
+      }
+
+      footer .right a:hover {
+        color: var(--text-dim);
+      }
+
+      /* ═══ REVEAL (INSTANT VISIBILITY FOR SMOOTH EXPERIENCE) ═══ */
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+
+      .reveal.visible {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .rd1, .rd2, .rd3, .rd4 {
+        transition-delay: 0s !important;
+      }s;
+      }
+
+      .rd4 {
+        transition-delay: 0.35s;
+      }
+
+      /* ═══ RESPONSIVE ═══ */
+      @media (max-width: 768px) {
+        nav {
+          padding: 20px 24px;
+        }
+
+        .nav-links {
+          gap: 20px;
+        }
+
+        .hero {
+          padding: 140px 24px 80px;
+        }
+
+        .hero h1 {
+          letter-spacing: -1.5px;
+        }
+
+        .demo-section {
+          padding: 80px 24px 100px;
+        }
+
+        .fire-orb-wrap {
+          width: 140px;
+          height: 140px;
+        }
+
+        .features-section {
+          padding: 80px 24px;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .feature-card {
+          border-radius: 0 !important;
+        }
+
+        .feature-card:first-child {
+          border-radius: 16px 16px 0 0 !important;
+        }
+
+        .feature-card:last-child {
+          border-radius: 0 0 16px 16px !important;
+        }
+
+        .pricing-section {
+          padding: 80px 24px;
+        }
+
+        .compare-section {
+          padding: 80px 24px;
+        }
+
+        .compare-header {
+          flex-direction: column;
+          align-items: flex-start;
+          margin-bottom: 48px;
+        }
+
+        .compare-header p {
+          text-align: left;
+        }
+
+        .final-cta {
+          padding: 80px 24px;
+        }
+
+        footer {
+          padding: 32px 24px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .nav-links a:not(.nav-cta) {
+          display: none;
+        }
+
+        .features-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .features-header p {
+          text-align: left;
+        }
+      }
+    
+      /* ── language belt ─────────────────────────────── */
+      .lang-belt {
+        overflow: hidden;
+        padding: 14px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        background: #060606;
+      }
+      .lang-track {
+        display: flex;
+        gap: 44px;
+        width: max-content;
+        animation: scroll-left 46s linear infinite reverse;
+      }
+      .lang-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 1.6px;
+        color: var(--text-dim);
+        text-transform: lowercase;
+        white-space: nowrap;
+      }
+      .lang-sep {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .lang-item.lang-more {
+        color: var(--accent);
+      }
+      /* ── clients strip ─────────────────────────────── */
+      .clients-strip {
+        text-align: center;
+        padding: 64px 24px 60px;
+        background: #060606;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      .clients-eyebrow {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--accent);
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 30px;
+      }
+      .clients-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: center;
+        gap: 22px 48px;
+      }
+      .client-mark {
+        color: var(--text);
+        opacity: 0.5;
+        transition: opacity 0.35s;
+        white-space: nowrap;
+        cursor: default;
+      }
+      .client-mark:hover {
+        opacity: 1;
+      }
+      .cm-danube {
+        font-family: var(--sans);
+        font-weight: 500;
+        font-size: 19px;
+        letter-spacing: 2.5px;
+      }
+      .cm-danube i {
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 300;
+        font-size: 15px;
+        letter-spacing: 1px;
+        margin-left: 6px;
+      }
+      .cm-sobha {
+        font-family: var(--sans);
+        font-weight: 300;
+        font-size: 18px;
+        letter-spacing: 7px;
+      }
+      .cm-merlin {
+        font-family: var(--sans);
+        font-weight: 500;
+        font-size: 18px;
+        letter-spacing: 2px;
+      }
+      .cm-merlin i {
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 300;
+        font-size: 15px;
+        margin-left: 6px;
+      }
+      .clients-note {
+        margin-top: 28px;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 1.8px;
+        color: var(--text-muted);
+        text-transform: lowercase;
+      }
+      .clients-note em {
+        font-family: var(--serif);
+        font-style: italic;
+        color: var(--text-mid);
+        letter-spacing: 0.5px;
+        font-size: 12.5px;
+        text-transform: none;
+      }
+      @media (max-width: 640px) {
+        .clients-row { gap: 16px 28px; }
+        .cm-danube, .cm-sobha, .cm-merlin { font-size: 15px; }
+      }
+      /* ── founding launch additions ── */
+      button.p-cta {
+        border: 0;
+        cursor: pointer;
+        font: inherit;
+        width: 100%;
+      }
+      .founding-strip {
+        text-align: center;
+        margin: 30px auto 10px;
+        max-width: 680px;
+      }
+      .founding-guarantee {
+        margin-top: 16px;
+        color: var(--text-mid);
+        font-size: 15px;
+        font-weight: 300;
+      }
+      .founding-guarantee em {
+        color: var(--text);
+        font-style: italic;
+      }
+      /* checkout — editorial, matches the page's own language */
+      .ck-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        background: rgba(4, 3, 2, 0.86);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        overflow-y: auto;
+      }
+      .ck-overlay[hidden] {
+        display: none;
+      }
+      .ck-modal {
+        position: relative;
+        width: 100%;
+        max-width: 440px;
+        background: var(--bg);
+        border: 1px solid var(--card-border);
+        border-radius: 4px;
+        padding: 46px 40px 36px;
+        max-height: 92vh;
+        overflow-y: auto;
+      }
+      .ck-close {
+        position: absolute;
+        top: 16px;
+        right: 18px;
+        background: none;
+        border: 0;
+        color: var(--text-dim);
+        font-size: 24px;
+        cursor: pointer;
+        line-height: 1;
+        transition: color 0.3s;
+      }
+      .ck-close:hover {
+        color: var(--text);
+      }
+      .ck-eyebrow {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--accent);
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+      .ck-title {
+        font-family: var(--serif);
+        font-weight: 400;
+        font-size: 34px;
+        line-height: 1.05;
+        color: var(--text);
+        margin-bottom: 28px;
+      }
+      .ck-title em {
+        font-style: italic;
+        color: var(--accent);
+      }
+      .ck-plans {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 30px;
+      }
+      .ck-plan {
+        cursor: pointer;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--card-border);
+        transition:
+          border-color 0.3s,
+          opacity 0.3s;
+        opacity: 0.45;
+      }
+      .ck-plan input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .ck-plan.sel {
+        border-bottom-color: var(--accent);
+        opacity: 1;
+      }
+      .ck-plan-name {
+        display: block;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--text-mid);
+        margin-bottom: 8px;
+      }
+      .ck-plan-price {
+        display: block;
+        font-family: var(--serif);
+        font-size: 24px;
+        color: var(--text);
+      }
+      .ck-plan-price i {
+        font-style: normal;
+        font-size: 12px;
+        color: var(--text-dim);
+      }
+      .ck-fields {
+        display: grid;
+        gap: 4px;
+      }
+      .ck-fields input,
+      .ck-fields select {
+        width: 100%;
+        background: transparent;
+        border: 0;
+        border-bottom: 1px solid var(--card-border);
+        border-radius: 0;
+        padding: 14px 2px;
+        color: var(--text);
+        font: 300 16px var(--sans);
+        outline: none;
+        transition: border-color 0.3s;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      .ck-fields input::placeholder {
+        color: var(--text-dim);
+      }
+      .ck-fields input:focus,
+      .ck-fields select:focus {
+        border-bottom-color: var(--accent);
+      }
+      .ck-phone-row {
+        display: grid;
+        grid-template-columns: 104px 1fr;
+        gap: 16px;
+      }
+      .ck-fields select {
+        color: var(--text-mid);
+        cursor: pointer;
+      }
+      .ck-fields select option {
+        background: #12100e;
+        color: var(--text);
+      }
+      .ck-btn {
+        width: 100%;
+        margin-top: 30px;
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: var(--bg);
+        background: var(--accent);
+        border: none;
+        padding: 17px 44px;
+        border-radius: 100px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .ck-btn:hover {
+        background: var(--accent-glow);
+        box-shadow: 0 0 50px rgba(232, 87, 42, 0.35);
+        transform: translateY(-2px);
+      }
+      .ck-btn:disabled {
+        opacity: 0.5;
+        cursor: wait;
+        transform: none;
+        box-shadow: none;
+      }
+      .ck-fine {
+        margin-top: 16px;
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--text-dim);
+      }
+      .ck-subline {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        margin: -18px 0 24px;
+      }
+      .ck-back {
+        display: inline-block;
+        margin-bottom: 20px;
+        background: none;
+        border: 0;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        cursor: pointer;
+        transition: color 0.3s;
+      }
+      .ck-back:hover {
+        color: var(--text);
+      }
+      #payment-element {
+        margin-top: 6px;
+      }
+      .ck-guarantee {
+        margin-top: 18px;
+        text-align: center;
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 14px;
+        color: var(--text-mid);
+      }
+      .ck-err {
+        margin-top: 12px;
+        text-align: center;
+        font-size: 13px;
+        color: #ff8b66;
+        min-height: 1em;
+      }
+      .ck-charge {
+        margin-top: 14px;
+        text-align: center;
+        font-size: 13px;
+        color: var(--text-mid);
+      }
+      @media (max-width: 900px) {
+        .p-card.p-pop {
+          transform: none;
+        }
+      }
+      @media (max-width: 640px) {
+        .hero-cta-row {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 12px;
+          width: 100%;
+          max-width: 400px;
+          margin: 40px auto 0;
+          padding: 0 26px;
+        }
+        .hero-cta-row .btn-primary,
+        .hero-cta-row .btn-ghost {
+          text-align: center;
+          padding: 17px 20px;
+        }
+        .cta-buttons {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 12px;
+          width: 100%;
+          max-width: 400px;
+          margin-left: auto;
+          margin-right: auto;
+          padding: 0 26px;
+        }
+        .cta-buttons .btn-primary,
+        .cta-buttons .btn-ghost {
+          text-align: center;
+        }
+      }
+      @media (max-width: 480px) {
+        .ck-modal {
+          padding: 36px 24px 28px;
+        }
+        .ck-plans {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+        }
+        .ck-plan-price {
+          font-size: 20px;
+        }
+        .ck-title {
+          font-size: 30px;
+        }
+      }
+</style>
+
+    <script>
+      // Heavy third-party scripts load only when actually needed:
+      // spline when its section scrolls near, livekit on first demo tap,
+      // stripe when the checkout opens.
+      window.novaLoad = function (src, type) {
+        window.__novaScripts = window.__novaScripts || {};
+        if (!window.__novaScripts[src]) {
+          window.__novaScripts[src] = new Promise(function (resolve, reject) {
+            var s = document.createElement("script");
+            if (type) s.type = type;
+            s.src = src;
+            s.onload = resolve;
+            s.onerror = function () {
+              delete window.__novaScripts[src];
+              reject(new Error("load failed: " + src));
+            };
+            document.head.appendChild(s);
+          });
+        }
+        return window.__novaScripts[src];
+      };
+    </script>
+    <!-- Meta Pixel (Nova) -->
+    <script>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = "2.0";
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        "script",
+        "https://connect.facebook.net/en_US/fbevents.js",
+      );
+      fbq("init", "1905969033546029");
+      fbq("track", "PageView");
+    </script>
+  </head>
+
+  <body>
+    <canvas id="flame-canvas"></canvas>
+    <canvas id="voice-canvas"></canvas>
+    <div class="scanlines"></div>
+    <div class="grain"></div>
+    <div class="flicker"></div>
+
+    <nav>
+      <a href="/" class="nav-logo" style="text-decoration:none; color:inherit;">
+        <span class="name">nova</span><span class="by">by nova.ai</span>
+      </a>
+      <div class="nav-links">
+        <a href="#demo">demo</a><a href="#features">why nova</a
+        ><a href="#pricing">pricing</a><a href="#benchmarks">benchmarks</a
+        ><a href="#compare">compare</a
+        ><a href="#pricing" class="nav-cta">get access now</a>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero blackout">
+      <p class="hero-tag">not just emotion. emotional intelligence.</p>
+      <h1>the era of robotic<br /><em>voice agents</em> ends here.</h1>
+      <p class="hero-sub">
+        nova speaks — it doesn't read. real speech-to-speech, sub-300ms,<br />
+        in your customer's own dialect. don't take our word for it.
+      </p>
+      <div class="hero-cta-row">
+        <a href="#demo" class="btn-primary">try the demo</a
+        ><a href="#pricing" class="btn-ghost">get nova access</a>
+      </div>
+      <div class="listening-badge">
+        <div class="listening-bars">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        nova is listening
+      </div>
+      <div class="hero-scroll">scroll<span class="scroll-line"></span></div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-marquee blackout">
+      <div class="stats-track">
+        <div class="stat-item">
+          <span class="stat-val">&lt;300</span
+          ><span class="stat-lbl">ms latency</span>
+        </div>
+        <span class="stat-sep">&middot;</span>
+        <div class="stat-item">
+          <span class="stat-val">100k+</span
+          ><span class="stat-lbl">daily calls</span>
+        </div>
+        <span class="stat-sep">&middot;</span>
+        <div class="stat-item">
+          <span class="stat-val">2,000+</span
+          ><span class="stat-lbl">businesses</span>
+        </div>
+        <span class="stat-sep">&middot;</span>
+        <div class="stat-item">
+          <span class="stat-val">&infin;</span
+          ><span class="stat-lbl">concurrency</span>
+        </div>
+        <span class="stat-sep">&middot;</span>
+        <div class="stat-item">
+          <span class="stat-val">$0.04</span
+          ><span class="stat-lbl">per minute</span>
+        </div>
+        <span class="stat-sep">&middot;</span>
+        <div class="stat-item">
+          <span class="stat-val">100+</span
+          ><span class="stat-lbl">languages &amp; dialects</span>
+        </div>
+        <span class="stat-sep">&middot;</span>
+        <div class="stat-item">
+          <span class="stat-val">&lt;300</span
+          ><span class="stat-lbl">ms latency</span>
+        </div>
+        <span class="stat-sep">&middot;</span>
+        <div class="stat-item">
+          <span class="stat-val">100k+</span
+          ><span class="stat-lbl">daily calls</span>
+        </div>
+        <span class="stat-sep">&middot;</span>
+        <div class="stat-item">
+          <span class="stat-val">2,000+</span
+          ><span class="stat-lbl">businesses</span>
+        </div>
+        <span class="stat-sep">&middot;</span>
+        <div class="stat-item">
+          <span class="stat-val">&infin;</span
+          ><span class="stat-lbl">concurrency</span>
+        </div>
+        <span class="stat-sep">&middot;</span>
+        <div class="stat-item">
+          <span class="stat-val">$0.04</span
+          ><span class="stat-lbl">per minute</span>
+        </div>
+        <span class="stat-sep">&middot;</span>
+        <div class="stat-item">
+          <span class="stat-val">100+</span
+          ><span class="stat-lbl">languages &amp; dialects</span>
+        </div>
+        <span class="stat-sep">&middot;</span>
+      </div>
+    </div>
+
+    
+    <!-- LANGUAGE BELT -->
+    <div class="lang-belt blackout" aria-label="100+ languages and dialects">
+      <div class="lang-track"><span class="lang-item">hinglish</span><span class="lang-sep">·</span><span class="lang-item">hindi</span><span class="lang-sep">·</span><span class="lang-item">us english</span><span class="lang-sep">·</span><span class="lang-item">uk english</span><span class="lang-sep">·</span><span class="lang-item">gulf arabic</span><span class="lang-sep">·</span><span class="lang-item">arabic</span><span class="lang-sep">·</span><span class="lang-item">spanish</span><span class="lang-sep">·</span><span class="lang-item">latam spanish</span><span class="lang-sep">·</span><span class="lang-item">portuguese</span><span class="lang-sep">·</span><span class="lang-item">french</span><span class="lang-sep">·</span><span class="lang-item">german</span><span class="lang-sep">·</span><span class="lang-item">italian</span><span class="lang-sep">·</span><span class="lang-item">tamil</span><span class="lang-sep">·</span><span class="lang-item">telugu</span><span class="lang-sep">·</span><span class="lang-item">marathi</span><span class="lang-sep">·</span><span class="lang-item">bengali</span><span class="lang-sep">·</span><span class="lang-item">russian</span><span class="lang-sep">·</span><span class="lang-item">turkish</span><span class="lang-sep">·</span><span class="lang-item">bahasa</span><span class="lang-sep">·</span><span class="lang-item">japanese</span><span class="lang-sep">·</span><span class="lang-item">korean</span><span class="lang-sep">·</span><span class="lang-item">thai</span><span class="lang-sep">·</span><span class="lang-item">vietnamese</span><span class="lang-sep">·</span><span class="lang-item">tagalog</span><span class="lang-sep">·</span><span class="lang-item lang-more">+ dialects to 100+</span><span class="lang-sep">·</span><span class="lang-item">hinglish</span><span class="lang-sep">·</span><span class="lang-item">hindi</span><span class="lang-sep">·</span><span class="lang-item">us english</span><span class="lang-sep">·</span><span class="lang-item">uk english</span><span class="lang-sep">·</span><span class="lang-item">gulf arabic</span><span class="lang-sep">·</span><span class="lang-item">arabic</span><span class="lang-sep">·</span><span class="lang-item">spanish</span><span class="lang-sep">·</span><span class="lang-item">latam spanish</span><span class="lang-sep">·</span><span class="lang-item">portuguese</span><span class="lang-sep">·</span><span class="lang-item">french</span><span class="lang-sep">·</span><span class="lang-item">german</span><span class="lang-sep">·</span><span class="lang-item">italian</span><span class="lang-sep">·</span><span class="lang-item">tamil</span><span class="lang-sep">·</span><span class="lang-item">telugu</span><span class="lang-sep">·</span><span class="lang-item">marathi</span><span class="lang-sep">·</span><span class="lang-item">bengali</span><span class="lang-sep">·</span><span class="lang-item">russian</span><span class="lang-sep">·</span><span class="lang-item">turkish</span><span class="lang-sep">·</span><span class="lang-item">bahasa</span><span class="lang-sep">·</span><span class="lang-item">japanese</span><span class="lang-sep">·</span><span class="lang-item">korean</span><span class="lang-sep">·</span><span class="lang-item">thai</span><span class="lang-sep">·</span><span class="lang-item">vietnamese</span><span class="lang-sep">·</span><span class="lang-item">tagalog</span><span class="lang-sep">·</span><span class="lang-item lang-more">+ dialects to 100+</span><span class="lang-sep">·</span></div>
+    </div>
+
+    <!-- DEMO -->
+    <section class="demo-section" id="demo">
+      <p class="demo-eyebrow reveal">experience it</p>
+      <p class="demo-headline reveal">don't read. <em>listen.</em></p>
+      <p class="demo-body reveal">
+        we could write paragraphs about latency, orchestration, and cost curves.
+        or you could just talk to it and know.
+      </p>
+
+      <div class="widget-pair">
+        <div class="widget-card" id="widgetCard">
+          <span class="version-label">NOVA PREMIUM</span>
+          <div class="orb-container" id="orbContainer">
+            <div class="orb-glow"></div>
+            <div class="fire-image" id="fireImage">
+              <img
+                src="https://storage.googleapis.com/msgsndr/LK2LrQP5tkIZ3ahmumnr/media/698928520708e4d8649f0642.png"
+                alt="Nova Fire"
+                crossorigin="anonymous"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="video-container" id="videoContainer">
+              <video id="agentVideo" playsinline muted preload="none"></video>
+            </div>
+            <div class="orb-shell"></div>
+            <div class="loading-ring" id="loadingRing"></div>
+            <div class="audio-ring" id="audioRing">
+              <canvas id="audioCanvas"></canvas>
+            </div>
+          </div>
+          <div class="tap-text" id="tapText">tap to talk</div>
+          <div class="tagline" id="tagline">experience novano signup</div>
+          <span class="status-text" id="statusText"></span>
+          <div class="call-controls" id="callControls">
+            <button class="mute-btn" id="muteBtn" title="Mute microphone">
+              <svg
+                class="mic-on"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+              <svg
+                class="mic-off"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"
+                  opacity="0.4"
+                />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" opacity="0.4" />
+                <line x1="12" y1="19" x2="12" y2="23" opacity="0.4" />
+                <line x1="8" y1="23" x2="16" y2="23" opacity="0.4" />
+                <line
+                  class="slash-line"
+                  x1="1"
+                  y1="1"
+                  x2="23"
+                  y2="23"
+                  stroke-width="2.5"
+                />
+              </svg>
+            </button>
+            <button class="end-call-btn" id="endCallBtn">End Call</button>
+          </div>
+          <div class="live-badge" id="liveBadge">
+            <span class="live-dot"></span>LIVE
+          </div>
+          <div class="scanlines"></div>
+        </div>
+        <div class="widget-card widget-card--duplex" id="widgetCardDuplex">
+          <span class="version-label">NOVA DUPLEX</span>
+          <div class="orb-container" id="orbContainerDuplex">
+            <div class="orb-glow"></div>
+            <div class="fire-image" id="fireImageDuplex">
+              <img
+                src="https://storage.googleapis.com/msgsndr/LK2LrQP5tkIZ3ahmumnr/media/698928520708e4d8649f0642.png"
+                alt="Nova Duplex"
+                crossorigin="anonymous"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="video-container" id="videoContainerDuplex">
+              <video id="agentVideoDuplex" playsinline muted preload="none"></video>
+            </div>
+            <div class="orb-shell"></div>
+            <div class="loading-ring" id="loadingRingDuplex"></div>
+            <div class="audio-ring" id="audioRingDuplex">
+              <canvas id="audioCanvasDuplex"></canvas>
+            </div>
+          </div>
+          <div class="tap-text" id="tapTextDuplex">tap to talk</div>
+          <div class="tagline" id="taglineDuplex">interrupt it. it listens while it talks.</div>
+          <span class="status-text" id="statusTextDuplex"></span>
+          <div class="call-controls" id="callControlsDuplex">
+            <button class="mute-btn" id="muteBtnDuplex" title="Mute microphone">
+              <svg
+                class="mic-on"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+              <svg
+                class="mic-off"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"
+                  opacity="0.4"
+                />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" opacity="0.4" />
+                <line x1="12" y1="19" x2="12" y2="23" opacity="0.4" />
+                <line x1="8" y1="23" x2="16" y2="23" opacity="0.4" />
+                <line
+                  class="slash-line"
+                  x1="1"
+                  y1="1"
+                  x2="23"
+                  y2="23"
+                  stroke-width="2.5"
+                />
+              </svg>
+            </button>
+            <button class="end-call-btn" id="endCallBtnDuplex">End Call</button>
+          </div>
+          <div class="live-badge" id="liveBadgeDuplex">
+            <span class="live-dot"></span>LIVE
+          </div>
+          <div class="scanlines"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- FEATURES -->
+    <section class="features-section blackout" id="features">
+      <div class="features-header reveal">
+        <h2>why this is<br /><em>different.</em></h2>
+        <p>
+          built from scratch for the post-real-time era. not retrofitted. not
+          patched. designed.
+        </p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal rd1">
+          <span class="feature-num">01</span>
+          <h3>real emotion, not synthesis</h3>
+          <p>
+            nova doesn't stitch audio clips. it thinks in voice &mdash; pauses,
+            laughs, hesitates, breathes. the way humans actually talk.
+          </p>
+        </div>
+        <div class="feature-card reveal rd2">
+          <span class="feature-num">02</span>
+          <h3>model-agnostic runtime</h3>
+          <p>
+            we don't lock you into one vendor. nova lets you switch across
+            real-time engines for the best latency, quality, and cost &mdash;
+            per use case.
+          </p>
+        </div>
+        <div class="feature-card reveal rd3">
+          <span class="feature-num">03</span>
+          <h3>your concurrency, your control</h3>
+          <p>
+            no provider contracts throttling your scale. concurrency is in your
+            hands &mdash; 50, 500, or 5,000 simultaneous sessions.
+          </p>
+        </div>
+        <div class="feature-card reveal rd4">
+          <span class="feature-num">04</span>
+          <h3>built post-real-time era</h3>
+          <p>
+            competitors architected before streaming models existed. nova was
+            designed from day one for the world we're in now.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- SPLINE VISUAL BREAK -->
+    <section class="spline-break blackout" id="splineSection">
+      <div class="spline-break-inner" id="splineContainer">
+        <!-- Spline loaded lazily via IntersectionObserver -->
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- PRICING -->
+    <section class="pricing-section blackout" id="pricing">
+      <div class="pricing-header">
+        <h2 class="reveal">simple<br /><em>pricing.</em></h2>
+        <p class="reveal">
+          one flat retainer. no hidden fees. no platform tax. no surprises.
+          founding access: 100 businesses.
+        </p>
+      </div>
+
+      <!-- Big hero price -->
+      <div class="pricing-hero reveal">
+        <p class="pricing-hero-big"><span>$0.04</span>/min</p>
+        <p class="pricing-hero-sub">all-in. voice + LLM + emotion.</p>
+        <p class="pricing-hero-note">
+          *on the $497 plan · enterprise from $0.02
+        </p>
+      </div>
+
+
+      <div class="founding-strip reveal">
+        <p class="founding-guarantee">
+          built for you in 5 minutes.
+          <em>outperform your current setup in 30 days — or it's free.</em>
+        </p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Lite$29/mo -->
+        <div class="p-card reveal">
+          <div class="p-name">lite</div>
+          <div class="p-desc">try nova live on a small budget.</div>
+          <div class="p-price-wrap">
+            <span class="p-currency">$</span><span class="p-amount">29</span>
+          </div>
+          <span class="p-period">/month</span>
+          <span class="p-rate">$0.10 per minute</span>
+          <ul class="p-features">
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              ><span
+                >100 minutes included<br /><em
+                  style="
+                    color: var(--text-muted);
+                    font-size: 11px;
+                    font-style: italic;
+                    font-weight: 300;
+                  "
+                  >then upgrade or top up credits</em
+                ></span
+              >
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >5 concurrent calls
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >10 ai agents
+            </li>
+          </ul>
+          <button
+            type="button"
+            class="p-cta p-cta-ghost js-checkout"
+            data-plan="lite"
+          >
+            get nova access →
+          </button>
+        </div>
+
+        <!-- Starter$97/mo -->
+        <div class="p-card reveal">
+          <div class="p-name">starter</div>
+          <div class="p-desc">solo operators and teams getting started.</div>
+          <div class="p-price-wrap">
+            <span class="p-currency">$</span><span class="p-amount">97</span>
+          </div>
+          <span class="p-period">/month</span>
+          <span class="p-rate">$0.08 per minute</span>
+          <ul class="p-features">
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              ><span
+                >400 minutes included<br /><em
+                  style="
+                    color: var(--text-muted);
+                    font-size: 11px;
+                    font-style: italic;
+                    font-weight: 300;
+                  "
+                  >then $0.08/min after</em
+                ></span
+              >
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >15 concurrent calls
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >30 ai agents
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >english + hindi
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >email support
+            </li>
+          </ul>
+          <button
+            type="button"
+            class="p-cta p-cta-ghost js-checkout"
+            data-plan="starter"
+          >
+            get nova access →
+          </button>
+        </div>
+
+        <!-- Growth$297/mo (MOST POPULAR) -->
+        <div class="p-card p-pop reveal">
+          <span class="p-badge">most popular</span>
+          <div class="p-name">growth</div>
+          <div class="p-desc">for teams scaling outbound.</div>
+          <div class="p-price-wrap">
+            <span class="p-currency">$</span
+            ><span class="p-amount p-amount-accent">297</span>
+          </div>
+          <span class="p-period">/month</span>
+          <span class="p-rate">$0.06 per minute · save 25%</span>
+          <ul class="p-features">
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-a" /></svg
+              ><span
+                >1,600 minutes included<br /><em
+                  style="
+                    color: var(--text-muted);
+                    font-size: 11px;
+                    font-style: italic;
+                    font-weight: 300;
+                  "
+                  >then $0.06/min after</em
+                ></span
+              >
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-a" /></svg
+              >25 concurrent calls
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-a" /></svg
+              >50 ai agents
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-a" /></svg
+              >all 40+ languages
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-a" /></svg
+              >priority support
+            </li>
+          </ul>
+          <button
+            type="button"
+            class="p-cta p-cta-primary js-checkout"
+            data-plan="growth"
+          >
+            get nova access →
+          </button>
+        </div>
+
+        <!-- Scale$497/mo -->
+        <div class="p-card reveal">
+          <div class="p-name">scale</div>
+          <div class="p-desc">best rate. built for high volume.</div>
+          <div class="p-price-wrap">
+            <span class="p-currency">$</span><span class="p-amount">497</span>
+          </div>
+          <span class="p-period">/month</span>
+          <span class="p-rate">$0.04 per minute · save 50%</span>
+          <ul class="p-features">
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              ><span
+                >3,500 minutes included<br /><em
+                  style="
+                    color: var(--text-muted);
+                    font-size: 11px;
+                    font-style: italic;
+                    font-weight: 300;
+                  "
+                  >then $0.04/min after</em
+                ></span
+              >
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >50 concurrent calls
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >unlimited ai agents
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >rest api access + inbound routing
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >agent memory · dedicated manager
+            </li>
+          </ul>
+          <button
+            type="button"
+            class="p-cta p-cta-ghost js-checkout"
+            data-plan="scale"
+          >
+            get nova access →
+          </button>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="p-card p-wide reveal">
+          <div class="p-wide-head">
+            <div class="p-name">enterprise</div>
+            <div class="p-desc">custom deployments at scale.</div>
+            <div class="p-price-wrap">
+              <span
+                class="p-amount"
+                style="font-size: 36px; letter-spacing: -1px"
+                >custom</span
+              >
+            </div>
+            <span class="p-period">&nbsp;</span>
+            <span class="p-rate">$0.02–$0.04 per minute</span>
+            <a href="https://nova.ai/book" class="p-cta p-cta-ent"
+              >contact us</a
+            >
+          </div>
+          <ul class="p-features">
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >everything in pro
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >on-prem / private cloud
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >custom integrations
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >SOC 2 / HIPAA / GDPR
+            </li>
+            <li>
+              <svg
+                class="p-check"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <polyline points="20 6 9 17 4 12" class="p-check-y" /></svg
+              >24/7 dedicated support
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="pricing-note reveal">
+        all plans include voice, LLM, and emotion &mdash; no stacking fees
+      </p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══ BENCHMARK CHARTS ═══ -->
+    <section class="bench-section blackout" id="benchmarks">
+      <div class="bench-header">
+        <h2 class="reveal">the<br /><em>numbers.</em></h2>
+        <p class="reveal">
+          not marketing claims. real benchmarks across speed, emotion, cost, and
+          dialect coverage.
+        </p>
+      </div>
+
+      <div class="bench-tabs reveal">
+        <div class="bench-tab active" data-bp="bp-speed">Speed vs Quality</div>
+        <div class="bench-tab" data-bp="bp-emotion">Emotion & Dialects</div>
+        <div class="bench-tab" data-bp="bp-cost">Cost vs Capability</div>
+      </div>
+
+      <div class="bench-card reveal">
+        <div class="bench-panel bp-active" id="bp-speed">
+          <div class="bench-canvas-wrap">
+            <span class="bench-ql bench-ql-tl">Slow & Smart</span>
+            <span class="bench-ql bench-ql-tr">Fast & Smart</span>
+            <span class="bench-ql bench-ql-bl">Slow & Basic</span>
+            <span class="bench-ql bench-ql-br">Fast & Basic</span>
+            <canvas id="bc-speed"></canvas>
+          </div>
+          <div class="bench-legend" id="bl-speed"></div>
+        </div>
+        <div class="bench-panel" id="bp-emotion">
+          <div class="bench-canvas-wrap">
+            <span class="bench-ql bench-ql-tl">No Emotion, Many Dialects</span>
+            <span class="bench-ql bench-ql-tr">Emotional & Multilingual</span>
+            <span class="bench-ql bench-ql-bl">No Emotion, Few Dialects</span>
+            <span class="bench-ql bench-ql-br">Emotional, Few Dialects</span>
+            <canvas id="bc-emotion"></canvas>
+          </div>
+          <div class="bench-legend" id="bl-emotion"></div>
+        </div>
+        <div class="bench-panel" id="bp-cost">
+          <div class="bench-canvas-wrap">
+            <span class="bench-ql bench-ql-tl">Expensive & Limited</span>
+            <span class="bench-ql bench-ql-tr">Cheap & Limited</span>
+            <span class="bench-ql bench-ql-bl">Expensive & Full-Stack</span>
+            <span class="bench-ql bench-ql-br">Cheap & Full-Stack</span>
+            <canvas id="bc-cost"></canvas>
+          </div>
+          <div class="bench-legend" id="bl-cost"></div>
+        </div>
+        <div class="bench-tooltip" id="benchTT">
+          <div class="btt-name" id="bttName"></div>
+          <div id="bttRows"></div>
+        </div>
+      </div>
+      <div class="bench-source">
+        data based on public benchmarks, vendor docs &amp; real deployment
+        testing · feb 2026
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══ COMPARE V2NEW TABLE ═══ -->
+    <section class="compare-section blackout" id="compare">
+      <div class="compare-header">
+        <h2 class="reveal">how we<br /><em>compare.</em></h2>
+        <p class="reveal">
+          everyone claims human-like voice ai. here's what actually happens when
+          you deploy at scale.
+        </p>
+      </div>
+
+      <div class="ct-scroll-hint">
+        <span>swipe to compare</span>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+      </div>
+      <div class="ct-wrap reveal">
+        <table class="ct">
+          <thead>
+            <tr>
+              <th>outcome</th>
+              <th class="cth-a">nova</th>
+              <th>retell</th>
+              <th>vapi</th>
+              <th>synthflow</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 1: Emotion -->
+            <tr>
+              <td>
+                <div class="ct-feat">
+                  <div class="ct-ico">
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"
+                      />
+                      <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                      <line x1="9" y1="9" x2="9.01" y2="9" />
+                      <line x1="15" y1="9" x2="15.01" y2="9" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="ct-fn">real human emotion</span
+                    ><span class="ct-fs">tone, laughter, hesitation</span>
+                  </div>
+                </div>
+              </td>
+              <td class="ctd-a">
+                <span class="ct-tag ct-g"
+                  ><span class="ct-dot"></span>built-in</span
+                >
+                <span class="ct-desc"
+                  >orchestrated emotion. adapts mid-call.</span
+                >
+              </td>
+              <td>
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>partial</span
+                >
+                <span class="ct-desc">select models only.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>varies</span
+                >
+                <span class="ct-desc">depends on TTS provider.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-d"
+                  ><span class="ct-dot"></span>basic</span
+                >
+                <span class="ct-desc">breaks on interruptions.</span>
+              </td>
+            </tr>
+
+            <!-- 2: Dialects -->
+            <tr>
+              <td>
+                <div class="ct-feat">
+                  <div class="ct-ico">
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="M3 5h12M9 3v2m1.048 3.5A18.24 18.24 0 016 15.5m4-3.5a18.24 18.24 0 01-2.16 3.5M14 5l7 15m-3.5-7h-7"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="ct-fn">dialects &amp; regional accents</span
+                    ><span class="ct-fs">hinglish, gulf arabic, latam</span>
+                  </div>
+                </div>
+              </td>
+              <td class="ctd-a">
+                <span class="ct-tag ct-g"
+                  ><span class="ct-dot"></span>native</span
+                >
+                <span class="ct-desc">dialect-aware orchestration.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>limited</span
+                >
+                <span class="ct-desc">31 langs. no dialect tuning.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-r"
+                  ><span class="ct-dot"></span>outsourced</span
+                >
+                <span class="ct-desc">no own voice layer.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-d"
+                  ><span class="ct-dot"></span>manual</span
+                >
+                <span class="ct-desc">clone only. no adaptation.</span>
+              </td>
+            </tr>
+
+            <!-- 3: Latency -->
+            <tr>
+              <td>
+                <div class="ct-feat">
+                  <div class="ct-ico">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="ct-fn">response latency</span
+                    ><span class="ct-fs">time to first reply</span>
+                  </div>
+                </div>
+              </td>
+              <td class="ctd-a">
+                <span class="ct-tag ct-g"
+                  ><span class="ct-dot"></span>&lt;300ms</span
+                >
+                <span class="ct-desc">real-time. no awkward pauses.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>~600ms</span
+                >
+                <span class="ct-desc">decent. custom turn-taking.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>550–800ms</span
+                >
+                <span class="ct-desc">varies by geography.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-d"
+                  ><span class="ct-dot"></span>~500ms</span
+                >
+                <span class="ct-desc">spikes on complex flows.</span>
+              </td>
+            </tr>
+
+            <!-- 4: Cost -->
+            <tr>
+              <td>
+                <div class="ct-feat">
+                  <div class="ct-ico">
+                    <svg viewBox="0 0 24 24">
+                      <line x1="12" y1="1" x2="12" y2="23" />
+                      <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="ct-fn">actual cost per minute</span
+                    ><span class="ct-fs">not the marketing number</span>
+                  </div>
+                </div>
+              </td>
+              <td class="ctd-a">
+                <span class="ct-price">$0.02–$0.07</span>
+                <span class="ct-price-sub">all-in · no hidden fees</span>
+              </td>
+              <td>
+                <span class="ct-strike">$0.08/min</span>
+                <span class="ct-arrow"> → $0.13–$0.31</span><br />
+                <span class="ct-desc">+ voice + LLM + telephony</span>
+              </td>
+              <td>
+                <span class="ct-strike">$0.05/min</span>
+                <span class="ct-arrow"> → $0.13–$0.33</span><br />
+                <span class="ct-desc">platform fee only. 3-6× more.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-d">$0.08–$0.13</span>
+                <span class="ct-desc">overages stack. $15K/yr min.</span>
+              </td>
+            </tr>
+
+            <!-- 5: Scale -->
+            <tr>
+              <td>
+                <div class="ct-feat">
+                  <div class="ct-ico">
+                    <svg viewBox="0 0 24 24">
+                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="ct-fn">scales without breaking</span
+                    ><span class="ct-fs">100 → 100K calls</span>
+                  </div>
+                </div>
+              </td>
+              <td class="ctd-a">
+                <span class="ct-tag ct-g"><span class="ct-dot"></span>yes</span>
+                <span class="ct-desc">same arch. no renegotiation.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>complex</span
+                >
+                <span class="ct-desc">burst = extra fees.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-r"
+                  ><span class="ct-dot"></span>painful</span
+                >
+                <span class="ct-desc">multi-vendor billing.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-d"
+                  ><span class="ct-dot"></span>plan-locked</span
+                >
+                <span class="ct-desc">tier limits. upgrade to grow.</span>
+              </td>
+            </tr>
+
+            <!-- 6: No devs -->
+            <tr>
+              <td>
+                <div class="ct-feat">
+                  <div class="ct-ico">
+                    <svg viewBox="0 0 24 24">
+                      <rect x="2" y="3" width="20" height="14" rx="2" />
+                      <line x1="8" y1="21" x2="16" y2="21" />
+                      <line x1="12" y1="17" x2="12" y2="21" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="ct-fn">no dev team required</span
+                    ><span class="ct-fs">business teams can deploy</span>
+                  </div>
+                </div>
+              </td>
+              <td class="ctd-a">
+                <span class="ct-tag ct-g"
+                  ><span class="ct-dot"></span>managed</span
+                >
+                <span class="ct-desc">platform + API. your choice.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-r"
+                  ><span class="ct-dot"></span>devs only</span
+                >
+                <span class="ct-desc">no visual builder.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-r"
+                  ><span class="ct-dot"></span>devs only</span
+                >
+                <span class="ct-desc">API-first. cosmetic no-code.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-ac"
+                  ><span class="ct-dot"></span>no-code</span
+                >
+                <span class="ct-desc">simple agents only.</span>
+              </td>
+            </tr>
+
+            <!-- 7: Enterprise -->
+            <tr>
+              <td>
+                <div class="ct-feat">
+                  <div class="ct-ico">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="ct-fn">enterprise-ready</span
+                    ><span class="ct-fs">SLA, compliance, uptime</span>
+                  </div>
+                </div>
+              </td>
+              <td class="ctd-a">
+                <span class="ct-tag ct-g"><span class="ct-dot"></span>yes</span>
+                <span class="ct-desc">SLA-backed. dedicated support.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-g"><span class="ct-dot"></span>yes</span>
+                <span class="ct-desc">SOC 2, HIPAA, GDPR.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-r"
+                  ><span class="ct-dot"></span>shaky</span
+                >
+                <span class="ct-desc">2.8/5 Trustpilot.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>partial</span
+                >
+                <span class="ct-desc">slow support lower tiers.</span>
+              </td>
+            </tr>
+
+            <!-- 8: Telesales -->
+            <tr>
+              <td>
+                <div class="ct-feat">
+                  <div
+                    class="ct-ico"
+                    style="
+                      border-color: rgba(232, 87, 42, 0.2);
+                      background: rgba(232, 87, 42, 0.08);
+                    "
+                  >
+                    <svg viewBox="0 0 24 24" style="stroke: var(--accent)">
+                      <path
+                        d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="ct-fn">replaces human telesales</span
+                    ><span class="ct-fs">objection handling, closing</span>
+                  </div>
+                </div>
+              </td>
+              <td class="ctd-a">
+                <span class="ct-tag ct-g"
+                  ><span class="ct-dot"></span>purpose-built</span
+                >
+                <span class="ct-desc">emotion + dialects + persistence.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>support-first</span
+                >
+                <span class="ct-desc">FAQs &amp; scheduling.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-d"
+                  ><span class="ct-dot"></span>infrastructure</span
+                >
+                <span class="ct-desc">you build everything.</span>
+              </td>
+              <td>
+                <span class="ct-tag ct-d"
+                  ><span class="ct-dot"></span>basic</span
+                >
+                <span class="ct-desc">simple campaigns only.</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MOBILE COMPARE CARDS (replaces table on small screens) -->
+      <div class="ct-mobile reveal">
+        <!-- 1: Emotion -->
+        <div class="ctm-card open">
+          <div
+            class="ctm-header"
+            onclick="this.parentElement.classList.toggle('open')"
+          >
+            <div class="ct-ico">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"
+                />
+                <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                <line x1="9" y1="9" x2="9.01" y2="9" />
+                <line x1="15" y1="9" x2="15.01" y2="9" />
+              </svg>
+            </div>
+            <span class="ctm-title">real human emotion</span>
+            <svg class="ctm-chevron" viewBox="0 0 24 24">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+          <div class="ctm-body">
+            <div class="ctm-row ctm-row-a">
+              <span class="ctm-vendor ctm-vendor-a">nova</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-g"
+                  ><span class="ct-dot"></span>built-in</span
+                ><span class="ct-desc"
+                  >orchestrated emotion. adapts mid-call.</span
+                >
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">retell</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>partial</span
+                ><span class="ct-desc">select models only.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">vapi</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>varies</span
+                ><span class="ct-desc">depends on TTS provider.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">synthflow</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-d"
+                  ><span class="ct-dot"></span>basic</span
+                ><span class="ct-desc">breaks on interruptions.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2: Dialects -->
+        <div class="ctm-card">
+          <div
+            class="ctm-header"
+            onclick="this.parentElement.classList.toggle('open')"
+          >
+            <div class="ct-ico">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M3 5h12M9 3v2m1.048 3.5A18.24 18.24 0 016 15.5m4-3.5a18.24 18.24 0 01-2.16 3.5M14 5l7 15m-3.5-7h-7"
+                />
+              </svg>
+            </div>
+            <span class="ctm-title">dialects & regional accents</span>
+            <svg class="ctm-chevron" viewBox="0 0 24 24">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+          <div class="ctm-body">
+            <div class="ctm-row ctm-row-a">
+              <span class="ctm-vendor ctm-vendor-a">nova</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-g"
+                  ><span class="ct-dot"></span>native</span
+                ><span class="ct-desc">dialect-aware orchestration.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">retell</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>limited</span
+                ><span class="ct-desc">31 langs. no dialect tuning.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">vapi</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-r"
+                  ><span class="ct-dot"></span>outsourced</span
+                ><span class="ct-desc">no own voice layer.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">synthflow</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-d"
+                  ><span class="ct-dot"></span>manual</span
+                ><span class="ct-desc">clone only. no adaptation.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3: Latency -->
+        <div class="ctm-card">
+          <div
+            class="ctm-header"
+            onclick="this.parentElement.classList.toggle('open')"
+          >
+            <div class="ct-ico">
+              <svg viewBox="0 0 24 24">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+            </div>
+            <span class="ctm-title">response latency</span>
+            <svg class="ctm-chevron" viewBox="0 0 24 24">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+          <div class="ctm-body">
+            <div class="ctm-row ctm-row-a">
+              <span class="ctm-vendor ctm-vendor-a">nova</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-g"
+                  ><span class="ct-dot"></span>&lt;300ms</span
+                ><span class="ct-desc">real-time. no awkward pauses.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">retell</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>~600ms</span
+                ><span class="ct-desc">decent. custom turn-taking.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">vapi</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>550–800ms</span
+                ><span class="ct-desc">varies by geography.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">synthflow</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-d"
+                  ><span class="ct-dot"></span>~500ms</span
+                ><span class="ct-desc">spikes on complex flows.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4: Cost -->
+        <div class="ctm-card">
+          <div
+            class="ctm-header"
+            onclick="this.parentElement.classList.toggle('open')"
+          >
+            <div class="ct-ico">
+              <svg viewBox="0 0 24 24">
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+              </svg>
+            </div>
+            <span class="ctm-title">actual cost per minute</span>
+            <svg class="ctm-chevron" viewBox="0 0 24 24">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+          <div class="ctm-body">
+            <div class="ctm-row ctm-row-a">
+              <span class="ctm-vendor ctm-vendor-a">nova</span>
+              <div class="ctm-content">
+                <span class="ct-price">$0.02–$0.07</span
+                ><span class="ct-price-sub">all-in · no hidden fees</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">retell</span>
+              <div class="ctm-content">
+                <span class="ct-desc"
+                  ><span class="ct-strike">$0.08/min</span> → $0.13–$0.31</span
+                >
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">vapi</span>
+              <div class="ctm-content">
+                <span class="ct-desc"
+                  ><span class="ct-strike">$0.05/min</span> → $0.13–$0.33</span
+                >
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">synthflow</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-d">$0.08–$0.13</span
+                ><span class="ct-desc">$15K/yr min.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5: Scale -->
+        <div class="ctm-card">
+          <div
+            class="ctm-header"
+            onclick="this.parentElement.classList.toggle('open')"
+          >
+            <div class="ct-ico">
+              <svg viewBox="0 0 24 24">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+            </div>
+            <span class="ctm-title">scales without breaking</span>
+            <svg class="ctm-chevron" viewBox="0 0 24 24">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+          <div class="ctm-body">
+            <div class="ctm-row ctm-row-a">
+              <span class="ctm-vendor ctm-vendor-a">nova</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-g"><span class="ct-dot"></span>yes</span
+                ><span class="ct-desc">same arch. no renegotiation.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">retell</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>complex</span
+                ><span class="ct-desc">burst = extra fees.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">vapi</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-r"
+                  ><span class="ct-dot"></span>painful</span
+                ><span class="ct-desc">multi-vendor billing.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">synthflow</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-d"
+                  ><span class="ct-dot"></span>plan-locked</span
+                ><span class="ct-desc">upgrade to grow.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6: No devs -->
+        <div class="ctm-card">
+          <div
+            class="ctm-header"
+            onclick="this.parentElement.classList.toggle('open')"
+          >
+            <div class="ct-ico">
+              <svg viewBox="0 0 24 24">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+            </div>
+            <span class="ctm-title">no dev team required</span>
+            <svg class="ctm-chevron" viewBox="0 0 24 24">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+          <div class="ctm-body">
+            <div class="ctm-row ctm-row-a">
+              <span class="ctm-vendor ctm-vendor-a">nova</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-g"
+                  ><span class="ct-dot"></span>managed</span
+                ><span class="ct-desc">platform + API. your choice.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">retell</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-r"
+                  ><span class="ct-dot"></span>devs only</span
+                ><span class="ct-desc">no visual builder.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">vapi</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-r"
+                  ><span class="ct-dot"></span>devs only</span
+                ><span class="ct-desc">API-first. cosmetic no-code.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">synthflow</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-ac"
+                  ><span class="ct-dot"></span>no-code</span
+                ><span class="ct-desc">simple agents only.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7: Enterprise -->
+        <div class="ctm-card">
+          <div
+            class="ctm-header"
+            onclick="this.parentElement.classList.toggle('open')"
+          >
+            <div class="ct-ico">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            </div>
+            <span class="ctm-title">enterprise-ready</span>
+            <svg class="ctm-chevron" viewBox="0 0 24 24">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+          <div class="ctm-body">
+            <div class="ctm-row ctm-row-a">
+              <span class="ctm-vendor ctm-vendor-a">nova</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-g"><span class="ct-dot"></span>yes</span
+                ><span class="ct-desc">SLA-backed. dedicated support.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">retell</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-g"><span class="ct-dot"></span>yes</span
+                ><span class="ct-desc">SOC 2, HIPAA, GDPR.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">vapi</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-r"
+                  ><span class="ct-dot"></span>shaky</span
+                ><span class="ct-desc">2.8/5 Trustpilot.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">synthflow</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>partial</span
+                ><span class="ct-desc">slow support lower tiers.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8: Telesales -->
+        <div class="ctm-card">
+          <div
+            class="ctm-header"
+            onclick="this.parentElement.classList.toggle('open')"
+          >
+            <div
+              class="ct-ico"
+              style="
+                border-color: rgba(232, 87, 42, 0.15);
+                background: rgba(232, 87, 42, 0.06);
+              "
+            >
+              <svg viewBox="0 0 24 24" style="stroke: var(--accent)">
+                <path
+                  d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"
+                />
+              </svg>
+            </div>
+            <span class="ctm-title">replaces human telesales</span>
+            <svg class="ctm-chevron" viewBox="0 0 24 24">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+          <div class="ctm-body">
+            <div class="ctm-row ctm-row-a">
+              <span class="ctm-vendor ctm-vendor-a">nova</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-g"
+                  ><span class="ct-dot"></span>purpose-built</span
+                ><span class="ct-desc">emotion + dialects + persistence.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">retell</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-y"
+                  ><span class="ct-dot"></span>support-first</span
+                ><span class="ct-desc">FAQs & scheduling.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">vapi</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-d"
+                  ><span class="ct-dot"></span>infrastructure</span
+                ><span class="ct-desc">you build everything.</span>
+              </div>
+            </div>
+            <div class="ctm-row">
+              <span class="ctm-vendor">synthflow</span>
+              <div class="ctm-content">
+                <span class="ct-tag ct-d"
+                  ><span class="ct-dot"></span>basic</span
+                ><span class="ct-desc">simple campaigns only.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="compare-footer reveal">
+        <span class="compare-footer-note"
+          >based on public docs &amp; real deployment costs · feb 2026</span
+        >
+        <a href="#pricing" class="btn-primary">claim founding access</a>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- CTA -->
+    <section class="final-cta">
+      <h2 class="reveal">words don't<br />do it <em>justice.</em></h2>
+      <p class="reveal">talk to nova. then decide.</p>
+      <div class="cta-buttons reveal">
+        <a href="#pricing" class="btn-primary">claim founding access</a
+        ><a href="#demo" class="btn-ghost">talk to nova first</a>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="blackout">
+      <div class="left">nova</div>
+      <div class="right">
+        <a href="https://docs.nova.ai">docs</a><a href="https://docs.nova.ai/api-reference/calling/create-call">api</a><a href="https://x.com/Nova_Ai_Agent">twitter</a
+        ><a href="https://www.nova.ai/contact">contact</a><a href="https://www.nova.ai/">nova.ai</a>
+      </div>
+    </footer>
+
+    <script>
+      // Immediately reveal all content so pricing and other sections are instantly visible without delay
+      document.querySelectorAll(".reveal").forEach((el) => el.classList.add("visible"));
+      const obs = new IntersectionObserver(
+        (es) => {
+          es.forEach((e) => {
+            if (e.isIntersecting) e.target.classList.add("visible");
+          });
+        },
+        { threshold: 0, rootMargin: "400px" },
+      );
+      document.querySelectorAll(".reveal").forEach((el) => obs.observe(el));
+    </script>
+
+    <!-- Lazy-load Spline when near viewport -->
+    <script>
+      (function () {
+        let loaded = false;
+        const container = document.getElementById("splineContainer");
+        if (!container) return;
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0].isIntersecting && !loaded) {
+              loaded = true;
+              window
+                .novaLoad(
+                  "https://unpkg.com/@splinetool/viewer@1.12.61/build/spline-viewer.js",
+                  "module",
+                )
+                .catch(() => {});
+              const sv = document.createElement("spline-viewer");
+              sv.setAttribute(
+                "url",
+                "/assets/nova-scene.splinecode",
+              );
+              sv.setAttribute("loading-anim-type", "none");
+              container.appendChild(sv);
+              observer.disconnect();
+            }
+          },
+          { rootMargin: "400px" },
+        );
+        observer.observe(container);
+      })();
+    </script>
+
+    <!-- ═══ WEBGL FLAME SHADER ═══ -->
+    <script>
+      const canvas = document.getElementById("flame-canvas");
+      const gl = canvas.getContext("webgl");
+      const vsSource = `
+  attribute vec4 aVertexPosition;
+  void main() {
+    gl_Position = aVertexPosition;
+  }
+`;
+      const fsSource = `
+  precision highp float;
+  uniform vec2 u_resolution;
+  uniform float u_time;
+  uniform vec2 u_mouse;
+  vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+  float snoise(vec2 v){
+    const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+             -0.577350269189626, 0.024390243902439);
+    vec2 i  = floor(v + dot(v, C.yy) );
+    vec2 x0 = v -   i + dot(i, C.xx);
+    vec2 i1;
+    i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+    vec4 x12 = x0.xyxy + C.xxzz;
+    x12.xy -= i1;
+    i = mod(i, 289.0);
+    vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+    + i.x + vec3(0.0, i1.x, 1.0 ));
+    vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+    m = m*m ;
+    m = m*m ;
+    vec3 x = 2.0 * fract(p * C.www) - 1.0;
+    vec3 h = abs(x) - 0.5;
+    vec3 ox = floor(x + 0.5);
+    vec3 a0 = x - ox;
+    m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+    vec3 g;
+    g.x  = a0.x  * x0.x  + h.x  * x0.y;
+    g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+    return 130.0 * dot(m, g);
+  }
+  float fbm(vec2 st) {
+    float value = 0.0;
+    float amplitude = 0.5;
+    for (int i = 0; i < 5; i++) {
+      value += amplitude * snoise(st);
+      st *= 2.0;
+      amplitude *= 0.5;
+    }
+    return value;
+  }
+  float warp(vec2 st, float time) {
+    vec2 q = vec2(
+      fbm(st + vec2(0.0, 0.0)),
+      fbm(st + vec2(5.2, 1.3))
+    );
+    vec2 r = vec2(
+      fbm(st + 4.0*q + vec2(1.7, 9.2) + 0.15*time),
+      fbm(st + 4.0*q + vec2(8.3, 2.8) + 0.126*time)
+    );
+    return fbm(st + 4.0*r);
+  }
+  void main() {
+    vec2 st = gl_FragCoord.xy / u_resolution.xy;
+    st.x *= u_resolution.x / u_resolution.y;
+    st -= vec2(0.5 * (u_resolution.x / u_resolution.y), 0.4);
+    vec2 mouse = u_mouse / u_resolution;
+    vec2 mouseDist = st - (mouse - 0.5);
+    float mouseInteraction = smoothstep(0.4, 0.0, length(mouseDist)) * 0.1;
+    float r = length(st);
+    float a = atan(st.y, st.x);
+    float time = u_time * 0.2;
+    float noiseVal = warp(st * 3.0 - vec2(0.0, time * 0.5), time);
+    float shape = 1.0 - smoothstep(0.0, 0.6 + noiseVal * 0.2, length(st * vec2(0.8, 1.2 + st.y * 0.5)));
+    vec3 colorBot = vec3(0.05, 0.0, 0.0);
+    vec3 colorMid = vec3(0.9, 0.2, 0.05);
+    vec3 colorTop = vec3(1.0, 0.8, 0.5);
+    vec3 color = mix(colorBot, colorMid, smoothstep(0.0, 0.6, noiseVal));
+    color = mix(color, colorTop, smoothstep(0.6, 1.0, noiseVal * (1.0 + st.y)));
+    float intensity = shape * (noiseVal * 1.5 + 0.2);
+    vec3 finalColor = vec3(
+        pow(intensity, 0.8) * 1.2,
+        pow(intensity, 2.0) * 0.8,
+        pow(intensity, 4.0) * 0.3
+    );
+    float glow = exp(-r * 2.0) * 0.2;
+    finalColor += vec3(0.8, 0.3, 0.1) * glow;
+    gl_FragColor = vec4(finalColor, shape * smoothstep(0.0, 0.2, intensity));
+  }
+`;
+      function loadShader(gl, type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+          console.error(gl.getShaderInfoLog(shader));
+          gl.deleteShader(shader);
+          return null;
+        }
+        return shader;
+      }
+      const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
+      const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+      const shaderProgram = gl.createProgram();
+      gl.attachShader(shaderProgram, vertexShader);
+      gl.attachShader(shaderProgram, fragmentShader);
+      gl.linkProgram(shaderProgram);
+      const programInfo = {
+        program: shaderProgram,
+        attribLocations: {
+          vertexPosition: gl.getAttribLocation(
+            shaderProgram,
+            "aVertexPosition",
+          ),
+        },
+        uniformLocations: {
+          resolution: gl.getUniformLocation(shaderProgram, "u_resolution"),
+          time: gl.getUniformLocation(shaderProgram, "u_time"),
+          mouse: gl.getUniformLocation(shaderProgram, "u_mouse"),
+        },
+      };
+      const positionBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array([-1, 1, 1, 1, -1, -1, 1, -1]),
+        gl.STATIC_DRAW,
+      );
+      function resize() {
+        const dpr = window.innerWidth < 768 ? 0.5 : 1;
+        const w = Math.floor(canvas.clientWidth * dpr),
+          h = Math.floor(canvas.clientHeight * dpr);
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w;
+          canvas.height = h;
+          gl.viewport(0, 0, canvas.width, canvas.height);
+        }
+      }
+      let startTime = Date.now();
+      let mouseX = 0,
+        mouseY = 0;
+      document.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX;
+        mouseY = canvas.height - e.clientY;
+      });
+      function render() {
+        resize();
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.useProgram(programInfo.program);
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.vertexAttribPointer(
+          programInfo.attribLocations.vertexPosition,
+          2,
+          gl.FLOAT,
+          false,
+          0,
+          0,
+        );
+        gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
+        gl.uniform2f(
+          programInfo.uniformLocations.resolution,
+          canvas.width,
+          canvas.height,
+        );
+        gl.uniform1f(
+          programInfo.uniformLocations.time,
+          (Date.now() - startTime) * 0.001,
+        );
+        gl.uniform2f(programInfo.uniformLocations.mouse, mouseX, mouseY);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        requestAnimationFrame(render);
+      }
+      render();
+    </script>
+
+    <!-- ═══ REACTIVE VOICE WAVEFORM ═══ -->
+    <script>
+      (function () {
+        const C = document.getElementById("voice-canvas"),
+          ctx = C.getContext("2d");
+        let W,
+          H,
+          time = 0,
+          mouseX = 0.5,
+          mouseY = 0.5,
+          prevMX = 0.5,
+          prevMY = 0.5,
+          energy = 0,
+          sY = 0;
+        function resize() {
+          W = C.width = window.innerWidth;
+          H = C.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resize);
+        resize();
+        document.addEventListener("mousemove", (e) => {
+          mouseX = e.clientX / W;
+          mouseY = e.clientY / H;
+        });
+        window.addEventListener("scroll", () => {
+          sY = window.scrollY;
+        });
+        function draw() {
+          time += 0.012;
+          ctx.clearRect(0, 0, W, H);
+          const dx = mouseX - prevMX,
+            dy = mouseY - prevMY;
+          energy +=
+            (Math.min(Math.sqrt(dx * dx + dy * dy) * 60, 1) - energy) * 0.08;
+          prevMX = mouseX;
+          prevMY = mouseY;
+          const scrollFade = Math.max(0, 1 - sY / (H * 1.2));
+          if (scrollFade < 0.01) {
+            requestAnimationFrame(draw);
+            return;
+          }
+          const centerY = H * (0.48 + (mouseY - 0.5) * 0.06);
+          const layers = [
+            {
+              amp: 120,
+              freq: 0.003,
+              speed: 1.0,
+              alpha: 0.35,
+              width: 2,
+              color: [232, 87, 42],
+            },
+            {
+              amp: 80,
+              freq: 0.005,
+              speed: 1.4,
+              alpha: 0.18,
+              width: 1.2,
+              color: [255, 140, 80],
+            },
+            {
+              amp: 200,
+              freq: 0.0015,
+              speed: 0.6,
+              alpha: 0.06,
+              width: 3.5,
+              color: [232, 87, 42],
+            },
+            {
+              amp: 40,
+              freq: 0.008,
+              speed: 2.2,
+              alpha: 0.12,
+              width: 0.8,
+              color: [244, 162, 97],
+            },
+            {
+              amp: 60,
+              freq: 0.006,
+              speed: -0.8,
+              alpha: 0.08,
+              width: 1,
+              color: [180, 100, 60],
+            },
+          ];
+          for (const L of layers) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(${L.color[0]},${L.color[1]},${L.color[2]},${L.alpha * scrollFade})`;
+            ctx.lineWidth = L.width;
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+            const baseAmp = L.amp * (0.15 + energy * 2.5);
+            for (let x = 0; x <= W; x += 2) {
+              const nx = x / W,
+                t = time * L.speed;
+              const localBoost =
+                Math.exp(-(nx - mouseX) * (nx - mouseX) * 12) * energy * 1.5;
+              const amp = baseAmp * (1 + localBoost);
+              let y =
+                Math.sin(x * L.freq + t) * amp +
+                Math.sin(x * L.freq * 2.3 + t * 1.7 + 1) * amp * 0.3 +
+                Math.sin(x * L.freq * 0.7 + t * 0.5 + 2.5) * amp * 0.5;
+              y +=
+                Math.sin(x * 0.05 + t * 8) *
+                Math.sin(x * 0.02 + t * 3) *
+                energy *
+                60;
+              y *= Math.sin(nx * Math.PI);
+              if (x === 0) ctx.moveTo(x, centerY + y);
+              else ctx.lineTo(x, centerY + y);
+            }
+            ctx.stroke();
+          }
+          if (energy > 0.02) {
+            const gx = mouseX * W;
+            const grad = ctx.createRadialGradient(
+              gx,
+              centerY,
+              0,
+              gx,
+              centerY,
+              200 * energy,
+            );
+            grad.addColorStop(
+              0,
+              `rgba(232,87,42,${0.05 * energy * scrollFade})`,
+            );
+            grad.addColorStop(1, "transparent");
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, W, H);
+          }
+          const idle = Math.max(0, 0.3 - energy);
+          if (idle > 0) {
+            const pulse = 0.5 + Math.sin(time * 0.8) * 0.5;
+            const g2 = ctx.createRadialGradient(
+              W * 0.5,
+              centerY,
+              0,
+              W * 0.5,
+              centerY,
+              300,
+            );
+            g2.addColorStop(
+              0,
+              `rgba(232,87,42,${0.02 * pulse * idle * scrollFade})`,
+            );
+            g2.addColorStop(1, "transparent");
+            ctx.fillStyle = g2;
+            ctx.fillRect(0, 0, W, H);
+          }
+          requestAnimationFrame(draw);
+        }
+        draw();
+      })();
+
+      // One controller per demo card (Premium + Duplex). Only one call is
+      // live at a time: starting a card hangs up the other.
+      const novaWidgets = [];
+      function novaDemoWidget(sfx, extraPayload) {
+        const API_URL = "/api/nova/web-call";
+        const PAYLOAD = Object.assign(
+          {
+            usecase: "nova_premium_landing_demo",
+            path: "/nova",
+          },
+          extraPayload || {},
+        );
+        const $ = (id) => document.getElementById(id + sfx);
+        if (!$("widgetCard")) return;
+        const VIDEO_URL =
+          "https://storage.googleapis.com/msgsndr/LK2LrQP5tkIZ3ahmumnr/media/6989285267d749bf9ff413c4.mp4";
+
+        const orbContainer = $("orbContainer");
+        const loadingRing = $("loadingRing");
+        const videoContainer = $("videoContainer");
+        const agentVideo = $("agentVideo");
+        const tapText = $("tapText");
+        const tagline = $("tagline");
+        const liveBadge = $("liveBadge");
+        const endCallBtn = $("endCallBtn");
+        const muteBtn = $("muteBtn");
+        const callControls = $("callControls");
+        const statusText = $("statusText");
+        const widgetCard = $("widgetCard");
+        const audioCanvas = $("audioCanvas");
+        const audioRing = $("audioRing");
+
+        if (orbContainer) orbContainer.style.cursor = "pointer";
+        if (tapText) tapText.style.cursor = "pointer";
+
+        let room = null,
+          isConnected = false,
+          isConnecting = false,
+          audioCtx = null,
+          analyser = null,
+          animFrameId = null,
+          isMuted = false,
+          gen = 0;
+        const audioEls = [];
+        const self = {
+          busy: () => isConnected || isConnecting,
+          hangup: () => handleDisconnect(),
+        };
+        novaWidgets.push(self);
+
+        function setStatus(msg) {
+          statusText.textContent = msg;
+          statusText.classList.toggle("visible", !!msg);
+        }
+
+        function initAudioVisualizer(audioTrack) {
+          try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const stream = new MediaStream([audioTrack.mediaStreamTrack]);
+            const source = audioCtx.createMediaStreamSource(stream);
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 128;
+            source.connect(analyser);
+            const bufferLength = analyser.frequencyBinCount,
+              dataArray = new Uint8Array(bufferLength);
+            const canvasEl = audioCanvas,
+              ctx = canvasEl.getContext("2d"),
+              size = 244;
+            canvasEl.width = size;
+            canvasEl.height = size;
+            audioRing.classList.add("active");
+            function drawRing() {
+              animFrameId = requestAnimationFrame(drawRing);
+              analyser.getByteFrequencyData(dataArray);
+              ctx.clearRect(0, 0, size, size);
+              const cx = size / 2,
+                cy = size / 2,
+                radius = size / 2 - 10,
+                bars = bufferLength;
+              for (let i = 0; i < bars; i++) {
+                const angle = (i / bars) * Math.PI * 2 - Math.PI / 2,
+                  val = dataArray[i] / 255;
+                const barH = val * 18 + 2;
+                const x1 = cx + Math.cos(angle) * radius,
+                  y1 = cy + Math.sin(angle) * radius;
+                const x2 = cx + Math.cos(angle) * (radius + barH),
+                  y2 = cy + Math.sin(angle) * (radius + barH);
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = `rgba(37, 99, 235, ${0.4 + val * 0.4})`;
+                ctx.lineWidth = 2;
+                ctx.lineCap = "round";
+                ctx.stroke();
+              }
+            }
+            drawRing();
+          } catch (e) {
+            console.warn("Audio visualizer error:", e);
+          }
+        }
+
+        function stopAudioVisualizer() {
+          if (animFrameId) cancelAnimationFrame(animFrameId);
+          if (audioCtx) {
+            audioCtx.close();
+            audioCtx = null;
+          }
+          audioRing.classList.remove("active");
+        }
+
+        async function connectToRoom() {
+          if (isConnecting || isConnected) return;
+          novaWidgets.forEach((w) => {
+            if (w !== self && w.busy()) w.hangup();
+          });
+          const myGen = ++gen;
+          isConnecting = true;
+          loadingRing.classList.add("active");
+          tapText.textContent = "connecting...";
+          tagline.style.opacity = "0.4";
+          setStatus("Connecting to AI voice...");
+          try {
+            const lkReady = window.LivekitClient
+              ? Promise.resolve()
+              : window.novaLoad("/assets/livekit-client.umd.js");
+            const res = await fetch(API_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(PAYLOAD),
+            });
+            const data = await res.json();
+            if (myGen !== gen) return; // hung up while connecting
+            if (!data.token || !data.url)
+              throw new Error(data.error || "Failed to create room");
+            const { token, url } = data;
+            setStatus("Starting real-time session...");
+            await lkReady;
+            if (myGen !== gen) return;
+            const LivekitClient = window.LivekitClient;
+            room = new LivekitClient.Room({
+              adaptiveStream: true,
+              dynacast: true,
+              videoCaptureDefaults: {
+                resolution: LivekitClient.VideoPresets.h720.resolution,
+              },
+            });
+            const myRoom = room;
+            room.on(
+              LivekitClient.RoomEvent.TrackSubscribed,
+              (track, publication, participant) => {
+                if (room !== myRoom) return;
+                if (track.kind === "video") {
+                  track.attach(agentVideo);
+                  agentVideo.muted = false;
+                  videoContainer.classList.add("active");
+                }
+                if (track.kind === "audio") {
+                  const audioEl = track.attach();
+                  document.body.appendChild(audioEl);
+                  audioEls.push(audioEl);
+                  initAudioVisualizer(track);
+                }
+              },
+            );
+            room.on(LivekitClient.RoomEvent.TrackUnsubscribed, (track) => {
+              track.detach().forEach((el) => el.remove());
+            });
+            room.on(LivekitClient.RoomEvent.Disconnected, () => {
+              if (room === myRoom) handleDisconnect();
+            });
+            room.on(
+              LivekitClient.RoomEvent.ParticipantConnected,
+              (participant) => {
+                setStatus("");
+              },
+            );
+            await room.connect(url, token);
+            if (myGen !== gen) {
+              myRoom.disconnect();
+              return;
+            }
+            try {
+              await room.localParticipant.setMicrophoneEnabled(true);
+            } catch (micErr) {
+              console.warn("Microphone access denied:", micErr);
+              setStatus("Mic access needed for voice");
+            }
+            agentVideo.src = VIDEO_URL;
+            agentVideo.muted = true;
+            agentVideo.play().catch(() => {});
+            videoContainer.classList.add("active");
+            isConnected = true;
+            isConnecting = false;
+            loadingRing.classList.remove("active");
+            widgetCard.classList.add("connected");
+            tapText.textContent = "speaking...";
+            tagline.style.opacity = "0";
+            liveBadge.classList.add("visible");
+            callControls.classList.add("visible");
+            setStatus("");
+          } catch (err) {
+            if (myGen !== gen) return;
+            console.error("Connection error:", err);
+            isConnecting = false;
+            loadingRing.classList.remove("active");
+            tapText.textContent = "tap to talk";
+            tagline.style.opacity = "1";
+            setStatus("Connection failed. Tap to retry.");
+            setTimeout(() => setStatus(""), 3000);
+          }
+        }
+
+        function handleDisconnect() {
+          gen++;
+          if (room) {
+            room.disconnect();
+            room = null;
+          }
+          stopAudioVisualizer();
+          isConnected = false;
+          isConnecting = false;
+          videoContainer.classList.remove("active");
+          agentVideo.srcObject = null;
+          agentVideo.src = "";
+          widgetCard.classList.remove("connected");
+          liveBadge.classList.remove("visible");
+          callControls.classList.remove("visible");
+          muteBtn.classList.remove("muted");
+          isMuted = false;
+          tapText.textContent = "tap to talk";
+          tagline.style.opacity = "1";
+          setStatus("");
+          audioEls.splice(0).forEach((el) => el.remove());
+        }
+
+        if (orbContainer) {
+          orbContainer.addEventListener("click", () => {
+            if (isConnected) return;
+            connectToRoom();
+          });
+        }
+        if (tapText) {
+          tapText.addEventListener("click", () => {
+            if (isConnected) return;
+            connectToRoom();
+          });
+        }
+        agentVideo.addEventListener("timeupdate", () => {
+          if (agentVideo.src.includes(VIDEO_URL)) {
+            if (agentVideo.currentTime > agentVideo.duration - 0.2) {
+              const loopStart = Math.max(0, agentVideo.duration - 0.5);
+              agentVideo.currentTime = loopStart;
+              agentVideo.play().catch(() => {});
+            }
+          }
+        });
+        endCallBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          handleDisconnect();
+        });
+        muteBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (!isConnected || !room) return;
+          isMuted = !isMuted;
+          muteBtn.classList.toggle("muted", isMuted);
+          try {
+            room.localParticipant.setMicrophoneEnabled(!isMuted);
+            tapText.textContent = isMuted ? "muted" : "speaking...";
+          } catch (err) {
+            console.warn("Mute toggle error:", err);
+          }
+        });
+      }
+      novaDemoWidget("");
+      novaDemoWidget("Duplex", { agent: "duplex", usecase: "nova_duplex_landing_demo" });
+    </script>
+    <!-- ═══ BENCHMARK CHARTS JS ═══ -->
+    <script>
+      (function () {
+        const BC = {
+          nova: "#2563eb",
+          elevenlabs: "#c084fc",
+          retell: "#67c7eb",
+          vapi: "#f5a623",
+          ultravox: "#5cd9a4",
+        };
+        const BN = {
+          nova: "nova",
+          elevenlabs: "ElevenLabs",
+          retell: "Retell AI",
+          vapi: "Vapi AI",
+          ultravox: "Ultravox",
+        };
+        const SD = [
+          {
+            id: "nova",
+            x: 280,
+            y: 96,
+            r: 18,
+            tip: {
+              Latency: "<300ms",
+              Quality: "96%",
+              Architecture: "Proprietary voice orchestration",
+            },
+          },
+          {
+            id: "ultravox",
+            x: 550,
+            y: 82,
+            r: 15,
+            tip: {
+              Latency: "~550ms",
+              Quality: "82%",
+              Architecture: "Speech LLM (GLM 4.6)",
+            },
+          },
+          {
+            id: "elevenlabs",
+            x: 850,
+            y: 90,
+            r: 15,
+            tip: {
+              Latency: "~850ms",
+              Quality: "90%",
+              Architecture: "Cascaded pipeline",
+            },
+          },
+          {
+            id: "retell",
+            x: 700,
+            y: 84,
+            r: 14,
+            tip: {
+              Latency: "~700ms",
+              Quality: "84%",
+              Architecture: "Multi-vendor stack",
+            },
+          },
+          {
+            id: "vapi",
+            x: 750,
+            y: 82,
+            r: 13,
+            tip: {
+              Latency: "500-1500ms",
+              Quality: "82%",
+              Architecture: "Middleware (external APIs)",
+            },
+          },
+        ];
+        const ED = [
+          {
+            id: "nova",
+            x: 92,
+            y: 95,
+            r: 20,
+            tip: {
+              Emotion: "Orchestrated. Adapts mid-call.",
+              Dialects: "100+ incl. Hinglish, Gulf Arabic",
+              "Dialect tuning": "Built-in",
+            },
+          },
+          {
+            id: "elevenlabs",
+            x: 75,
+            y: 80,
+            r: 15,
+            tip: {
+              Emotion: "Text-cue based",
+              Dialects: "32 languages",
+              "Code-switching": "None",
+            },
+          },
+          {
+            id: "retell",
+            x: 55,
+            y: 40,
+            r: 13,
+            tip: {
+              Emotion: "Select models",
+              Dialects: "31 languages",
+              "Code-switching": "None",
+            },
+          },
+          {
+            id: "vapi",
+            x: 60,
+            y: 35,
+            r: 12,
+            tip: {
+              Emotion: "Provider-dependent",
+              Dialects: "100+ via 3rd party",
+              "Code-switching": "None",
+            },
+          },
+          {
+            id: "ultravox",
+            x: 45,
+            y: 50,
+            r: 14,
+            tip: {
+              Emotion: "Model-level",
+              Dialects: "15 languages",
+              "Code-switching": "Limited",
+            },
+          },
+        ];
+        const CD = [
+          {
+            id: "nova",
+            x: 0.05,
+            y: 94,
+            r: 18,
+            tip: {
+              "Cost/min": "$0.05 all-in",
+              Features: "94%",
+              Includes: "TTS + LLM + telephony + emotion",
+            },
+          },
+          {
+            id: "elevenlabs",
+            x: 0.1,
+            y: 85,
+            r: 14,
+            tip: {
+              "Cost/min": "$0.08–$0.10",
+              Features: "85%",
+              Includes: "TTS + agents (LLM extra)",
+            },
+          },
+          {
+            id: "retell",
+            x: 0.2,
+            y: 78,
+            r: 13,
+            tip: {
+              "Cost/min": "$0.13–$0.31 real",
+              Features: "78%",
+              Includes: "Base $0.07 + voice + LLM + tel",
+            },
+          },
+          {
+            id: "vapi",
+            x: 0.23,
+            y: 65,
+            r: 12,
+            tip: {
+              "Cost/min": "$0.13–$0.33 real",
+              Features: "65%",
+              Includes: "Platform $0.05 + all providers",
+            },
+          },
+          {
+            id: "ultravox",
+            x: 0.07,
+            y: 68,
+            r: 15,
+            tip: {
+              "Cost/min": "$0.05 + TTS",
+              Features: "68%",
+              Includes: "Model only (TTS + telephony extra)",
+            },
+          },
+        ];
+
+        class BChart {
+          constructor(cid, data, opts) {
+            this.canvas = document.getElementById(cid);
+            if (!this.canvas) return;
+            this.ctx = this.canvas.getContext("2d");
+            this.data = data;
+            this.opts = opts;
+            this.dpr = window.devicePixelRatio || 1;
+            this.hovIdx = -1;
+            this.points = [];
+            this.resize();
+            window.addEventListener("resize", () => this.resize());
+          }
+          resize() {
+            const r = this.canvas.parentElement.getBoundingClientRect();
+            this.w = r.width;
+            this.h = r.height;
+            this.canvas.width = this.w * this.dpr;
+            this.canvas.height = this.h * this.dpr;
+            this.canvas.style.width = this.w + "px";
+            this.canvas.style.height = this.h + "px";
+            this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+            this.pad = { t: 36, r: 36, b: 46, l: 56 };
+            this.pw = this.w - this.pad.l - this.pad.r;
+            this.ph = this.h - this.pad.t - this.pad.b;
+            this.draw(1);
+          }
+          toPixel(d) {
+            const o = this.opts;
+            let nx = o.invertX
+              ? 1 - (d.x - o.xMin) / (o.xMax - o.xMin)
+              : (d.x - o.xMin) / (o.xMax - o.xMin);
+            let ny = 1 - (d.y - o.yMin) / (o.yMax - o.yMin);
+            return {
+              px: this.pad.l + nx * this.pw,
+              py: this.pad.t + ny * this.ph,
+              r: d.r,
+            };
+          }
+          draw(progress) {
+            const c = this.ctx,
+              w = this.w,
+              h = this.h,
+              p = this.pad,
+              o = this.opts;
+            c.clearRect(0, 0, w, h);
+            c.strokeStyle = "rgba(255,240,220,.03)";
+            c.lineWidth = 1;
+            c.setLineDash([3, 4]);
+            const ys = o.yTicks || 5;
+            for (let i = 0; i <= ys; i++) {
+              const y = p.t + (this.ph / ys) * i;
+              c.beginPath();
+              c.moveTo(p.l, y);
+              c.lineTo(p.l + this.pw, y);
+              c.stroke();
+              const v = o.yMax - ((o.yMax - o.yMin) / ys) * i;
+              c.fillStyle = "#3d3830";
+              c.font = '10px "JetBrains Mono"';
+              c.textAlign = "right";
+              c.fillText(o.yFmt ? o.yFmt(v) : v, p.l - 8, y + 3);
+            }
+            const xs = o.xTicks || 5;
+            for (let i = 0; i <= xs; i++) {
+              const x = p.l + (this.pw / xs) * i;
+              c.beginPath();
+              c.moveTo(x, p.t);
+              c.lineTo(x, p.t + this.ph);
+              c.stroke();
+              let v = o.invertX
+                ? o.xMax - ((o.xMax - o.xMin) / xs) * i
+                : o.xMin + ((o.xMax - o.xMin) / xs) * i;
+              c.fillStyle = "#3d3830";
+              c.textAlign = "center";
+              c.fillText(o.xFmt ? o.xFmt(v) : v, x, p.t + this.ph + 18);
+            }
+            c.setLineDash([]);
+            if (o.midY) {
+              const my =
+                p.t + (1 - (o.midY - o.yMin) / (o.yMax - o.yMin)) * this.ph;
+              c.strokeStyle = "rgba(232,87,42,.08)";
+              c.lineWidth = 1;
+              c.setLineDash([5, 4]);
+              c.beginPath();
+              c.moveTo(p.l, my);
+              c.lineTo(p.l + this.pw, my);
+              c.stroke();
+              c.setLineDash([]);
+            }
+            c.fillStyle = "#746b60";
+            c.font = '9px "JetBrains Mono"';
+            c.textAlign = "center";
+            c.fillText(o.xLabel || "", p.l + this.pw / 2, h - 2);
+            c.save();
+            c.translate(10, p.t + this.ph / 2);
+            c.rotate(-Math.PI / 2);
+            c.fillText(o.yLabel || "", 0, 0);
+            c.restore();
+            this.points = [];
+            this.data.forEach((d, i) => {
+              const pt = this.toPixel(d),
+                r = pt.r * Math.min(progress, 1),
+                col = BC[d.id],
+                hov = i === this.hovIdx,
+                dr = hov ? r * 1.3 : r;
+              const g = c.createRadialGradient(
+                pt.px,
+                pt.py,
+                0,
+                pt.px,
+                pt.py,
+                dr * 2.5,
+              );
+              g.addColorStop(0, col + "30");
+              g.addColorStop(1, "transparent");
+              c.fillStyle = g;
+              c.beginPath();
+              c.arc(pt.px, pt.py, dr * 2.5, 0, Math.PI * 2);
+              c.fill();
+              c.beginPath();
+              c.arc(pt.px, pt.py, dr, 0, Math.PI * 2);
+              c.fillStyle = col + (hov ? "ee" : "cc");
+              c.fill();
+              c.strokeStyle = col;
+              c.lineWidth = hov ? 2.5 : 1.5;
+              c.stroke();
+              c.beginPath();
+              c.arc(
+                pt.px - dr * 0.25,
+                pt.py - dr * 0.25,
+                dr * 0.35,
+                0,
+                Math.PI * 2,
+              );
+              c.fillStyle = "rgba(255,255,255,.12)";
+              c.fill();
+              c.font = `${hov ? "600" : "400"} 11px "DM Sans"`;
+              c.fillStyle = hov ? col : "#b5ab9d";
+              c.textAlign = "left";
+              c.fillText(BN[d.id], pt.px + dr + 8, pt.py + 4);
+              if (d.id === "nova") {
+                c.strokeStyle = col + "40";
+                c.lineWidth = 1;
+                c.setLineDash([2, 3]);
+                c.beginPath();
+                c.arc(pt.px, pt.py, dr + 6, 0, Math.PI * 2);
+                c.stroke();
+                c.setLineDash([]);
+              }
+              this.points.push({ ...pt, idx: i, data: d });
+            });
+          }
+        }
+
+        const btt = document.getElementById("benchTT"),
+          bttN = document.getElementById("bttName"),
+          bttR = document.getElementById("bttRows");
+        const bcharts = {};
+
+        function bLegend(id, data) {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.innerHTML = data
+            .map(
+              (d) =>
+                `<div class="bench-legend-item"><div class="bench-legend-dot" style="background:${BC[d.id]}"></div>${BN[d.id]}</div>`,
+            )
+            .join("");
+        }
+
+        function bInit(id, data, opts) {
+          const ch = new BChart("bc-" + id, data, opts);
+          bcharts[id] = ch;
+          bLegend("bl-" + id, data);
+          let st = null;
+          function anim(ts) {
+            if (!st) st = ts;
+            const p = Math.min((ts - st) / 800, 1);
+            ch.draw(1 - Math.pow(1 - p, 3));
+            if (p < 1) requestAnimationFrame(anim);
+          }
+          requestAnimationFrame(anim);
+          ch.canvas.addEventListener("mousemove", (e) => {
+            const rect = ch.canvas.getBoundingClientRect(),
+              mx = e.clientX - rect.left,
+              my = e.clientY - rect.top;
+            let f = -1;
+            ch.points.forEach((pt, i) => {
+              const dx = mx - pt.px,
+                dy = my - pt.py;
+              if (Math.sqrt(dx * dx + dy * dy) < pt.r + 10) f = i;
+            });
+            ch.hovIdx = f;
+            ch.draw(1);
+            if (f >= 0) {
+              const d = ch.data[f];
+              bttN.textContent = BN[d.id];
+              bttN.style.color = BC[d.id];
+              bttR.innerHTML = Object.entries(d.tip)
+                .map(
+                  ([k, v]) =>
+                    `<div class="btt-row"><span>${k}</span><span class="btt-val">${v}</span></div>`,
+                )
+                .join("");
+              btt.style.left =
+                Math.min(e.clientX - rect.left + 16, ch.w - 220) + "px";
+              btt.style.top = Math.max(e.clientY - rect.top - 80, 10) + "px";
+              btt.classList.add("btt-show");
+            } else {
+              btt.classList.remove("btt-show");
+            }
+          });
+          ch.canvas.addEventListener("mouseleave", () => {
+            ch.hovIdx = -1;
+            ch.draw(1);
+            btt.classList.remove("btt-show");
+          });
+        }
+
+        bInit("speed", SD, {
+          xMin: 0,
+          xMax: 1200,
+          invertX: true,
+          yMin: 78,
+          yMax: 100,
+          xTicks: 6,
+          yTicks: 5,
+          midY: 90,
+          xFmt: (v) => Math.round(v) + "ms",
+          yFmt: (v) => v + "%",
+          xLabel: "Response Time (faster →)",
+          yLabel: "Conversational Quality",
+        });
+        bInit("emotion", ED, {
+          xMin: 20,
+          xMax: 100,
+          invertX: false,
+          yMin: 20,
+          yMax: 100,
+          xTicks: 4,
+          yTicks: 4,
+          xFmt: (v) => Math.round(v),
+          yFmt: (v) => Math.round(v),
+          xLabel: "Dialect & Language Coverage →",
+          yLabel: "Emotion Depth",
+        });
+        bInit("cost", CD, {
+          xMin: 0,
+          xMax: 0.3,
+          invertX: true,
+          yMin: 50,
+          yMax: 100,
+          xTicks: 6,
+          yTicks: 5,
+          midY: 80,
+          xFmt: (v) => "$" + v.toFixed(2),
+          yFmt: (v) => v + "%",
+          xLabel: "Cost per Minute (cheaper →)",
+          yLabel: "Feature Completeness",
+        });
+
+        document.querySelectorAll(".bench-tab").forEach((tab) => {
+          tab.addEventListener("click", () => {
+            document
+              .querySelectorAll(".bench-tab")
+              .forEach((t) => t.classList.remove("active"));
+            document
+              .querySelectorAll(".bench-panel")
+              .forEach((p) => p.classList.remove("bp-active"));
+            tab.classList.add("active");
+            document.getElementById(tab.dataset.bp).classList.add("bp-active");
+            const id = tab.dataset.bp.replace("bp-", "");
+            if (bcharts[id]) {
+              bcharts[id].resize();
+              let s = null;
+              function a(ts) {
+                if (!s) s = ts;
+                const p = Math.min((ts - s) / 700, 1);
+                bcharts[id].draw(1 - Math.pow(1 - p, 3));
+                if (p < 1) requestAnimationFrame(a);
+              }
+              requestAnimationFrame(a);
+            }
+          });
+        });
+      })();
+    </script>
+    <!-- RIYA AI ENTERPRISE ASSISTANT — bottom-right widget -->
+    <script src="/nova-widget.js?v=riya-clean-2026-v2"></script>
+
+    <!-- FOUNDING CHECKOUT -->
+    <div class="ck-overlay" id="ckOverlay" hidden>
+      <div
+        class="ck-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Get access to Nova"
+      >
+        <button class="ck-close" id="ckClose" aria-label="Close">
+          &times;
+        </button>
+
+        <form class="ck-step1" id="ckStep1" novalidate>
+          <p class="ck-eyebrow">founding access</p>
+          <h3 class="ck-title">get <em>access.</em></h3>
+
+          <div class="ck-plans" id="ckPlans">
+            <label class="ck-plan" data-plan="lite">
+              <input type="radio" name="ckplan" value="lite" />
+              <span class="ck-plan-name">lite</span>
+              <span class="ck-plan-price">$29<i>/mo</i></span>
+            </label>
+            <label class="ck-plan" data-plan="starter">
+              <input type="radio" name="ckplan" value="starter" />
+              <span class="ck-plan-name">starter</span>
+              <span class="ck-plan-price">$97<i>/mo</i></span>
+            </label>
+            <label class="ck-plan sel" data-plan="growth">
+              <input type="radio" name="ckplan" value="growth" checked />
+              <span class="ck-plan-name">growth</span>
+              <span class="ck-plan-price">$297<i>/mo</i></span>
+            </label>
+            <label class="ck-plan" data-plan="scale">
+              <input type="radio" name="ckplan" value="scale" />
+              <span class="ck-plan-name">scale</span>
+              <span class="ck-plan-price">$497<i>/mo</i></span>
+            </label>
+          </div>
+
+          <div class="ck-fields">
+            <input
+              required
+              id="ckName"
+              placeholder="full name"
+              autocomplete="name"
+            />
+            <input
+              required
+              id="ckEmail"
+              type="email"
+              placeholder="email"
+              autocomplete="email"
+            />
+            <div class="ck-phone-row">
+              <select id="ckDial" aria-label="country code">
+                <option value="+1" selected>🇺🇸 +1</option>
+                <option value="+1">🇨🇦 +1</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+61">🇦🇺 +61</option>
+                <option value="+64">🇳🇿 +64</option>
+                <option value="+91">🇮🇳 +91</option>
+                <option value="+971">🇦🇪 +971</option>
+                <option value="+966">🇸🇦 +966</option>
+                <option value="+974">🇶🇦 +974</option>
+                <option value="+965">🇰🇼 +965</option>
+                <option value="+973">🇧🇭 +973</option>
+                <option value="+968">🇴🇲 +968</option>
+                <option value="+65">🇸🇬 +65</option>
+                <option value="+60">🇲🇾 +60</option>
+                <option value="+63">🇵🇭 +63</option>
+                <option value="+62">🇮🇩 +62</option>
+                <option value="+66">🇹🇭 +66</option>
+                <option value="+84">🇻🇳 +84</option>
+                <option value="+81">🇯🇵 +81</option>
+                <option value="+82">🇰🇷 +82</option>
+                <option value="+852">🇭🇰 +852</option>
+                <option value="+49">🇩🇪 +49</option>
+                <option value="+33">🇫🇷 +33</option>
+                <option value="+34">🇪🇸 +34</option>
+                <option value="+39">🇮🇹 +39</option>
+                <option value="+31">🇳🇱 +31</option>
+                <option value="+351">🇵🇹 +351</option>
+                <option value="+353">🇮🇪 +353</option>
+                <option value="+46">🇸🇪 +46</option>
+                <option value="+47">🇳🇴 +47</option>
+                <option value="+45">🇩🇰 +45</option>
+                <option value="+41">🇨🇭 +41</option>
+                <option value="+43">🇦🇹 +43</option>
+                <option value="+32">🇧🇪 +32</option>
+                <option value="+48">🇵🇱 +48</option>
+                <option value="+30">🇬🇷 +30</option>
+                <option value="+90">🇹🇷 +90</option>
+                <option value="+972">🇮🇱 +972</option>
+                <option value="+27">🇿🇦 +27</option>
+                <option value="+234">🇳🇬 +234</option>
+                <option value="+254">🇰🇪 +254</option>
+                <option value="+233">🇬🇭 +233</option>
+                <option value="+20">🇪🇬 +20</option>
+                <option value="+212">🇲🇦 +212</option>
+                <option value="+55">🇧🇷 +55</option>
+                <option value="+52">🇲🇽 +52</option>
+                <option value="+54">🇦🇷 +54</option>
+                <option value="+56">🇨🇱 +56</option>
+                <option value="+57">🇨🇴 +57</option>
+                <option value="+51">🇵🇪 +51</option>
+                <option value="+92">🇵🇰 +92</option>
+                <option value="+880">🇧🇩 +880</option>
+                <option value="+94">🇱🇰 +94</option>
+                <option value="+977">🇳🇵 +977</option>
+              </select>
+              <input
+                required
+                id="ckPhone"
+                type="tel"
+                placeholder="phone number"
+                autocomplete="tel-national"
+              />
+            </div>
+          </div>
+
+          <button type="submit" class="ck-btn" id="ckContinue">
+            get access now
+          </button>
+          <p class="ck-guarantee">
+            30 days: outperform your current setup — or it's free.
+          </p>
+          <p class="ck-fine">flat monthly · cancel anytime · secured by stripe</p>
+          <p class="ck-err" id="ckErr1"></p>
+        </form>
+
+        <div class="ck-step2" id="ckStep2" hidden>
+          <button type="button" class="ck-back" id="ckBack">&lsaquo; back</button>
+          <p class="ck-eyebrow">payment</p>
+          <h3 class="ck-title">
+            <span id="ckSumPlan">growth</span> — <em id="ckSumPrice">$297/mo</em>
+          </h3>
+          <p class="ck-subline">flat · no usage bills, ever</p>
+          <div id="payment-element"></div>
+          <button class="ck-btn" id="ckPay">get access now</button>
+          <p class="ck-charge" id="ckCharge">
+            $297 today, then monthly. cancel anytime.
+          </p>
+          <p class="ck-guarantee">
+            30 days: outperform your current setup — or it's free.
+          </p>
+          <p class="ck-fine">
+            secured by stripe · visa · mastercard · amex · apple pay ·
+            google pay
+          </p>
+          <p class="ck-err" id="ckErr2"></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (() => {
+        const CK_API = "/api/nova/checkout";
+        // No hardcoded publishable key: it must match the account behind the
+        // server's secret key, so the server is the only source of truth. If
+        // it sends none, the server has already routed us to hosted checkout.
+        const PLANS = {
+          lite: { label: "lite", amount: 29 },
+          starter: { label: "starter", amount: 97 },
+          growth: { label: "growth", amount: 297 },
+          scale: { label: "scale", amount: 497 },
+        };
+        const $ = (id) => document.getElementById(id);
+        const overlay = $("ckOverlay"),
+          step1 = $("ckStep1"),
+          step2 = $("ckStep2"),
+          err1 = $("ckErr1"),
+          err2 = $("ckErr2"),
+          continueBtn = $("ckContinue"),
+          payBtn = $("ckPay");
+        let stripe = null,
+          elements = null,
+          chosen = "growth";
+
+        const utm = {};
+        try {
+          const sp = new URLSearchParams(location.search);
+          [
+            "utm_source",
+            "utm_medium",
+            "utm_campaign",
+            "utm_term",
+            "utm_content",
+          ].forEach((k) => {
+            const v = sp.get(k);
+            if (v) utm[k] = v;
+          });
+          if (Object.keys(utm).length)
+            sessionStorage.setItem("nova_utm", JSON.stringify(utm));
+          else
+            Object.assign(
+              utm,
+              JSON.parse(sessionStorage.getItem("nova_utm") || "{}"),
+            );
+        } catch (e) {}
+
+        function setPlan(plan) {
+          if (!PLANS[plan]) return;
+          chosen = plan;
+          document.querySelectorAll(".ck-plan").forEach((el) => {
+            const on = el.dataset.plan === plan;
+            el.classList.toggle("sel", on);
+            el.querySelector("input").checked = on;
+          });
+          $("ckSumPlan").textContent = PLANS[plan].label;
+          $("ckSumPrice").textContent = "$" + PLANS[plan].amount + "/mo";
+          $("ckCharge").textContent =
+            "$" +
+            PLANS[plan].amount +
+            " today, then monthly. cancel anytime.";
+        }
+        document
+          .querySelectorAll(".ck-plan input")
+          .forEach((r) => r.addEventListener("change", () => setPlan(r.value)));
+
+        function openCheckout(plan) {
+          if (plan) setPlan(plan);
+          if (!window.Stripe)
+            window.novaLoad("https://js.stripe.com/v3/").catch(function () {});
+          overlay.hidden = false;
+          document.body.style.overflow = "hidden";
+          const riya = document.getElementById("riya-widget-host");
+          if (riya) riya.style.display = "none";
+          showStep(1);
+          if (window.fbq) fbq("track", "InitiateCheckout");
+        }
+        function closeCheckout() {
+          overlay.hidden = true;
+          document.body.style.overflow = "";
+          const riya = document.getElementById("riya-widget-host");
+          if (riya) riya.style.display = "";
+        }
+        function showStep(n) {
+          step1.style.display = n === 1 ? "" : "none";
+          step2.hidden = n !== 2;
+        }
+        document.querySelectorAll(".js-checkout").forEach((b) =>
+          b.addEventListener("click", (e) => {
+            e.preventDefault();
+            openCheckout(b.dataset.plan);
+          }),
+        );
+        /* ad links: /nova?plan=lite pre-selects that plan and opens on pricing */
+        try {
+          const p = new URLSearchParams(location.search).get("plan");
+          if (p && Object.prototype.hasOwnProperty.call(PLANS, p)) {
+            setPlan(p);
+            const pricing = $("pricing");
+            if (pricing)
+              setTimeout(
+                () => pricing.scrollIntoView({ behavior: "smooth" }),
+                600,
+              );
+          }
+        } catch (e) {}
+        $("ckClose").addEventListener("click", closeCheckout);
+        $("ckBack").addEventListener("click", () => showStep(1));
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) closeCheckout();
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && !overlay.hidden) closeCheckout();
+        });
+
+        function fullPhone() {
+          const raw = $("ckPhone").value.trim();
+          if (raw.startsWith("+")) return raw.replace(/[^\d+]/g, "");
+          const digits = raw.replace(/\D/g, "").replace(/^0+/, "");
+          return digits ? $("ckDial").value + digits : "";
+        }
+
+        step1.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          err1.textContent = "";
+          err1.style.color = "";
+          const name = $("ckName").value.trim(),
+            email = $("ckEmail").value.trim(),
+            phone = fullPhone();
+          if (!name || !email || !phone) {
+            err1.textContent = "name, email and phone are required.";
+            return;
+          }
+          continueBtn.disabled = true;
+          continueBtn.textContent = "one moment…";
+          try {
+            const res = await fetch(CK_API, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                plan: chosen,
+                name: name,
+                email: email,
+                phone: phone,
+                utm: utm,
+                path: location.pathname + location.search,
+              }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (window.fbq && res.status !== 429) fbq("track", "Lead");
+            if (res.status === 503 && data.leadSaved) {
+              err1.style.color = "#b5ab9d";
+              err1.textContent =
+                "payment is being activated — your details are saved and our team will reach out within the hour.";
+              return;
+            }
+            if (data.checkoutUrl) {
+              window.location.assign(data.checkoutUrl);
+              return;
+            }
+            if (!res.ok || !data.clientSecret)
+              throw new Error(
+                data.error || "could not start checkout — please try again.",
+              );
+            if (!window.Stripe)
+              await window.novaLoad("https://js.stripe.com/v3/");
+            if (!data.publishableKey)
+              throw new Error("could not start checkout — please try again.");
+            stripe = Stripe(data.publishableKey);
+            elements = stripe.elements({
+              clientSecret: data.clientSecret,
+              appearance: {
+                theme: "night",
+                variables: {
+                  colorPrimary: "#e8572a",
+                  colorBackground: "#0d0b09",
+                  colorText: "#f2ede6",
+                  colorDanger: "#ff8b66",
+                  fontFamily: '"DM Sans", system-ui, sans-serif',
+                  borderRadius: "2px",
+                  fontSizeBase: "16px",
+                },
+                rules: {
+                  ".Input": { border: "1px solid #2a211a" },
+                  ".Input:focus": {
+                    border: "1px solid #e8572a",
+                    boxShadow: "none",
+                  },
+                  ".Label": {
+                    color: "#746b60",
+                    fontSize: "11px",
+                    letterSpacing: "1px",
+                    textTransform: "uppercase",
+                  },
+                  ".Tab--selected": { borderColor: "#e8572a" },
+                },
+              },
+            });
+            const pe = elements.create("payment", { layout: "tabs" });
+            pe.mount("#payment-element");
+            showStep(2);
+          } catch (ex) {
+            err1.textContent = ex.message;
+          } finally {
+            continueBtn.disabled = false;
+            continueBtn.textContent = "get access now";
+          }
+        });
+
+        payBtn.addEventListener("click", async () => {
+          if (!stripe || !elements) return;
+          payBtn.disabled = true;
+          err2.textContent = "";
+          const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+              return_url: location.origin + "/nova/thanks?plan=" + chosen,
+            },
+          });
+          if (error) {
+            err2.textContent =
+              error.message || "payment failed — try another card.";
+            payBtn.disabled = false;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

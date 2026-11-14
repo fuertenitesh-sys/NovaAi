@@ -1,0 +1,4 @@
+/* Immediate, crisp brand logo presentation with zero delay */
+.brand { position: relative; display: inline-flex; align-items: center; }
+.brand > img { opacity: 1 !important; display: block; max-width: 100%; height: auto; }
+.brand-fragments { display: none !important; }
