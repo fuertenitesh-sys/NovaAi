@@ -8,7 +8,7 @@ const mix = THREE.MathUtils.lerp;
 const random = i => { const v = Math.sin(i*127.1+311.7)*43758.5453123; return v-Math.floor(v); };
 const motion = {2:{hold:350,assembly:5000,toggle:3900},3:{hold:900,assembly:6800,toggle:4800}};
 let direction = Number(document.body.dataset.direction)||1;
-let host = hosts[direction-1], paused = false, visible = true, raf = 0;
+let host = hosts[direction-1] || hosts[0], paused = false, visible = true, raf = 0;
 let last = 0, elapsed = 0, sequence = 0, progress = 0;
 let manual = null, manualFrom = 0, manualTime = 0;
 const pointer = {x:0,y:0}, cursor = {x:0,y:0};
@@ -150,11 +150,11 @@ if (renderer) {
     camera.left=-half*aspect;camera.right=half*aspect;camera.top=half;camera.bottom=-half;camera.updateProjectionMatrix();
     renderer.render(scene,camera);
   }
-  function resize(){if(!host.clientWidth||!host.clientHeight)return;renderer.setSize(host.clientWidth,host.clientHeight);aspect=host.clientWidth/host.clientHeight;render(performance.now());}
+  function resize(){if(!host||!host.clientWidth||!host.clientHeight)return;renderer.setSize(host.clientWidth,host.clientHeight);aspect=host.clientWidth/host.clientHeight;render(performance.now());}
   function tick(now){raf=0;if(document.hidden||!visible)return;render(now);if(!paused&&!reduced.matches)raf=requestAnimationFrame(tick);}
   function start(){cancelAnimationFrame(raf);raf=0;last=performance.now();render(last);if(visible&&!paused&&!reduced.matches&&!document.hidden)raf=requestAnimationFrame(tick);}
   function reset(){sequence=(reduced.matches||paused)?8000:0;manual=null;manualTime=0;progress=(reduced.matches||paused)?1:0;pointer.x=pointer.y=0;lastPhase='';start();}
-  function move(n){direction=n;host=hosts[n-1];host.appendChild(renderer.domElement);hosts.forEach((h,i)=>h.classList.toggle('ready',i===n-1));visible=true;reset();resize();}
+  function move(n){direction=n;host=hosts[n-1]||hosts[0];if(!host)return;const fb=host.querySelector('.scene-fallback');if(fb)fb.style.display='none';host.appendChild(renderer.domElement);hosts.forEach((h,i)=>h.classList.toggle('ready',i===n-1||hosts.length===1));visible=true;reset();resize();}
   hosts.forEach(h=>{
     new ResizeObserver(()=>{if(h===host)resize();}).observe(h);
     new IntersectionObserver(entries=>{if(h===host){visible=entries[0].isIntersecting;start();}},{threshold:.01}).observe(h);

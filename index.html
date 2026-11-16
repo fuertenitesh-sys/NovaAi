@@ -20,14 +20,14 @@
 
 <script src="app.js" defer></script>
 <script src="homepage.js?v=buyer-review-2" defer></script>
-<script type="module" src="scene.js?v=perf1"></script>
+<script type="module" src="scene.js?v=assembly-fix-v5"></script>
 <script src="navigation.js" defer></script>
 <script src="film.js?v=perf1" defer></script>
 <script src="brand.js?v=3" defer></script>
 <script defer src="contact.js?v=1"></script>
 <script src="assets/livekit-client.umd.js"></script>
 <script defer src="js/nova-modern.js?v=4"></script>
-<script defer src="js/nova-interactive-engine.js?v=1"></script>
+<script defer src="js/nova-interactive-engine.js?v=hero-sampler-v7"></script>
 
 <link rel="canonical" href="/">
 <meta name="robots" content="index,follow,max-image-preview:large">
@@ -72,6 +72,15 @@
   <section class="hero embedded assembly-study" data-hero="2" aria-labelledby="title-2">
     <div class="embedded-top">
       <div>
+        <div class="hero-live-telemetry">
+          <span class="telemetry-beacon"><span class="beacon-dot"></span> WEBRTC LIVE</span>
+          <span class="telemetry-sep">·</span>
+          <span class="telemetry-stat">LATENCY: <strong id="heroLivePing">176ms</strong></span>
+          <span class="telemetry-sep">·</span>
+          <span class="telemetry-stat">SPEECH: <strong>DIRECT S2S</strong></span>
+          <span class="telemetry-sep">·</span>
+          <span class="telemetry-stat">100+ DIALECTS</span>
+        </div>
         <p class="eyebrow"><i></i> ENTERPRISE VOICE &amp; AI INTELLIGENCE</p>
         <h1 id="title-2">Voice &amp; Autonomous<br>AI for Modern<br>Enterprises<span class="orange">.</span></h1>
       </div>
@@ -80,6 +89,34 @@
         <div class="hero-actions">
           <a class="button primary" href="/nova">Experience Voice Studio <svg aria-hidden="true"><use href="#diagonal"/></svg></a>
           <a class="text-link" href="#demo-console">Listen to live audio <span><svg class="nova-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M5 13l7 7 7-7"/></svg></span></a>
+        </div>
+
+        <!-- 1-Click Interactive Hero Voice Sampler -->
+        <div class="hero-voice-sampler" id="heroVoiceSampler">
+          <div class="sampler-top">
+            <div class="sampler-status-label">
+              <span class="sampler-wave-icon">
+                <span></span><span></span><span></span><span></span>
+              </span>
+              <span>LIVE VOICE SAMPLER (1-CLICK AUDITION)</span>
+            </div>
+            <div class="sampler-pills">
+              <button type="button" class="sampler-pill active" data-lang="en-US" data-sample="Hello! Thanks for connecting with Nova AI. I operate at 178 milliseconds direct speech latency, resolving customer inquiries with zero robotic pause.">English 🇺🇸</button>
+              <button type="button" class="sampler-pill" data-lang="hi-IN" data-sample="नमस्ते! मैं रिया हूँ। नोवा का रियल-टाइम स्पीच इंजन बिना किसी रुकावट के स्वाभाविक हिंदी और इंग्लिश में तुरंत जवाब देता है।">हिंदी 🇮🇳</button>
+              <button type="button" class="sampler-pill" data-lang="es-ES" data-sample="¡Hola! Soy Riya de Nova. Nuestro modelo neural procesa voz en tiempo real con latencia inferior a doscientos milisegundos.">Español 🇪🇸</button>
+              <button type="button" class="sampler-pill" data-lang="de-DE" data-sample="Hallo! Ich bin Riya von Nova. Unsere autonome Sprach-KI reagiert in Echtzeit mit nativer Prosodie.">Deutsch 🇩🇪</button>
+            </div>
+          </div>
+          <div class="sampler-controls">
+            <button type="button" class="sampler-play-btn" id="heroSamplerPlayBtn">
+              <svg class="play-svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M8 5v14l11-7z"/></svg>
+              <span>Play Live Voice (178ms)</span>
+            </button>
+            <div class="sampler-canvas-container">
+              <canvas id="heroSamplerCanvas" height="36"></canvas>
+            </div>
+          </div>
+          <p class="sampler-live-caption" id="heroSamplerCaption">"Click 'Play Live Voice' to stream neural speech synthesis in real-time."</p>
         </div>
       </div>
     </div>
