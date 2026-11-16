@@ -18,10 +18,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 1. ENSURE ALL VOICE STUDIO BUTTONS OPEN /nova DIRECTLY
 function fixVoiceStudioLinks() {
+  const isPublicPrefix = window.location.pathname.startsWith('/public');
+  if (isPublicPrefix) {
+    document.querySelectorAll('a[href^="/"]').forEach(a => {
+      const href = a.getAttribute('href');
+      if (!href.startsWith('/public') && !href.startsWith('//')) {
+        a.setAttribute('href', '/public' + (href === '/' ? '' : href));
+      }
+    });
+  }
+
   document.querySelectorAll('a[href="#studio"], a.btn-studio, .action-voice-studio').forEach(el => {
     // If it's a primary CTA meant to launch the studio, direct to /nova
     if (el.textContent.toLowerCase().includes('voice studio') || el.classList.contains('primary')) {
-      el.setAttribute('href', '/nova');
+      el.setAttribute('href', isPublicPrefix ? '/public/nova' : '/nova');
     }
   });
 }
