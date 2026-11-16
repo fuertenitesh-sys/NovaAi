@@ -280,6 +280,12 @@ const server = http.createServer((req, res) => {
     pageFile = 'approach.html';
   } else if (pathname === '/solutions' || pathname === '/solutions.html') {
     pageFile = 'solutions.html';
+  } else if (pathname === '/architecture' || pathname === '/architecture.html') {
+    pageFile = 'architecture.html';
+  } else if (pathname === '/roi' || pathname === '/roi.html') {
+    pageFile = 'roi.html';
+  } else if (pathname === '/team' || pathname === '/team.html') {
+    pageFile = 'team.html';
   }
 
   if (pageFile) {
