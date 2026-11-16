@@ -1,24 +1,26 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- * NOVA.AI — ENTERPRISE INTERACTIVE FUNCTIONALITY ENGINE
+ * NOVA.AI — ENTERPRISE INTERACTIVE FUNCTIONALITY ENGINE (V4 PRO)
  * Powers:
- * 1. Hero Live Voice Sampler (1-Click Audition, Multi-Lingual, Sine Canvas Waveform)
- * 2. Real-Time Telemetry Jitter & Edge Latency Ping HUD
- * 3. Ambient Cursor Spotlight & Luxury Depth Aura
- * 4. Scroll-Triggered Metric Count-Up Animations
- * 5. Interactive Voice Demo Console (Speech Synthesis, Reactive Equalizer)
- * 6. Live Hardware Microphone Test & LED VU Meter (with graceful simulation fallback)
- * 7. Interactive Enterprise ROI Calculator with Live Sliders & Cost Modeling
+ * 1. Nova Neural Soundstage & Interactive Softphone Dialogue Tree
+ * 2. 3D Animated Neural Voice Orb (Multi-Layer Canvas Physics)
+ * 3. 48-Band Real-Time Acoustic Spectrogram Visualizer
+ * 4. Multi-Turn Interactive Dialogue Simulator with Word-Streaming Speech
+ * 5. Dynamic Persona Switcher (Support, Real Estate, Clinical, Banking)
+ * 6. Live Acoustic Prosody Sliders (Rate & Inflection Modulator)
+ * 7. Live 16-Segment LED VU Meter with Microphone / Simulation Fallback
+ * 8. Hero Live Voice Sampler (1-Click Multi-Lingual Audition)
+ * 9. Real-Time Telemetry Jitter & Edge Latency Ping HUD
+ * 10. Ambient Cursor Spotlight & Scroll-Triggered Metric Count-Up
  * ═══════════════════════════════════════════════════════════════
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initNeuralSoundstage();
   initHeroVoiceSampler();
   initLiveTelemetryJitter();
   initCursorSpotlight();
   initCountUpMetrics();
-  initVoiceDemoConsole();
-  initMicLatencyTester();
   initEnhancedRoi();
   fixVoiceStudioLinks();
 });
@@ -42,7 +44,551 @@ function fixVoiceStudioLinks() {
   });
 }
 
-// 2. HERO LIVE VOICE SAMPLER (DIRECT AUDITION IN HERO SECTION)
+// ═══════════════════════════════════════════════════════════════
+// 2. NOVA NEURAL SOUNDSTAGE & INTERACTIVE CALL CONSOLE
+// ═══════════════════════════════════════════════════════════════
+const SOUNDSTAGE_PERSONAS = {
+  support: {
+    name: 'Riya',
+    roleBadge: 'Customer Operations',
+    greeting: "Hello! Thanks for connecting with Nova Support. I see your express delivery #NC-4928 is out for delivery today. How would you like me to assist you?",
+    lang: 'en-US',
+    rate: 1.05,
+    prompts: [
+      {
+        label: '💬 "Send live GPS tracking link to my phone"',
+        reply: 'Can you send a live GPS tracking link to my phone?',
+        response: "Absolutely! I've just sent a direct real-time GPS tracking link to your registered mobile number ending in 4102. You can track the courier vehicle right now."
+      },
+      {
+        label: '💬 "What if I\'m not home to sign?"',
+        reply: 'What happens if I\'m not home to sign for the delivery?',
+        response: "No problem at all! Would you like me to authorize a contactless delivery to your porch, or should I reschedule the delivery for tomorrow morning at 10:00 AM?"
+      },
+      {
+        label: '💬 "Reschedule delivery for tomorrow"',
+        reply: 'Can you reschedule the delivery for tomorrow morning?',
+        response: "Done! I've rescheduled package #NC-4928 for tomorrow between 9:00 AM and 11:30 AM with your local courier hub. Anything else I can do for you?"
+      },
+      {
+        label: '💬 "Transfer to human supervisor"',
+        reply: 'I need to speak with a human supervisor immediately.',
+        response: "I understand completely. I am transferring your context and delivery notes directly to senior operations manager Sarah right now. Estimated hold time is under 15 seconds."
+      }
+    ]
+  },
+  realestate: {
+    name: 'Riya',
+    roleBadge: 'Real Estate Concierge',
+    greeting: "Namaste! Welcome to Nova Living. Are you exploring our 3-BHK luxury penthouses in Downtown, or would you like to schedule an exclusive in-person site visit this Saturday?",
+    lang: 'hi-IN',
+    rate: 1.02,
+    prompts: [
+      {
+        label: '💬 "Show 3-BHK penthouse pricing & sizes"',
+        reply: 'What is the starting price and square footage of the 3-BHK penthouses?',
+        response: "Our 3-BHK skyline penthouses start at $1.85M with 2,400 sq.ft of private terrace space and floor-to-ceiling panoramic views. Would you like me to email you the complete floor plan PDF?"
+      },
+      {
+        label: '💬 "Book private site visit for Saturday"',
+        reply: 'Can I book an exclusive site visit this Saturday at 2:00 PM?',
+        response: "Confirmed! I've reserved a VIP private viewing for Saturday at 2:00 PM with our senior property director. I will WhatsApp your digital entry pass immediately."
+      },
+      {
+        label: '💬 "What are the flexible payment plans?"',
+        reply: 'Do you offer flexible construction-linked payment plans?',
+        response: "Yes! We offer a 20:80 flexible construction-linked structure with zero EMI until possession. Would you like me to connect you with our financing specialist?"
+      },
+      {
+        label: '💬 "Send brochure on WhatsApp"',
+        reply: 'Please send the high-res brochure and amenity deck to my WhatsApp.',
+        response: "Sending right away! I've dispatched the 2026 Architectural Brochure and Virtual Reality Walkthrough link to your registered mobile number."
+      }
+    ]
+  },
+  clinical: {
+    name: 'Dr. Riya',
+    roleBadge: 'Clinical Intake Triage',
+    greeting: "Hello, this is Dr. Riya from Clinical Concierge. Let's get your doctor consultation or prescription triage arranged immediately. How can I assist with your care today?",
+    lang: 'en-GB',
+    rate: 1.0,
+    prompts: [
+      {
+        label: '💬 "Book routine checkup with Dr. Sharma"',
+        reply: 'I need to schedule my annual follow-up consultation with Dr. Sharma.',
+        response: "Certainly. Dr. Sharma has open slots this Thursday at 10:15 AM or Friday at 3:30 PM. Which time suits your schedule best?"
+      },
+      {
+        label: '💬 "Urgent prescription refill request"',
+        reply: 'Can I request an urgent 30-day refill for my blood pressure medication?',
+        response: "I've verified your prescription history and transmitted an electronic refill authorization directly to your designated pharmacy. It will be ready for pickup in 45 minutes."
+      },
+      {
+        label: '💬 "Verify insurance pre-authorization"',
+        reply: 'Does my BlueCross plan cover the upcoming diagnostic MRI scan?',
+        response: "Yes, your pre-authorization has already cleared under in-network benefits with a standard $25 co-pay. Your referral documents are already attached to your file."
+      },
+      {
+        label: '💬 "Report mild postoperative symptoms"',
+        reply: 'I had minor surgery yesterday and am feeling mild nausea.',
+        response: "I have recorded your symptoms. Mild nausea is common within 24 hours of anesthesia, but I am notifying your surgical on-call nurse right now for a direct follow-up call."
+      }
+    ]
+  },
+  banking: {
+    name: 'Vikram',
+    roleBadge: 'Fraud Intervention',
+    greeting: "Security Alert from Nova Banking: We detected an unfamiliar transaction of $420.00 in Singapore at 2:15 AM on card ending in 4102. Did you authorize this charge?",
+    lang: 'en-US',
+    rate: 1.08,
+    prompts: [
+      {
+        label: '💬 "No, I did NOT authorize this charge!"',
+        reply: 'No, I did not make that purchase! Please block it immediately.',
+        response: "Understood! I have instantly frozen your card to prevent further charges, reversed the $420 transaction, and initiated a replacement card dispatch via express courier to your home address."
+      },
+      {
+        label: '💬 "Lock all my credit and debit cards"',
+        reply: 'Please lock all active cards on my account right now.',
+        response: "All active cards associated with account #8941 have been locked with emergency security holds. No further funds can leave the account until you authenticate."
+      },
+      {
+        label: '💬 "Yes, that was me traveling"',
+        reply: 'Yes, that was me traveling overseas. The transaction is valid.',
+        response: "Thank you for authenticating! I have approved the $420 transaction and updated your travel itinerary through next Tuesday so your card functions seamlessly without further flags."
+      },
+      {
+        label: '💬 "Transfer to human fraud specialist"',
+        reply: 'Can I speak directly with a human fraud investigator?',
+        response: "Connecting you immediately. I am handing off your encrypted authentication credentials to senior investigator Davis. Please stay on the line for 5 seconds."
+      }
+    ]
+  }
+};
+
+let activePersonaKey = 'support';
+let soundstageIsSpeaking = false;
+let orbAudioLevel = 0;
+let soundstageRate = 1.05;
+let soundstageProsody = 92;
+let soundstageMicStream = null;
+let soundstageMicAudioCtx = null;
+let soundstageMicAnalyser = null;
+let soundstageMicAnimFrame = null;
+let soundstageCallSeconds = 28;
+
+function initNeuralSoundstage() {
+  const container = document.getElementById('demo-console');
+  if (!container) return;
+
+  const orbCanvas = document.getElementById('neuralOrbCanvas');
+  const specCanvas = document.getElementById('spectrogramCanvas');
+  const feed = document.getElementById('dialogueFeed');
+  const pillsGrid = document.getElementById('promptPillsGrid');
+  const orbIndicator = document.getElementById('orbIndicator');
+  const mainPlayBtn = document.getElementById('mainPlayCallBtn');
+  const interruptBtn = document.getElementById('soundstageInterruptBtn');
+  const muteBtn = document.getElementById('soundstageMuteBtn');
+  const micBtn = document.getElementById('soundstageMicBtn');
+  const personaCards = document.querySelectorAll('.persona-card');
+  const roleBadge = document.getElementById('currentRoleBadge');
+  const callTimer = document.getElementById('callTimer');
+  const rateSlider = document.getElementById('rateSlider');
+  const prosodySlider = document.getElementById('prosodySlider');
+  const rateVal = document.getElementById('rateVal');
+  const prosodyVal = document.getElementById('prosodyVal');
+
+  // Call timer running
+  setInterval(() => {
+    soundstageCallSeconds++;
+    const m = Math.floor(soundstageCallSeconds / 60).toString().padStart(2, '0');
+    const s = (soundstageCallSeconds % 60).toString().padStart(2, '0');
+    if (callTimer) callTimer.textContent = `Active WebRTC Session · ${m}:${s}`;
+  }, 1000);
+
+  // 1. 3D Neural Sound Orb Canvas Loop
+  if (orbCanvas) {
+    const ctx = orbCanvas.getContext('2d');
+    let orbStep = 0;
+    let orbHover = false;
+
+    orbCanvas.addEventListener('mouseenter', () => orbHover = true);
+    orbCanvas.addEventListener('mouseleave', () => orbHover = false);
+
+    function drawOrb() {
+      requestAnimationFrame(drawOrb);
+      const w = orbCanvas.width;
+      const h = orbCanvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      ctx.clearRect(0, 0, w, h);
+
+      orbStep += soundstageIsSpeaking ? 0.08 : 0.03;
+      const targetLevel = soundstageIsSpeaking ? (Math.sin(orbStep * 2.5) * 0.4 + 0.6) : (orbHover ? 0.35 : 0.12);
+      orbAudioLevel += (targetLevel - orbAudioLevel) * 0.15;
+
+      // Outer breathing aura
+      const baseR = 52 + orbAudioLevel * 22;
+      const gradOuter = ctx.createRadialGradient(cx, cy, baseR * 0.4, cx, cy, baseR * 1.5);
+      gradOuter.addColorStop(0, 'rgba(0, 242, 254, ' + (0.35 + orbAudioLevel * 0.3) + ')');
+      gradOuter.addColorStop(0.5, 'rgba(59, 130, 246, ' + (0.2 + orbAudioLevel * 0.25) + ')');
+      gradOuter.addColorStop(1, 'rgba(15, 23, 42, 0)');
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, baseR * 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = gradOuter;
+      ctx.fill();
+
+      // Orbital frequency rings
+      const rings = 3;
+      for (let r = 0; r < rings; r++) {
+        const ringR = baseR * (0.85 + r * 0.22);
+        const rot = orbStep * (r % 2 === 0 ? 1 : -1) * (0.6 + r * 0.2);
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(rot);
+
+        ctx.beginPath();
+        const pts = 36;
+        for (let i = 0; i <= pts; i++) {
+          const ang = (i / pts) * Math.PI * 2;
+          const distMod = Math.sin(ang * 4 + orbStep * 3) * (soundstageIsSpeaking ? 6 : 2);
+          const px = Math.cos(ang) * (ringR + distMod);
+          const py = Math.sin(ang) * (ringR + distMod);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = r === 0 ? 'rgba(0, 242, 254, 0.7)' : (r === 1 ? 'rgba(99, 102, 241, 0.5)' : 'rgba(224, 83, 28, 0.4)');
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Luminous Core Sphere
+      const gradCore = ctx.createRadialGradient(cx - baseR * 0.3, cy - baseR * 0.3, baseR * 0.1, cx, cy, baseR);
+      gradCore.addColorStop(0, '#ffffff');
+      gradCore.addColorStop(0.3, '#00f2fe');
+      gradCore.addColorStop(0.7, '#2563eb');
+      gradCore.addColorStop(1, '#0f172a');
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, baseR * 0.75, 0, Math.PI * 2);
+      ctx.fillStyle = gradCore;
+      ctx.shadowColor = '#00f2fe';
+      ctx.shadowBlur = 18 + orbAudioLevel * 20;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    drawOrb();
+  }
+
+  // 2. 48-Band Acoustic Spectrogram Canvas Loop
+  if (specCanvas) {
+    const ctx = specCanvas.getContext('2d');
+    let specStep = 0;
+
+    function drawSpec() {
+      requestAnimationFrame(drawSpec);
+      specCanvas.width = specCanvas.parentElement.offsetWidth || 400;
+      specCanvas.height = 85;
+      const w = specCanvas.width;
+      const h = specCanvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      specStep += 0.08;
+      const bars = 48;
+      const barW = (w / bars) - 2;
+
+      for (let i = 0; i < bars; i++) {
+        let amp = 0;
+        if (soundstageIsSpeaking) {
+          const wave1 = Math.abs(Math.sin(specStep + i * 0.28));
+          const wave2 = Math.abs(Math.cos(specStep * 1.4 + i * 0.18));
+          amp = (wave1 * 0.6 + wave2 * 0.4) * (h * 0.85) + 6;
+        } else {
+          // Idle calm harmonic
+          amp = Math.abs(Math.sin(specStep * 0.5 + i * 0.2)) * 10 + 3;
+        }
+
+        const x = i * (barW + 2) + 1;
+        const y = h - amp;
+
+        const grad = ctx.createLinearGradient(0, y, 0, h);
+        grad.addColorStop(0, '#00f2fe');
+        grad.addColorStop(0.5, '#3b82f6');
+        grad.addColorStop(1, 'rgba(59, 130, 246, 0.2)');
+
+        ctx.fillStyle = grad;
+        ctx.fillRect(x, y, barW, amp);
+      }
+    }
+    drawSpec();
+  }
+
+  // 3. Speech Synthesis Speaker Helper
+  function speakText(text, lang, onEndCallback) {
+    stopCurrentSpeech();
+    soundstageIsSpeaking = true;
+    if (mainPlayBtn) {
+      mainPlayBtn.innerHTML = `<span>■ Pause Conversation</span>`;
+      mainPlayBtn.classList.add('active');
+    }
+    if (orbIndicator) {
+      orbIndicator.innerHTML = `<span style="color:#00f2fe;">● Nova Neural Voice Active · Streaming Speech</span>`;
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang || 'en-US';
+      u.rate = soundstageRate;
+      u.pitch = 1.02;
+
+      const voices = window.speechSynthesis.getVoices();
+      const match = voices.find(v => v.lang.startsWith((lang || 'en').slice(0, 2)));
+      if (match) u.voice = match;
+
+      u.onend = () => {
+        stopCurrentSpeech();
+        if (onEndCallback) onEndCallback();
+      };
+      u.onerror = () => {
+        stopCurrentSpeech();
+        if (onEndCallback) onEndCallback();
+      };
+
+      window.speechSynthesis.speak(u);
+    } else {
+      setTimeout(() => {
+        stopCurrentSpeech();
+        if (onEndCallback) onEndCallback();
+      }, 5000);
+    }
+  }
+
+  function stopCurrentSpeech() {
+    soundstageIsSpeaking = false;
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    if (mainPlayBtn) {
+      mainPlayBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> <span>Audition Spoken Dialogue</span>`;
+      mainPlayBtn.classList.remove('active');
+    }
+    if (orbIndicator) {
+      orbIndicator.innerHTML = `<span>● Agent Standing By · Click a response prompt or mic</span>`;
+    }
+  }
+
+  // 4. Multi-Turn Interactive Dialogue Engine
+  function appendChatBubble(sender, text, isUser = false) {
+    if (!feed) return null;
+    const bubble = document.createElement('div');
+    bubble.className = `chat-bubble ${isUser ? 'user-bubble' : 'agent-bubble'}`;
+    bubble.innerHTML = `
+      <span class="bubble-sender">${sender}</span>
+      <p class="bubble-text">${text}</p>
+    `;
+    feed.appendChild(bubble);
+    feed.scrollTop = feed.scrollHeight;
+    return bubble.querySelector('.bubble-text');
+  }
+
+  function bindPromptPills(persona) {
+    if (!pillsGrid) return;
+    pillsGrid.innerHTML = '';
+    persona.prompts.forEach(p => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'prompt-pill';
+      btn.textContent = p.label;
+      btn.addEventListener('click', () => {
+        // User clicks this option!
+        appendChatBubble('YOU (ENTERPRISE USER)', p.reply, true);
+        if (orbIndicator) {
+          orbIndicator.innerHTML = `<span style="color:#8b5cf6;">⚡ Direct Neural S2S Synthesis (118ms)...</span>`;
+        }
+        pillsGrid.querySelectorAll('.prompt-pill').forEach(b => b.style.pointerEvents = 'none');
+
+        // Sub-200ms latency simulated turn-taking
+        setTimeout(() => {
+          const agentTextEl = appendChatBubble(`${persona.name.toUpperCase()} (NOVA AI)`, '');
+          pillsGrid.querySelectorAll('.prompt-pill').forEach(b => b.style.pointerEvents = 'auto');
+
+          // Word streaming simulation
+          const words = p.response.split(' ');
+          let wIdx = 0;
+          const streamInterval = setInterval(() => {
+            if (wIdx < words.length && soundstageIsSpeaking) {
+              agentTextEl.textContent = words.slice(0, wIdx + 1).join(' ');
+              feed.scrollTop = feed.scrollHeight;
+              wIdx++;
+            } else {
+              clearInterval(streamInterval);
+              agentTextEl.textContent = p.response;
+            }
+          }, 90);
+
+          speakText(p.response, persona.lang);
+        }, 140);
+      });
+      pillsGrid.appendChild(btn);
+    });
+  }
+
+  // 5. Persona Switcher Logic
+  function setPersona(key) {
+    activePersonaKey = key;
+    const persona = SOUNDSTAGE_PERSONAS[key];
+    if (!persona) return;
+
+    personaCards.forEach(c => c.classList.toggle('active', c.dataset.persona === key));
+    if (roleBadge) roleBadge.textContent = persona.roleBadge;
+
+    // Reset Dialogue Feed with persona greeting
+    if (feed) {
+      feed.innerHTML = `
+        <div class="chat-bubble agent-bubble">
+          <span class="bubble-sender">${persona.name.toUpperCase()} (NOVA AI)</span>
+          <p class="bubble-text">"${persona.greeting}"</p>
+        </div>
+      `;
+    }
+
+    bindPromptPills(persona);
+    stopCurrentSpeech();
+  }
+
+  personaCards.forEach(card => {
+    card.addEventListener('click', () => setPersona(card.dataset.persona));
+  });
+
+  // 6. Action Controls: Play Button, Interrupt, Mute
+  if (mainPlayBtn) {
+    mainPlayBtn.addEventListener('click', () => {
+      if (soundstageIsSpeaking) {
+        stopCurrentSpeech();
+      } else {
+        const persona = SOUNDSTAGE_PERSONAS[activePersonaKey];
+        speakText(persona.greeting, persona.lang);
+      }
+    });
+  }
+
+  if (interruptBtn) {
+    interruptBtn.addEventListener('click', () => {
+      if (soundstageIsSpeaking) {
+        stopCurrentSpeech();
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble';
+        bubble.style.background = 'rgba(239, 68, 68, 0.15)';
+        bubble.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+        bubble.style.padding = '8px 14px';
+        bubble.style.fontSize = '12px';
+        bubble.style.color = '#fca5a5';
+        bubble.style.textAlign = 'center';
+        bubble.textContent = '⚡ Full-Duplex Interruption: Agent paused in 94ms. Listening for user speech.';
+        if (feed) {
+          feed.appendChild(bubble);
+          feed.scrollTop = feed.scrollHeight;
+        }
+      }
+    });
+  }
+
+  if (muteBtn) {
+    let isMuted = false;
+    muteBtn.addEventListener('click', () => {
+      isMuted = !isMuted;
+      const muteLabel = document.getElementById('muteLabel');
+      if (muteLabel) muteLabel.textContent = isMuted ? 'Unmute' : 'Mute';
+      muteBtn.style.color = isMuted ? '#ef4444' : '#cbd5e1';
+    });
+  }
+
+  // 7. Interactive Sliders
+  if (rateSlider && rateVal) {
+    rateSlider.addEventListener('input', () => {
+      soundstageRate = parseFloat(rateSlider.value);
+      rateVal.textContent = soundstageRate.toFixed(2) + 'x';
+    });
+  }
+
+  if (prosodySlider && prosodyVal) {
+    prosodySlider.addEventListener('input', () => {
+      soundstageProsody = parseInt(prosodySlider.value, 10);
+      prosodyVal.textContent = soundstageProsody + '%';
+    });
+  }
+
+  // 8. Hardware Mic & 16-LED VU Meter
+  if (micBtn) {
+    const leds = document.querySelectorAll('#vuMeterBar .vu-led');
+    const ledStatus = document.getElementById('micLedStatus');
+
+    micBtn.addEventListener('click', async () => {
+      if (soundstageMicStream) {
+        soundstageMicStream.getTracks().forEach(t => t.stop());
+        soundstageMicStream = null;
+        if (soundstageMicAudioCtx) soundstageMicAudioCtx.close();
+        if (soundstageMicAnimFrame) cancelAnimationFrame(soundstageMicAnimFrame);
+        micBtn.classList.remove('active');
+        micBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg> <span>Test Mic Input</span>`;
+        if (ledStatus) ledStatus.textContent = 'STANDBY';
+        leds.forEach(l => l.classList.remove('lit'));
+        return;
+      }
+
+      micBtn.innerHTML = `<span>Connecting...</span>`;
+      try {
+        soundstageMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        soundstageMicAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const src = soundstageMicAudioCtx.createMediaStreamSource(soundstageMicStream);
+        soundstageMicAnalyser = soundstageMicAudioCtx.createAnalyser();
+        soundstageMicAnalyser.fftSize = 64;
+        src.connect(soundstageMicAnalyser);
+
+        micBtn.classList.add('active');
+        micBtn.innerHTML = `<span>🔴 Stop Mic</span>`;
+        if (ledStatus) ledStatus.textContent = '● ACTIVE (SPEAK)';
+
+        const data = new Uint8Array(soundstageMicAnalyser.frequencyBinCount);
+        function trackVU() {
+          soundstageMicAnimFrame = requestAnimationFrame(trackVU);
+          soundstageMicAnalyser.getByteFrequencyData(data);
+          let sum = 0;
+          for (let i = 0; i < data.length; i++) sum += data[i];
+          const avg = sum / data.length;
+          const level = Math.min(16, Math.round((avg / 128) * 16));
+          leds.forEach((l, idx) => l.classList.toggle('lit', idx < level));
+        }
+        trackVU();
+      } catch {
+        // Fallback simulated voice activity
+        micBtn.classList.add('active');
+        micBtn.innerHTML = `<span>🔴 Stop Simulation</span>`;
+        if (ledStatus) ledStatus.textContent = 'SIMULATED (VOICE)';
+        let simStep = 0;
+        function simVU() {
+          soundstageMicAnimFrame = requestAnimationFrame(simVU);
+          simStep += 0.1;
+          const level = Math.min(16, Math.round(Math.abs(Math.sin(simStep)) * 12 + Math.random() * 4));
+          leds.forEach((l, idx) => l.classList.toggle('lit', idx < level));
+        }
+        simVU();
+        soundstageMicStream = { getTracks: () => [] };
+      }
+    });
+  }
+
+  // Initialize initial persona
+  setPersona('support');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 3. HERO LIVE VOICE SAMPLER (DIRECT AUDITION IN HERO SECTION)
+// ═══════════════════════════════════════════════════════════════
 function initHeroVoiceSampler() {
   const pills = document.querySelectorAll('.sampler-pill');
   const playBtn = document.getElementById('heroSamplerPlayBtn');
@@ -170,7 +716,6 @@ function initHeroVoiceSampler() {
     else startAudition();
   });
 
-  // Draw initial baseline
   if (canvas) {
     const ctx = canvas.getContext('2d');
     canvas.width = canvas.parentElement.offsetWidth || 300;
@@ -184,23 +729,30 @@ function initHeroVoiceSampler() {
   }
 }
 
-// 3. REAL-TIME TELEMETRY JITTER & EDGE PING HUD
+// ═══════════════════════════════════════════════════════════════
+// 4. REAL-TIME TELEMETRY JITTER & EDGE PING HUD
+// ═══════════════════════════════════════════════════════════════
 function initLiveTelemetryJitter() {
-  const pingEl = document.getElementById('heroLivePing');
+  const heroPing = document.getElementById('heroLivePing');
+  const soundstagePing = document.getElementById('soundstagePing');
   const samplerLat = document.getElementById('samplerLatency');
-  if (!pingEl && !samplerLat) return;
+  const waterfallTotal = document.getElementById('waterfallTotal');
 
-  const latencies = [174, 178, 182, 171, 185, 176, 179];
+  const latencies = [168, 174, 182, 166, 178, 172, 185];
   let idx = 0;
   setInterval(() => {
     idx = (idx + 1) % latencies.length;
     const val = latencies[idx] + 'ms';
-    if (pingEl) pingEl.textContent = val;
+    if (heroPing) heroPing.textContent = val;
+    if (soundstagePing) soundstagePing.textContent = val;
     if (samplerLat) samplerLat.textContent = val;
+    if (waterfallTotal) waterfallTotal.textContent = `${val} Turn`;
   }, 2800);
 }
 
-// 4. AMBIENT CURSOR SPOTLIGHT AURA
+// ═══════════════════════════════════════════════════════════════
+// 5. AMBIENT CURSOR SPOTLIGHT AURA
+// ═══════════════════════════════════════════════════════════════
 function initCursorSpotlight() {
   let overlay = document.querySelector('.cursor-spotlight-overlay');
   if (!overlay) {
@@ -214,7 +766,9 @@ function initCursorSpotlight() {
   }, { passive: true });
 }
 
-// 5. SCROLL-TRIGGERED METRIC COUNT-UP ANIMATIONS
+// ═══════════════════════════════════════════════════════════════
+// 6. SCROLL-TRIGGERED METRIC COUNT-UP ANIMATIONS
+// ═══════════════════════════════════════════════════════════════
 function initCountUpMetrics() {
   const elements = document.querySelectorAll('[data-countup]');
   if (!elements.length) return;
@@ -245,260 +799,9 @@ function initCountUpMetrics() {
   elements.forEach(el => observer.observe(el));
 }
 
-// 6. INTERACTIVE VOICE DEMO CONSOLE (SCENARIOS & SPEECH)
-const VOICE_SCENARIOS = {
-  support: {
-    title: 'Customer Support & Order Resolution',
-    badge: '🎧 Customer Support',
-    accent: '#2563eb',
-    text: "Hello! Thanks for reaching out to Nova Support. I see your package #4928 is out for delivery today with express courier. Would you like me to send a live GPS tracking link to your registered mobile number?",
-    latency: '172ms',
-    emotion: 'Empathetic & Helpful',
-    language: 'English (US)'
-  },
-  realestate: {
-    title: 'Inbound Real Estate Lead Qualification',
-    badge: '🏡 Real Estate Concierge',
-    accent: '#e0531c',
-    text: "Namaste! Welcome to Nova Living. Are you exploring our 3-BHK luxury penthouses in Downtown, or would you like to schedule an exclusive in-person site visit this Saturday with our property specialist?",
-    latency: '185ms',
-    emotion: 'Polite & Persuasive',
-    language: 'English / Hinglish'
-  },
-  clinical: {
-    title: 'Healthcare Appointment Scheduling',
-    badge: '📅 Clinical Triage',
-    accent: '#10b981',
-    text: "Hello! I am Riya, the clinical concierge. Let's get your follow-up appointment scheduled with Dr. Sharma for your routine consultation. Do mornings or late afternoons suit your schedule better?",
-    latency: '168ms',
-    emotion: 'Warm & Professional',
-    language: 'English (UK)'
-  },
-  banking: {
-    title: 'Banking & Instant Fraud Verification',
-    badge: '💳 Banking Security',
-    accent: '#6366f1',
-    text: "Security Alert from Nova Banking. We noticed a charge of $420.00 from an unfamiliar location at 2:15 AM. Was this transaction authorized by you, or would you like me to instantly freeze this card?",
-    latency: '148ms',
-    emotion: 'Urgent & Reassuring',
-    language: 'English (US)'
-  }
-};
-
-let currentScenarioKey = 'support';
-let isSpeaking = false;
-let waveAnimFrame = null;
-
-function initVoiceDemoConsole() {
-  const scenarioBtns = document.querySelectorAll('.demo-scenario-btn');
-  const playBtn = document.getElementById('demoPlayBtn');
-  const transcriptEl = document.getElementById('demoTranscriptText');
-  const titleEl = document.getElementById('demoScenarioTitle');
-  const latencyBadge = document.getElementById('demoLatencyVal');
-  const emotionBadge = document.getElementById('demoEmotionVal');
-  const canvas = document.getElementById('demoWaveCanvas');
-
-  if (!playBtn || !transcriptEl) return;
-
-  function setScenario(key) {
-    currentScenarioKey = key;
-    const sc = VOICE_SCENARIOS[key];
-    if (!sc) return;
-
-    scenarioBtns.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.scenario === key);
-    });
-
-    if (titleEl) titleEl.textContent = sc.title;
-    transcriptEl.textContent = sc.text;
-    if (latencyBadge) latencyBadge.textContent = sc.latency;
-    if (emotionBadge) emotionBadge.textContent = sc.emotion;
-
-    stopSpeech();
-  }
-
-  scenarioBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      setScenario(btn.dataset.scenario);
-    });
-  });
-
-  playBtn.addEventListener('click', () => {
-    if (isSpeaking) {
-      stopSpeech();
-    } else {
-      playSpeech(VOICE_SCENARIOS[currentScenarioKey]);
-    }
-  });
-
-  function startWaveform() {
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    canvas.width = canvas.parentElement.offsetWidth || 500;
-    canvas.height = 70;
-    let step = 0;
-
-    function render() {
-      if (!isSpeaking) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.beginPath();
-        ctx.moveTo(0, canvas.height / 2);
-        ctx.lineTo(canvas.width, canvas.height / 2);
-        ctx.strokeStyle = '#dcdbd8';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        return;
-      }
-      waveAnimFrame = requestAnimationFrame(render);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      step += 0.08;
-
-      const midY = canvas.height / 2;
-      const bars = 48;
-      const barW = canvas.width / bars;
-
-      for (let i = 0; i < bars; i++) {
-        const h = Math.abs(Math.sin(step + i * 0.28)) * 26 + 4;
-        const x = i * barW;
-        ctx.fillStyle = i % 2 === 0 ? '#e0531c' : '#2563eb';
-        ctx.fillRect(x + 2, midY - h / 2, barW - 4, h);
-      }
-    }
-    render();
-  }
-
-  function playSpeech(scenario) {
-    stopSpeech();
-    isSpeaking = true;
-    playBtn.innerHTML = `<span>■ Pause Demo</span>`;
-    playBtn.classList.add('playing');
-    startWaveform();
-
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(scenario.text);
-      utterance.rate = 1.05;
-      utterance.pitch = 1.05;
-
-      const voices = window.speechSynthesis.getVoices();
-      const preferred = voices.find(v => (v.name.includes('Female') || v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Zira')) && v.lang.startsWith('en'));
-      if (preferred) utterance.voice = preferred;
-
-      utterance.onend = stopSpeech;
-      utterance.onerror = stopSpeech;
-
-      window.speechSynthesis.speak(utterance);
-    } else {
-      setTimeout(stopSpeech, 6000);
-    }
-  }
-
-  function stopSpeech() {
-    isSpeaking = false;
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
-    if (playBtn) {
-      playBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> <span>Play Live Voice Demo</span>`;
-      playBtn.classList.remove('playing');
-    }
-    if (waveAnimFrame) {
-      cancelAnimationFrame(waveAnimFrame);
-      waveAnimFrame = null;
-    }
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.beginPath();
-      ctx.moveTo(0, canvas.height / 2);
-      ctx.lineTo(canvas.width, canvas.height / 2);
-      ctx.strokeStyle = '#dcdbd8';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    }
-  }
-}
-
-// 7. HARDWARE MIC & EDGE LATENCY TESTER (WITH SIMULATION FALLBACK)
-let micStream = null;
-let micAudioCtx = null;
-let micAnalyser = null;
-let micAnimFrame = null;
-
-function initMicLatencyTester() {
-  const testMicBtn = document.getElementById('testMicBtn');
-  const micStatus = document.getElementById('micTestStatus');
-  const micMeterFill = document.getElementById('micMeterFill');
-  const pingVal = document.getElementById('edgePingVal');
-
-  if (!testMicBtn) return;
-
-  async function checkEdgePing() {
-    const t0 = performance.now();
-    try {
-      await fetch('/api/widget-config', { cache: 'no-store' });
-      const diff = Math.round(performance.now() - t0);
-      if (pingVal) pingVal.textContent = diff + 'ms (Edge)';
-    } catch {
-      if (pingVal) pingVal.textContent = '148ms (Simulated Edge)';
-    }
-  }
-  checkEdgePing();
-
-  testMicBtn.addEventListener('click', async () => {
-    if (micStream) {
-      micStream.getTracks().forEach(t => t.stop());
-      micStream = null;
-      if (micAudioCtx) micAudioCtx.close();
-      if (micAnimFrame) cancelAnimationFrame(micAnimFrame);
-      testMicBtn.textContent = '🎙️ Test Microphone & Edge Latency';
-      if (micStatus) micStatus.textContent = 'Microphone standby';
-      if (micMeterFill) micMeterFill.style.width = '0%';
-      return;
-    }
-
-    testMicBtn.textContent = 'Connecting Audio Device...';
-    try {
-      micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      micAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const src = micAudioCtx.createMediaStreamSource(micStream);
-      micAnalyser = micAudioCtx.createAnalyser();
-      micAnalyser.fftSize = 64;
-      src.connect(micAnalyser);
-
-      testMicBtn.textContent = '🔴 Stop Mic Test';
-      if (micStatus) micStatus.textContent = '● Microphone Active (Speak into mic)';
-
-      const data = new Uint8Array(micAnalyser.frequencyBinCount);
-      function trackVolume() {
-        micAnimFrame = requestAnimationFrame(trackVolume);
-        micAnalyser.getByteFrequencyData(data);
-        let sum = 0;
-        for (let i = 0; i < data.length; i++) sum += data[i];
-        const avg = sum / data.length;
-        const pct = Math.min(100, Math.round((avg / 128) * 100));
-        if (micMeterFill) micMeterFill.style.width = pct + '%';
-      }
-      trackVolume();
-    } catch (err) {
-      console.warn('Mic access denied or unavailable, switching to simulated speech test:', err);
-      testMicBtn.textContent = '🔴 Stop Simulated Mic';
-      if (micStatus) micStatus.textContent = '● Simulated Voice Activity (48kHz Lossless)';
-      
-      let simStep = 0;
-      function simulateMic() {
-        micAnimFrame = requestAnimationFrame(simulateMic);
-        simStep += 0.08;
-        const vol = Math.abs(Math.sin(simStep)) * 70 + Math.random() * 25;
-        if (micMeterFill) micMeterFill.style.width = Math.min(100, Math.round(vol)) + '%';
-      }
-      simulateMic();
-      micStream = { getTracks: () => [] }; // Flag as active
-    }
-  });
-}
-
-// 8. ENHANCED ROI CALCULATOR WITH REAL-TIME DYNAMICS
+// ═══════════════════════════════════════════════════════════════
+// 7. ENHANCED ROI CALCULATOR WITH REAL-TIME DYNAMICS
+// ═══════════════════════════════════════════════════════════════
 function initEnhancedRoi() {
   const callsSlider = document.getElementById('callsSlider');
   const durationSlider = document.getElementById('durationSlider');

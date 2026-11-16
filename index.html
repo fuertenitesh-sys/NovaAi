@@ -16,8 +16,7 @@
 <link rel="stylesheet" href="contact.css?v=1">
 <link rel="stylesheet" href="icons.css?v=1">
 <link rel="stylesheet" href="clients.css?v=1">
-<link rel="stylesheet" href="css/nova-enhancements.css?v=4">
-
+<link rel="stylesheet" href="css/nova-enhancements.css?v=soundstage-v8">
 <script src="app.js" defer></script>
 <script src="homepage.js?v=buyer-review-2" defer></script>
 <script type="module" src="scene.js?v=assembly-fix-v5"></script>
@@ -27,7 +26,7 @@
 <script defer src="contact.js?v=1"></script>
 <script src="assets/livekit-client.umd.js"></script>
 <script defer src="js/nova-modern.js?v=4"></script>
-<script defer src="js/nova-interactive-engine.js?v=hero-sampler-v7"></script>
+<script defer src="js/nova-interactive-engine.js?v=soundstage-v8"></script>
 
 <link rel="canonical" href="/">
 <meta name="robots" content="index,follow,max-image-preview:large">
@@ -205,103 +204,229 @@
     </div>
   </section>
 
-  <!-- ═══════════ LIVE INTERACTIVE VOICE DEMO CONSOLE ═══════════ -->
-  <section class="editorial-addon-section" id="demo-console" aria-labelledby="demo-title">
-    <div class="section-top">
-      <p class="eyebrow"><i></i> REAL-TIME AUDIO DEMONSTRATION</p>
-      <span class="mono">VOICE PLAYGROUND / 01</span>
-    </div>
-
-    <div class="editorial-addon-header">
-      <div>
-        <h2 id="demo-title">Hear Riya speak.<br>Live in action<span class="orange">.</span></h2>
+  <!-- ═══════════ NOVA NEURAL SOUNDSTAGE & INTERACTIVE CALL CONSOLE ═══════════ -->
+  <section class="soundstage-section" id="demo-console" aria-labelledby="soundstage-title">
+    <div class="soundstage-container">
+      
+      <!-- Section Header -->
+      <div class="soundstage-header">
+        <div class="soundstage-header-left">
+          <div class="soundstage-eyebrow">
+            <span class="live-pulse-badge"><span class="pulse-ring"></span> LIVE S2S ENGINE</span>
+            <span class="eyebrow-sep">/</span>
+            <span class="eyebrow-tag">DIRECT NEURAL CONVERSATIONAL AUDIO</span>
+          </div>
+          <h2 id="soundstage-title" class="soundstage-headline">
+            Autonomous Voice Intelligence.<br>
+            <span class="gradient-text">Sub-200ms Interactive Soundstage.</span>
+          </h2>
+          <p class="soundstage-sub">
+            Nova's direct speech-to-speech model eliminates traditional cascading transcription lag. Interact with the live agent simulator below, test multi-turn conversations, adjust acoustic prosody, or speak directly through your microphone.
+          </p>
+        </div>
+        <div class="soundstage-header-hud">
+          <div class="hud-pill"><span class="hud-k">ENGINE:</span> <span class="hud-v">Nova Duplex v3.4</span></div>
+          <div class="hud-pill"><span class="hud-k">SAMPLING:</span> <span class="hud-v">48kHz Lossless Opus</span></div>
+          <div class="hud-pill"><span class="hud-k">TURN LATENCY:</span> <span class="hud-v highlight" id="soundstagePing">168ms</span></div>
+          <div class="hud-pill"><span class="hud-k">INTERRUPTION:</span> <span class="hud-v green">Full-Duplex Zero-Wait</span></div>
+        </div>
       </div>
-      <div>
-        <p>Click any enterprise scenario below to hear Nova's neural voice intelligence speak out loud. Experience sub-200ms latency, natural pronunciation, and conversational empathy.</p>
-      </div>
-    </div>
 
-    <!-- Live Interactive Console Card -->
-    <div class="demo-console-card">
-      <!-- Scenario Nav Tabs -->
-      <div class="demo-scenario-nav">
-        <button class="demo-scenario-btn active" data-scenario="support">🎧 Customer Support (Order Triage)</button>
-        <button class="demo-scenario-btn" data-scenario="realestate">🏡 Real Estate (Hinglish/English Sales)</button>
-        <button class="demo-scenario-btn" data-scenario="clinical">📅 Clinical Intake (Doctor Appointment)</button>
-        <button class="demo-scenario-btn" data-scenario="banking">💳 Banking (Urgent Fraud Verification)</button>
-      </div>
-
-      <!-- Player Grid -->
-      <div class="demo-player-grid">
-        <div>
-          <div class="demo-transcript-bubble">
-            <div class="demo-transcript-header">
-              <span id="demoScenarioTitle">Customer Support &amp; Order Resolution</span>
-              <span style="color: #10b981; font-weight: 600;">● Neural S2S Stream</span>
+      <!-- Main Soundstage Cyber Deck -->
+      <div class="soundstage-deck">
+        
+        <!-- Deck Left: Interactive Softphone & Dialogue Simulator -->
+        <div class="deck-call-panel">
+          
+          <!-- Softphone Status Bar -->
+          <div class="softphone-topbar">
+            <div class="softphone-agent-info">
+              <div class="softphone-avatar-glow">
+                <img src="assets/nova-avatar.jpg" alt="Riya AI Agent" onerror="this.src='assets/favicon.svg'">
+                <span class="avatar-status-dot"></span>
+              </div>
+              <div>
+                <div class="softphone-agent-name">Riya <span class="agent-role-badge" id="currentRoleBadge">Customer Operations</span></div>
+                <div class="softphone-call-timer" id="callTimer">Active WebRTC Session · 00:28</div>
+              </div>
             </div>
-            <p class="demo-transcript-text" id="demoTranscriptText">
-              "Hello! Thanks for reaching out to Nova Support. I see your package #4928 is out for delivery today with express courier. Would you like me to send a live GPS tracking link to your registered mobile number?"
-            </p>
-
-            <!-- Dynamic Animated Frequency Waveform -->
-            <div class="demo-waveform-container">
-              <canvas class="demo-waveform-canvas" id="demoWaveCanvas"></canvas>
+            <div class="softphone-actions">
+              <button type="button" class="btn-softphone-pill" id="soundstageMuteBtn" title="Toggle Mute">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                <span id="muteLabel">Mute</span>
+              </button>
+              <button type="button" class="btn-softphone-pill interrupt-btn" id="soundstageInterruptBtn">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                <span>Interrupt Agent</span>
+              </button>
             </div>
           </div>
 
-          <div style="margin-top: 18px; display: flex; gap: 14px;">
-            <button class="demo-play-btn" id="demoPlayBtn">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              <span>Play Live Voice Demo</span>
+          <!-- 3D Neural Sound Orb Stage -->
+          <div class="neural-orb-stage" id="orbStage">
+            <div class="orb-ambient-aura"></div>
+            <canvas id="neuralOrbCanvas" width="220" height="220"></canvas>
+            <div class="orb-speech-indicator" id="orbIndicator">● Agent Standing By · Click a prompt or play audition</div>
+          </div>
+
+          <!-- Interactive Multi-Turn Dialogue Feed -->
+          <div class="dialogue-feed-container" id="dialogueFeed">
+            <div class="chat-bubble agent-bubble">
+              <span class="bubble-sender">RIYA (NOVA AI)</span>
+              <p class="bubble-text" id="agentSpeechBubble">"Hello! Thanks for connecting with Nova. I see your express delivery #NC-4928 is out for delivery today. How would you like me to assist you?"</p>
+            </div>
+          </div>
+
+          <!-- Interactive User Prompt Pills (Click to test conversation) -->
+          <div class="prompt-pills-wrap">
+            <span class="prompt-pills-label">CHOOSE A RESPONSE TO TEST MULTI-TURN CONVERSATION:</span>
+            <div class="prompt-pills-grid" id="promptPillsGrid">
+              <button type="button" class="prompt-pill" data-reply="Can you send a live GPS tracking link to my phone?" data-response="Absolutely! I've sent a live GPS tracking link to your registered mobile number ending in 4102. You can track the delivery van right now.">
+                💬 "Send live GPS tracking link to my phone"
+              </button>
+              <button type="button" class="prompt-pill" data-reply="What happens if I'm not home to sign for the delivery?" data-response="No problem at all! Would you like me to authorize a contactless delivery to your porch, or reschedule for tomorrow morning at 10:00 AM?">
+                💬 "What if I'm not home to sign?"
+              </button>
+              <button type="button" class="prompt-pill" data-reply="Can you reschedule the delivery for tomorrow morning?" data-response="Done! I've rescheduled package #NC-4928 for tomorrow between 9:00 AM and 11:30 AM with your local courier hub. Anything else I can do?">
+                💬 "Reschedule delivery for tomorrow"
+              </button>
+              <button type="button" class="prompt-pill" data-reply="I need to speak with a human supervisor immediately." data-response="I understand completely. I am transferring your context and delivery notes directly to senior operations lead Sarah right now. Hold time is under 15 seconds.">
+                💬 "Transfer to human supervisor"
+              </button>
+            </div>
+          </div>
+
+          <!-- Bottom Softphone Controls -->
+          <div class="softphone-bottom-bar">
+            <button type="button" class="btn-primary-call" id="mainPlayCallBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              <span>Audition Spoken Dialogue</span>
             </button>
-            <a href="/nova" class="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; border-radius: 999px; padding: 0 24px; font-weight: 600; font-size: 13px; background: #1c1b1a; color: #fff; white-space: nowrap;">
-              Open Full Studio ⚡
+            <button type="button" class="btn-mic-live" id="soundstageMicBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+              <span>Test Mic Input</span>
+            </button>
+            <a href="/nova" class="btn-studio-direct">
+              <span>Full Studio ⚡</span>
             </a>
           </div>
+
         </div>
 
-        <!-- Telemetry & Stream Metrics -->
-        <div class="demo-metrics-card">
-          <span style="font-size: 11px; font-family: var(--font-mono, monospace); text-transform: uppercase; letter-spacing: 0.08em; color: #7a7976;">Stream Diagnostics</span>
-          <div class="demo-metric-row">
-            <span>Speech Latency</span>
-            <strong style="color: #10b981;" id="demoLatencyVal">172ms</strong>
+        <!-- Deck Right: Neural Telemetry, Spectrogram & Prosody Controls -->
+        <div class="deck-telemetry-panel">
+          
+          <!-- Scenario Switcher -->
+          <div class="telemetry-block">
+            <div class="block-title">
+              <span>SELECT ENTERPRISE PERSONA</span>
+              <span class="block-badge">100+ DIALECTS</span>
+            </div>
+            <div class="persona-cards-grid">
+              <button type="button" class="persona-card active" data-persona="support">
+                <span class="persona-icon">🎧</span>
+                <div>
+                  <div class="persona-name">Customer Operations</div>
+                  <small>Order triage &amp; refunds (English US)</small>
+                </div>
+              </button>
+              <button type="button" class="persona-card" data-persona="realestate">
+                <span class="persona-icon">🏡</span>
+                <div>
+                  <div class="persona-name">Real Estate Concierge</div>
+                  <small>Luxury site visits (Hinglish / Hindi)</small>
+                </div>
+              </button>
+              <button type="button" class="persona-card" data-persona="clinical">
+                <span class="persona-icon">🩺</span>
+                <div>
+                  <div class="persona-name">Clinical Intake Triage</div>
+                  <small>HIPAA triage &amp; consults (English UK)</small>
+                </div>
+              </button>
+              <button type="button" class="persona-card" data-persona="banking">
+                <span class="persona-icon">🛡️</span>
+                <div>
+                  <div class="persona-name">Fraud Intervention</div>
+                  <small>Urgent transaction freeze (English)</small>
+                </div>
+              </button>
+            </div>
           </div>
-          <div class="demo-metric-row">
-            <span>Prosody / Emotion</span>
-            <strong id="demoEmotionVal">Empathetic &amp; Helpful</strong>
+
+          <!-- Real-Time 64-Band Neural Spectrogram -->
+          <div class="telemetry-block">
+            <div class="block-title">
+              <span>REAL-TIME NEURAL ACOUSTIC SPECTROGRAM</span>
+              <span class="block-freq" id="freqLabel">48kHz / 256 FFT</span>
+            </div>
+            <div class="spectrogram-canvas-wrap">
+              <canvas id="spectrogramCanvas" height="85"></canvas>
+            </div>
           </div>
-          <div class="demo-metric-row">
-            <span>Audio Sampling</span>
-            <strong>48kHz Opus HD</strong>
+
+          <!-- Live Waterfall Latency Budget -->
+          <div class="telemetry-block">
+            <div class="block-title">
+              <span>S2S PIPELINE LATENCY WATERFALL</span>
+              <span class="waterfall-total" id="waterfallTotal">168ms Turn</span>
+            </div>
+            <div class="waterfall-bars">
+              <div class="waterfall-step">
+                <div class="step-meta"><span>Acoustic Ingestion &amp; VAD</span><strong>18ms</strong></div>
+                <div class="step-track"><div class="step-fill fill-1" style="width: 18%;"></div></div>
+              </div>
+              <div class="waterfall-step">
+                <div class="step-meta"><span>Neural Tokenizer</span><strong>38ms</strong></div>
+                <div class="step-track"><div class="step-fill fill-2" style="width: 38%;"></div></div>
+              </div>
+              <div class="waterfall-step">
+                <div class="step-meta"><span>Latent Transformer Gen</span><strong>82ms</strong></div>
+                <div class="step-track"><div class="step-fill fill-3" style="width: 82%;"></div></div>
+              </div>
+              <div class="waterfall-step">
+                <div class="step-meta"><span>Neural Vocoder Stream</span><strong>30ms</strong></div>
+                <div class="step-track"><div class="step-fill fill-4" style="width: 30%;"></div></div>
+              </div>
+            </div>
           </div>
-          <div class="demo-metric-row">
-            <span>Interruption</span>
-            <strong style="color: #2563eb;">Full-Duplex Active</strong>
+
+          <!-- Interactive Acoustic Tuning Sliders -->
+          <div class="telemetry-block">
+            <div class="block-title">
+              <span>LIVE ACOUSTIC PROSODY TUNER</span>
+              <span class="block-badge">INTERACTIVE</span>
+            </div>
+            <div class="sliders-grid">
+              <div class="slider-row">
+                <div class="slider-label"><span>Speaking Rate:</span> <strong id="rateVal">1.05x</strong></div>
+                <input type="range" class="pro-slider" id="rateSlider" min="0.8" max="1.4" step="0.05" value="1.05">
+              </div>
+              <div class="slider-row">
+                <div class="slider-label"><span>Emotional Prosody:</span> <strong id="prosodyVal">92%</strong></div>
+                <input type="range" class="pro-slider" id="prosodySlider" min="40" max="100" step="1" value="92">
+              </div>
+            </div>
           </div>
-          <div class="demo-metric-row">
-            <span>Edge Gateway</span>
-            <strong id="edgePingVal">142ms (Edge)</strong>
+
+          <!-- Hardware Mic VU Meter -->
+          <div class="telemetry-block" id="micBlock">
+            <div class="block-title">
+              <span>MICROPHONE AUDIO LEVEL (VU METER)</span>
+              <span id="micLedStatus" class="mono-badge">STANDBY</span>
+            </div>
+            <div class="vu-meter-bar" id="vuMeterBar">
+              <span class="vu-led"></span><span class="vu-led"></span><span class="vu-led"></span><span class="vu-led"></span>
+              <span class="vu-led"></span><span class="vu-led"></span><span class="vu-led"></span><span class="vu-led"></span>
+              <span class="vu-led"></span><span class="vu-led"></span><span class="vu-led"></span><span class="vu-led"></span>
+              <span class="vu-led warn"></span><span class="vu-led warn"></span><span class="vu-led peak"></span><span class="vu-led peak"></span>
+            </div>
           </div>
+
         </div>
+
       </div>
 
-      <!-- Hardware Mic & Network Latency Test Bar -->
-      <div class="hardware-test-bar">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <button class="btn-test-mic" id="testMicBtn">
-            <span>🎙️ Test Your Microphone &amp; Edge Latency</span>
-          </button>
-          <span id="micTestStatus" style="font-size: 12px; color: #7a7976; font-family: var(--font-mono, monospace);">Microphone standby</span>
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <span style="font-size: 11px; font-family: var(--font-mono, monospace); color: #7a7976;">Audio Input Level:</span>
-          <div class="meter-track">
-            <div class="meter-fill" id="micMeterFill"></div>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 
