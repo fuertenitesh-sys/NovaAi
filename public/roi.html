@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fafaf7">
+<title>Nova.ai — Enterprise ROI &amp; Operational Cost Calculator</title>
+<meta name="description" content="Calculate the exact operational cost savings of replacing high-volume customer service call centers with Nova's autonomous sub-200ms voice agents.">
+<link rel="icon" href="/assets/favicon.svg?v=nova3" type="image/svg+xml">
+<link rel="preload" href="/assets/manrope-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/manrope-semibold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/homepage.css">
+<link rel="stylesheet" href="/refinement.css">
+<link rel="stylesheet" href="/pages.css">
+<link rel="stylesheet" href="/brand.css?v=2">
+<link rel="stylesheet" href="/contact.css?v=1">
+<link rel="stylesheet" href="/icons.css?v=1">
+<link rel="stylesheet" href="/css/nova-enhancements.css?v=5">
+
+<script src="/pages.js" defer></script>
+<script src="/navigation.js" defer></script>
+<script src="/brand.js?v=3" defer></script>
+<script defer src="/contact.js?v=1"></script>
+
+<style>
+  .roi-page-hero {
+    padding: 140px var(--pad, 36px) 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .calculator-suite {
+    background: #ffffff;
+    border: 1px solid #dcdbd8;
+    border-radius: 24px;
+    padding: 48px;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 48px;
+    box-shadow: 0 16px 45px -15px rgba(0, 0, 0, 0.08);
+    margin-top: 36px;
+  }
+  @media (max-width: 900px) {
+    .calculator-suite { grid-template-columns: 1fr; padding: 28px; }
+  }
+  .slider-item {
+    margin-bottom: 28px;
+  }
+  .slider-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+  .slider-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #444341;
+  }
+  .slider-val-tag {
+    font-size: 17px;
+    font-weight: 600;
+    font-family: var(--font-mono, monospace);
+    color: var(--dark, #1c1b1a);
+  }
+  .roi-summary-panel {
+    background: #fbfaf8;
+    border: 1px solid #e7e6e3;
+    border-radius: 18px;
+    padding: 36px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .annual-savings-callout {
+    font-size: clamp(42px, 5vw, 62px);
+    font-weight: 700;
+    font-family: var(--font-mono, monospace);
+    letter-spacing: -0.04em;
+    color: var(--dark, #1c1b1a);
+    line-height: 1;
+    margin: 12px 0 6px;
+  }
+  .cost-comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 36px;
+  }
+  .cost-comp-table th, .cost-comp-table td {
+    padding: 18px 22px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid #e5e4e1;
+  }
+  .cost-comp-table th {
+    font-family: var(--font-mono, monospace);
+    font-size: 11px;
+    color: #7a7976;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body class="inner-page">
+<div class="reading-progress" aria-hidden="true"></div>
+<div class="header-space">
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Nova home">
+      <img src="/assets/nova-logo.svg" width="366" height="96" alt="Nova.ai" decoding="async">
+    </a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="/solutions">Solutions</a>
+      <a href="/approach">Approach</a>
+      <a href="/nova">Voice Studio ⚡</a>
+      <a href="/architecture">Architecture</a>
+      <a href="/roi" aria-current="page" style="color: var(--orange, #e0531c); font-weight: 600;">ROI Calculator</a>
+      <a href="/team">Your AI team</a>
+    </nav>
+    <button class="nav-cta" data-open="brief"><span>Let’s talk</span><svg aria-hidden="true"><use href="#diagonal"/></svg></button>
+    <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button>
+  </header>
+</div>
+
+<div class="mobile-menu" id="mobile-menu" hidden>
+  <a href="/solutions">Solutions <small>01</small></a>
+  <a href="/approach">Approach <small>02</small></a>
+  <a href="/nova">Voice Studio <small>03</small></a>
+  <a href="/architecture">Architecture <small>04</small></a>
+  <a href="/roi">ROI Calculator <small>05</small></a>
+  <a href="/team">Your AI team <small>06</small></a>
+</div>
+
+<main id="main">
+  <!-- ROI HERO -->
+  <section class="roi-page-hero">
+    <div class="section-top">
+      <p class="eyebrow"><i></i> FINANCIAL MODELING &amp; COST EFFICIENCY</p>
+      <span class="mono">ROI SUITE / 02</span>
+    </div>
+    <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 48px; align-items: end; margin-top: 24px;">
+      <div>
+        <h1 style="font-size: clamp(38px, 4.8vw, 68px); line-height: 1.08; letter-spacing: -0.04em; margin: 0; color: #1c1b1a;">
+          Model your enterprise ROI.<br>Down to the dollar<span class="orange">.</span>
+        </h1>
+      </div>
+      <div>
+        <p style="font-size: 16px; line-height: 1.75; color: #62615e; margin: 0;">
+          Human call centers cost $14.50–$28.00 per agent hour with high attrition and missed customer calls. Nova delivers flat $0.04/minute autonomous voice agents with zero queue wait times.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE CALCULATOR SUITE -->
+  <section class="editorial-addon-section" style="padding-top: 30px;">
+    <div class="calculator-suite">
+      <div>
+        <span class="mono" style="font-size: 11px; color: #7a7976; display: block; margin-bottom: 24px;">CUSTOMIZE ENTERPRISE PARAMETERS</span>
+
+        <!-- Slider 1: Monthly Calls -->
+        <div class="slider-item">
+          <div class="slider-header-row">
+            <span class="slider-label">Monthly Inbound &amp; Outbound Calls</span>
+            <span class="slider-val-tag" id="roiCallsTag">25,000 calls/mo</span>
+          </div>
+          <input type="range" min="1000" max="200000" step="1000" value="25000" class="range-slider-editorial" id="roiCallsInput">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; font-family: var(--font-mono, monospace); color: #858482; margin-top: 8px;">
+            <span>1,000</span>
+            <span>100,000</span>
+            <span>200,000+</span>
+          </div>
+        </div>
+
+        <!-- Slider 2: Call Duration -->
+        <div class="slider-item">
+          <div class="slider-header-row">
+            <span class="slider-label">Average Call Duration (Minutes)</span>
+            <span class="slider-val-tag" id="roiDurationTag">4.0 mins</span>
+          </div>
+          <input type="range" min="1.0" max="12.0" step="0.5" value="4.0" class="range-slider-editorial" id="roiDurationInput">
+        </div>
+
+        <!-- Slider 3: Human Agent Hourly Cost -->
+        <div class="slider-item">
+          <div class="slider-header-row">
+            <span class="slider-label">Current Human Agent Loaded Hourly Cost</span>
+            <span class="slider-val-tag" id="roiWageTag">$16.00 / hr</span>
+          </div>
+          <input type="range" min="10" max="45" step="1" value="16" class="range-slider-editorial" id="roiWageInput">
+        </div>
+
+        <p style="font-size: 12px; color: #7a7976; line-height: 1.6; margin: 0;">
+          *Includes fully loaded employee costs (wages, benefits, supervisory management, and telephony seat licenses) compared against Nova's $0.04/minute usage rate.
+        </p>
+      </div>
+
+      <!-- Live Results Summary -->
+      <div class="roi-summary-panel">
+        <div>
+          <span style="font-size: 11px; font-family: var(--font-mono, monospace); text-transform: uppercase; letter-spacing: 0.08em; color: #7a7976;">Projected Net Annual Savings</span>
+          <div class="annual-savings-callout" id="roiAnnualVal">$272,000</div>
+          <p style="font-size: 13px; color: #10b981; font-weight: 600; margin: 0 0 24px;" id="roiMonthlyVal">
+            $22,667 / month saved
+          </p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #e7e6e3; padding-top: 20px;">
+          <div style="display: flex; justify-content: space-between; font-size: 13px; color: #62615e;">
+            <span>Current Human Cost:</span>
+            <strong id="roiHumanTotal" style="font-family: var(--font-mono, monospace); color: #1c1b1a;">$26,667 / mo</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px; color: #62615e;">
+            <span>Nova Voice AI Cost:</span>
+            <strong id="roiNovaTotal" style="font-family: var(--font-mono, monospace); color: var(--orange, #e0531c);">$4,000 / mo</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px; color: #62615e;">
+            <span>Estimated ROI:</span>
+            <strong id="roiPercent" style="font-family: var(--font-mono, monospace); color: #10b981;">+567%</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px; color: #62615e;">
+            <span>Staff Hours Reclaimed:</span>
+            <strong id="roiHoursSaved" style="font-family: var(--font-mono, monospace); color: #1c1b1a;">1,667 hrs / mo</strong>
+          </div>
+        </div>
+
+        <button class="button primary" data-open="brief" style="margin-top: 28px; width: 100%; justify-content: center;">
+          Request Custom Financial Audit <svg aria-hidden="true"><use href="#diagonal"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- COST COMPARISON BREAKDOWN TABLE -->
+  <section class="editorial-addon-section">
+    <div class="section-top">
+      <p class="eyebrow"><i></i> UNIT ECONOMICS</p>
+      <span class="mono">COST COMPARISON</span>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #dcdbd8; border-radius: 18px; padding: 10px; margin-top: 30px; overflow-x: auto;">
+      <table class="cost-comp-table">
+        <thead>
+          <tr>
+            <th>Operational Dimension</th>
+            <th>Traditional Human BPO</th>
+            <th>Nova Autonomous Voice</th>
+            <th>Enterprise Advantage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Cost per Minute</strong></td>
+            <td>$0.24 – $0.45 / min</td>
+            <td style="color: var(--orange); font-weight: 600;">$0.04 / min</td>
+            <td><strong>83% Cost Reduction</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Call Concurrency Capacity</strong></td>
+            <td>1 call per active human agent</td>
+            <td style="color: var(--orange); font-weight: 600;">10,000+ simultaneous calls</td>
+            <td><strong>Zero queue hold times</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Operating Hours</strong></td>
+            <td>8–12 hrs/day (shift based)</td>
+            <td style="color: var(--orange); font-weight: 600;">24/7/365 uninterrupted</td>
+            <td><strong>Always-on customer service</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Multi-Language Fluency</strong></td>
+            <td>Requires multilingual hires</td>
+            <td style="color: var(--orange); font-weight: 600;">100+ native dialects</td>
+            <td><strong>No hiring bottlenecks</strong></td>
+          </tr>
+          <tr>
+            <td><strong>CRM Data Entry</strong></td>
+            <td>Manual &amp; error-prone (15m post-call)</td>
+            <td style="color: var(--orange); font-weight: 600;">Instant synchronous webhook sync</td>
+            <td><strong>100% data fidelity</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="page-closing">
+    <p class="eyebrow"><i></i> READY TO SCALE</p>
+    <h2>Discuss your enterprise call volume<span class="orange">.</span></h2>
+    <div>
+      <p>Let our forward-deployed engineers audit your call flows and configure a working pilot for your business.</p>
+      <button class="button primary" data-open="brief">Schedule Pilot Review <svg aria-hidden="true"><use href="#diagonal"/></svg></button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-top">
+      <a class="brand" href="/" aria-label="Nova home"><img src="/assets/nova-logo.svg" width="366" height="96" alt="Nova.ai" decoding="async"></a>
+      <p>Enterprise Voice &amp; Autonomous AI.<br>Built around you.</p>
+      <nav aria-label="Footer navigation">
+        <a href="/solutions">Solutions</a>
+        <a href="/approach">Approach</a>
+        <a href="/nova">Voice Studio</a>
+        <a href="/architecture">Architecture</a>
+        <a href="/roi">ROI Calculator</a>
+        <a href="/team">Your AI team</a>
+      </nav>
+      <a class="back-top" href="#main">Back to top <svg class="nova-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20V4M5 11l7-7 7 7"/></svg></a>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Nova.ai</span>
+      <span>Enterprise AI. Built from within.</span>
+      <a href="/privacy" target="_blank" rel="noopener">Privacy <svg class="nova-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a>
+    </div>
+  </footer>
+</main>
+
+<script>
+  // Dedicated ROI calculation script
+  document.addEventListener('DOMContentLoaded', () => {
+    const callsIn = document.getElementById('roiCallsInput');
+    const durIn = document.getElementById('roiDurationInput');
+    const wageIn = document.getElementById('roiWageInput');
+
+    const callsTag = document.getElementById('roiCallsTag');
+    const durTag = document.getElementById('roiDurationTag');
+    const wageTag = document.getElementById('roiWageTag');
+
+    const annualVal = document.getElementById('roiAnnualVal');
+    const monthlyVal = document.getElementById('roiMonthlyVal');
+    const humanTotal = document.getElementById('roiHumanTotal');
+    const novaTotal = document.getElementById('roiNovaTotal');
+    const percentEl = document.getElementById('roiPercent');
+    const hoursEl = document.getElementById('roiHoursSaved');
+
+    function update() {
+      const calls = parseInt(callsIn.value, 10);
+      const duration = parseFloat(durIn.value);
+      const wage = parseFloat(wageIn.value);
+
+      const totalMinutes = calls * duration;
+      const totalHours = totalMinutes / 60;
+
+      const humanCost = Math.round(totalHours * wage);
+      const novaCost = Math.round(totalMinutes * 0.04);
+      const monthlySavings = Math.max(0, humanCost - novaCost);
+      const annualSavings = monthlySavings * 12;
+      const roiPct = novaCost > 0 ? Math.round((monthlySavings / novaCost) * 100) : 0;
+
+      callsTag.textContent = calls.toLocaleString() + ' calls/mo';
+      durTag.textContent = duration.toFixed(1) + ' mins';
+      wageTag.textContent = '$' + wage.toFixed(2) + ' / hr';
+
+      annualVal.textContent = '$' + annualSavings.toLocaleString();
+      monthlyVal.textContent = '$' + monthlySavings.toLocaleString() + ' / month saved';
+      humanTotal.textContent = '$' + humanCost.toLocaleString() + ' / mo';
+      novaTotal.textContent = '$' + novaCost.toLocaleString() + ' / mo';
+      percentEl.textContent = '+' + roiPct + '%';
+      hoursEl.textContent = Math.round(totalHours).toLocaleString() + ' hrs / mo';
+    }
+
+    [callsIn, durIn, wageIn].forEach(el => el.addEventListener('input', update));
+    update();
+  });
+</script>
+<script src="/nova-widget.js?v=riya-clean-2026-v2" defer></script>
+</body>
+</html>
