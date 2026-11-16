@@ -1,0 +1,11 @@
+/* Client proof: original brand assets, optically balanced within the existing grid. */
+.client-proof{padding:48px var(--pad) 44px;background:var(--bg);border-top:1px solid var(--line);border-bottom:1px solid var(--line);scroll-margin-top:100px}
+.client-proof-heading{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:25px}
+.client-proof-heading h2{font-weight:400}
+.client-proof-heading>p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+.client-proof-logos{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;padding:0;column-gap:24px;row-gap:4px}
+.client-proof-logo{height:100px;display:flex;align-items:center;justify-content:center;min-width:0}
+.client-proof-logo img{display:block;max-width:90%;object-fit:contain;filter:grayscale(1);opacity:.86;mix-blend-mode:multiply}
+.client-proof-sobha img{filter:grayscale(1);opacity:.9}
+@media(min-width:1600px){.client-proof{padding-top:58px;padding-bottom:52px}.client-proof-logo{height:115px}.client-proof-logo img{transform:scale(1.1)}}
+@media(max-width:760px){.client-proof{padding:32px var(--pad) 28px}.client-proof-heading{align-items:flex-start;flex-direction:column;gap:9px;margin-bottom:20px}.client-proof-heading>p{font-size:11px}.client-proof-logos{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px;row-gap:0}.client-proof-logo{height:86px}.client-proof-logo img{max-width:92%;max-height:64px}.client-proof-emperium img{width:64px;height:64px}.client-proof-gargash img{width:140px;height:auto}.client-proof-oswaal img{width:145px;height:auto}.client-proof-danube img{width:140px;height:auto}}

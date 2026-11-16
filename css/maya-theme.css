@@ -1,0 +1,66 @@
+/* Applied only inside Riya's own shadow root with Cobalt Sapphire Blue theme */
+:host { font-family: 'Manrope', Arial, sans-serif; color: #20221f; }
+.lk-room-container { font-family: 'Manrope', Arial, sans-serif !important; }
+.lk-room-container > .fixed { bottom: max(22px, env(safe-area-inset-bottom)) !important; right: 22px !important; }
+.widget-container {
+  width: min(400px, calc(100vw - 32px)) !important;
+  height: min(600px, calc(100dvh - 110px)) !important;
+  border: 1px solid #d6d0c5 !important;
+  border-radius: 14px !important;
+  background: #faf9f6 !important;
+  box-shadow: 0 24px 80px rgba(32, 34, 31, 0.22), 0 4px 16px rgba(32, 34, 31, 0.08) !important;
+  color: #20221f !important;
+  animation: maya-reveal .28s cubic-bezier(.2,.7,.25,1) both;
+}
+.widget-container > .shrink-0:first-child {
+  padding: 17px 20px !important;
+  background: #20221f !important;
+  color: #faf9f6 !important;
+  border-bottom: 2px solid #2563eb !important;
+}
+.widget-container > .shrink-0:first-child .font-semibold { font-size: 16px; font-weight: 600; letter-spacing: -.3px; }
+.widget-container > .shrink-0:first-child button { width: 32px; height: 32px; border-radius: 5px; color: #faf9f6 !important; }
+.widget-container > .shrink-0:first-child button:empty { display: none; }
+.widget-container > .shrink-0:first-child button:hover { background: #ffffff18; }
+.widget-container .p-6 { padding: 23px 20px 12px !important; }
+.widget-container button.w-40 {
+  width: 108px !important; height: 108px !important; min-height: 108px;
+  margin-bottom: 16px !important; border: 3px solid #faf9f6;
+  outline: 1px solid #e1d9cd; box-shadow: 0 7px 22px rgba(32, 34, 31, 0.12) !important;
+}
+.widget-container .rounded-full.text-sm { background: #eeeae2 !important; color: #504b43 !important; border-radius: 5px !important; padding: 8px 14px !important; font-size: 12px !important; }
+.widget-container .w-full.px-4 { padding-left: 0 !important; padding-right: 0 !important; }
+.widget-container .w-full > .font-medium { color: #6d675e !important; font-size: 10px !important; text-transform: uppercase; letter-spacing: .12em; margin: 4px 0 10px; }
+.widget-container .transcript-box { background: #f1eee8 !important; color: #302e2a !important; border: 1px solid #ded8cd !important; border-radius: 7px !important; line-height: 1.7; }
+.widget-container .transcript-box .italic { font-style: normal !important; color: #79746c !important; font-size: 12px; }
+.widget-container .chat-input, .widget-container .form-input { font-family: inherit; background: #fff !important; border: 1px solid #d8d2c8 !important; border-radius: 6px !important; color: #20221f !important; font-size: 13px; min-width: 0; }
+.widget-container input::placeholder { color: #827b71 !important; }
+.widget-container .chat-input + button { background: #2563eb !important; border-radius: 6px !important; box-shadow: none !important; }
+.widget-container button:focus-visible, .widget-container a:focus-visible, .widget-container input:focus-visible { outline: 2px solid #2563eb !important; outline-offset: 3px; }
+.widget-container .shrink-0 > a,
+.widget-container a,
+.widget-container a[href*="ravan"],
+.widget-container a[href*="snowie"],
+a[href*="ravan"],
+a[href*="snowie"],
+[title*="Ravan"],
+img[alt*="Ravan"],
+img[src*="Ravan"],
+[data-nova],
+.widget-container [class*="opacity-80"],
+.widget-container [class*="rounded-full"][class*="text-[11px]"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+}
+@keyframes maya-reveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 640px) {
+  .lk-room-container > .fixed { right: 16px !important; bottom: max(16px, env(safe-area-inset-bottom)) !important; }
+  .widget-container { width: calc(100vw - 32px) !important; height: min(580px, calc(100dvh - 104px)) !important; }
+  .widget-container .chat-input, .widget-container .form-input { font-size: 16px !important; }
+}
+@media (prefers-reduced-motion: reduce) { .widget-container { animation: none !important; } }

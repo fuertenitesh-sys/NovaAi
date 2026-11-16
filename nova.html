@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova Voice Studio — Real-Time Speech-to-Speech Platform</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="Test Nova's ultra-low latency (<200ms) full-duplex speech-to-speech voice intelligence in real-time. Native multi-language support across 100+ dialects."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/nova-modern.css?v=2" />
+    <script src="/assets/livekit-client.umd.js"></script>
+    <script defer src="/js/nova-modern.js?v=2"></script>
+    <style>
+      .studio-hero {
+        padding: 8rem 2rem 4rem;
+        text-align: center;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.75rem;
+        margin-top: 3rem;
+      }
+      .pricing-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 22px;
+        padding: 2.2rem 1.8rem;
+        backdrop-filter: blur(16px);
+        position: relative;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+      }
+      .pricing-card.featured {
+        border-color: rgba(0, 242, 254, 0.4);
+        background: rgba(14, 20, 36, 0.85);
+        box-shadow: 0 0 40px rgba(0, 242, 254, 0.15);
+      }
+      .pricing-badge {
+        position: absolute;
+        top: -12px;
+        right: 20px;
+        background: linear-gradient(135deg, #00f2fe, #2563eb);
+        color: #07080d;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+      }
+      .price-val {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-main);
+        font-family: var(--font-mono);
+        margin: 1rem 0 0.5rem;
+      }
+      .price-val span {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        font-weight: 400;
+      }
+      .price-feature-list {
+        list-style: none;
+        margin: 1.5rem 0 2rem;
+        flex-grow: 1;
+      }
+      .price-feature-item {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        padding: 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .price-feature-item svg {
+        color: var(--accent-cyan);
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ═══════════ NAVIGATION ═══════════ -->
+    <header class="nova-nav">
+      <div class="nova-nav-inner">
+        <a href="/" class="nova-brand">
+          <div class="nova-brand-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+          </div>
+          <span class="nova-brand-name">Nova.ai</span>
+          <span class="nova-brand-tag">Voice Studio</span>
+        </a>
+
+        <nav class="nova-nav-links">
+          <a href="/" class="nova-nav-link">Home</a>
+          <a href="/solutions" class="nova-nav-link">Solutions</a>
+          <a href="/approach" class="nova-nav-link">Approach</a>
+          <a href="/nova" class="nova-nav-link active">Voice Studio</a>
+          <a href="/architecture" class="nova-nav-link">Architecture</a>
+          <a href="/roi" class="nova-nav-link">ROI Calculator</a>
+          <a href="/team" class="nova-nav-link">Your AI team</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ═══════════ STUDIO HERO ═══════════ -->
+    <section class="studio-hero">
+      <div class="nova-badge">
+        <span class="nova-badge-pulse"></span>
+        <span>Live Speech-to-Speech Sandbox</span>
+      </div>
+
+      <h1 class="nova-hero-title">
+        The Future of Voice is <span class="highlight">Direct Neural</span>
+      </h1>
+
+      <p class="nova-hero-sub">
+        Interact with Nova's autonomous voice agent in real-time. Test sub-200ms latency, emotional speech synthesis, and live interruptions across 100+ languages.
+      </p>
+    </section>
+
+    <!-- ═══════════ VOICE PLAYGROUND ═══════════ -->
+    <section class="nova-section" id="studio" style="padding-top: 0;">
+      <div class="nova-studio">
+        <div class="studio-header">
+          <div class="studio-title-group">
+            <span class="studio-badge">Autonomous Agent Sandbox</span>
+            <h2 class="studio-title">Voice Demo (Riya from Nova.ai)</h2>
+          </div>
+          <div class="studio-metrics">
+            <div class="metric-pill">Real-time Latency: <strong>185ms</strong></div>
+            <div class="metric-pill">Sentiment: <strong style="color: #10b981;">Positive / Empathetic</strong></div>
+            <div class="metric-pill">Speech Visualizer: <strong style="color: #00f2fe;">Live Neural S2S</strong></div>
+            <div class="metric-pill">Multi-Language: <strong>100+ Dialects</strong></div>
+          </div>
+        </div>
+
+        <!-- Role Selectors -->
+        <div class="studio-tabs">
+          <button class="studio-tab active" data-persona="Customer Support Agent">🎧 Customer Support Agent</button>
+          <button class="studio-tab" data-persona="Real Estate Sales Concierge">🏡 Real Estate Sales Concierge</button>
+          <button class="studio-tab" data-persona="Appointment Booking Concierge">📅 Appointment Booking</button>
+          <button class="studio-tab" data-persona="Debt Recovery Specialist">💳 Debt Recovery Specialist</button>
+        </div>
+
+        <!-- Dual Cards -->
+        <div class="studio-cards">
+          <!-- Card 1: Nova Premium -->
+          <div class="studio-card" id="studioCardPremium">
+            <span class="card-edition">NOVA PREMIUM (STANDARD S2S)</span>
+            <div class="live-indicator">LIVE</div>
+
+            <div class="orb-wrapper" title="Tap to talk">
+              <div class="orb-ambient-glow"></div>
+              <div class="orb-sphere">
+                <video class="orb-flame-video" playsinline muted loop autoplay preload="none" src="https://storage.googleapis.com/msgsndr/LK2LrQP5tkIZ3ahmumnr/media/6989285267d749bf9ff413c4.mp4"></video>
+              </div>
+              <canvas class="orb-canvas-ring"></canvas>
+            </div>
+
+            <div class="call-state-label">Tap to Talk</div>
+            <div class="call-hint-label">Speaks fluent English, Hindi, Hinglish, Spanish & more</div>
+
+            <div class="call-controls-row">
+              <button class="btn-mute-toggle" title="Mute microphone">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+              </button>
+              <button class="btn-end-call">End Call</button>
+            </div>
+          </div>
+
+          <!-- Card 2: Nova Duplex -->
+          <div class="studio-card" id="studioCardDuplex">
+            <span class="card-edition">NOVA DUPLEX (NATURAL INTERRUPTION)</span>
+            <div class="live-indicator">LIVE</div>
+
+            <div class="orb-wrapper" title="Tap to talk">
+              <div class="orb-ambient-glow"></div>
+              <div class="orb-sphere" style="background: radial-gradient(circle at 35% 35%, #00f2fe, #6366f1 60%, #0c152e 90%); box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.4), 0 0 35px rgba(0, 242, 254, 0.6);">
+                <video class="orb-flame-video" playsinline muted loop autoplay preload="none" src="https://storage.googleapis.com/msgsndr/LK2LrQP5tkIZ3ahmumnr/media/6989285267d749bf9ff413c4.mp4"></video>
+              </div>
+              <canvas class="orb-canvas-ring"></canvas>
+            </div>
+
+            <div class="call-state-label">Tap to Talk</div>
+            <div class="call-hint-label">Interrupt anytime. It listens while it talks.</div>
+
+            <div class="call-controls-row">
+              <button class="btn-mute-toggle" title="Mute microphone">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+              </button>
+              <button class="btn-end-call">End Call</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ PRICING SECTION ═══════════ -->
+    <section class="nova-section" id="pricing">
+      <span class="section-tag">Predictable Economics</span>
+      <h2 class="section-title">Transparent Enterprise Pricing</h2>
+      <p class="section-sub">
+        No per-agent licensing fees. Pay only for the minutes your customers actually spend on calls.
+      </p>
+
+      <div class="pricing-grid">
+        <!-- Starter Tier -->
+        <div class="pricing-card">
+          <h3 style="font-size: 1.25rem;">Starter Pilot</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">For agile testing & validation</p>
+          <div class="price-val">$49<span>/mo</span></div>
+          <p style="font-size: 0.82rem; color: var(--text-dim);">$0.05 / additional minute</p>
+
+          <ul class="price-feature-list">
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 1,200 included minutes</li>
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 1 Custom Voice Agent</li>
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Standard S2S Engine</li>
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Webhook & REST API</li>
+          </ul>
+
+          <a href="#studio" class="btn-secondary" style="justify-content: center; width: 100%;">Get Started</a>
+        </div>
+
+        <!-- Growth Tier -->
+        <div class="pricing-card featured">
+          <span class="pricing-badge">Most Popular</span>
+          <h3 style="font-size: 1.25rem; color: var(--accent-cyan);">Growth Scale</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">For high-volume customer teams</p>
+          <div class="price-val">$199<span>/mo</span></div>
+          <p style="font-size: 0.82rem; color: var(--text-dim);">$0.04 / additional minute</p>
+
+          <ul class="price-feature-list">
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 6,000 included minutes</li>
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 5 Custom Voice Agents</li>
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Nova Duplex Interruption</li>
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> CRM & Zapier Sync</li>
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 100+ Language Mirroring</li>
+          </ul>
+
+          <a href="#studio" class="btn-primary" style="justify-content: center; width: 100%;">Deploy Growth</a>
+        </div>
+
+        <!-- Enterprise Tier -->
+        <div class="pricing-card">
+          <h3 style="font-size: 1.25rem;">Enterprise Custom</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Dedicated infrastructure & SLAs</p>
+          <div class="price-val">Custom</div>
+          <p style="font-size: 0.82rem; color: var(--text-dim);">Volume discounts available</p>
+
+          <ul class="price-feature-list">
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Unlimited Concierge Agents</li>
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Sub-150ms Dedicated Cluster</li>
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> HIPAA & SOC-2 BAAs</li>
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 99.99% Guaranteed SLA</li>
+            <li class="price-feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Dedicated Solutions Architect</li>
+          </ul>
+
+          <a href="#studio" class="btn-secondary" style="justify-content: center; width: 100%;">Contact Enterprise</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ FOOTER ═══════════ -->
+    <footer class="nova-footer">
+      <div class="footer-inner">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="nova-brand-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+          </div>
+          <div>
+            <span style="font-weight: 700; font-size: 1.2rem; color: var(--text-main);">Nova.ai</span>
+            <p style="font-size: 0.8rem; color: var(--text-dim);">Enterprise Autonomous Voice Intelligence</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 2rem; font-size: 0.9rem;">
+          <a href="/" style="color: var(--text-muted); text-decoration: none;">Overview</a>
+          <a href="/nova" style="color: var(--text-muted); text-decoration: none;">Live Studio</a>
+          <a href="/approach" style="color: var(--text-muted); text-decoration: none;">Architecture</a>
+          <a href="/solutions" style="color: var(--text-muted); text-decoration: none;">Industries</a>
+        </div>
+      </div>
+
+      <p class="footer-copy">
+        © 2026 Nova.ai Technologies Inc. All rights reserved. Sub-200ms speech-to-speech intelligence.
+      </p>
+    </footer>
+
+    <!-- Floating Riya Assistant Connector -->
+    <script src="/nova-widget.js?v=2"></script>
+  </body>
+</html>

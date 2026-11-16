@@ -1,0 +1,6 @@
+/* Shape icons cannot be substituted by a device emoji font. */
+svg.nova-icon, svg.nova-icon{display:inline-block;position:static;inset:auto;width:1em;height:1em;min-width:1em;flex:none;vertical-align:-.15em;margin:0;overflow:visible;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.morph-count{display:inline-flex;align-items:center;justify-content:center;flex:none}
+.morph-count .nova-icon, .morph-count .nova-icon{width:1em;height:1em}
+.questions-list summary>span{display:inline-flex;align-items:center;justify-content:center}
+.impact-ledger summary>b{display:inline-flex;align-items:center;justify-content:center}

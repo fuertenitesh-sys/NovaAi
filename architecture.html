@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#faf9f6">
+<title>Nova.ai — Direct Neural Speech-to-Speech Architecture</title>
+<meta name="description" content="Technical architecture of Nova's sub-200ms speech-to-speech voice intelligence engine. Direct neural streaming, full-duplex audio, and enterprise tool execution.">
+<link rel="icon" href="/assets/favicon.svg?v=nova3" type="image/svg+xml">
+<link rel="preload" href="/assets/manrope-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/manrope-semibold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/homepage.css">
+<link rel="stylesheet" href="/refinement.css">
+<link rel="stylesheet" href="/pages.css">
+<link rel="stylesheet" href="/brand.css?v=2">
+<link rel="stylesheet" href="/contact.css?v=1">
+<link rel="stylesheet" href="/icons.css?v=1">
+<link rel="stylesheet" href="/css/nova-enhancements.css?v=5">
+
+<script src="/pages.js" defer></script>
+<script src="/navigation.js" defer></script>
+<script src="/brand.js?v=3" defer></script>
+<script defer src="/contact.js?v=1"></script>
+<script defer src="/js/nova-interactive-engine.js?v=2"></script>
+
+<style>
+  .arch-hero {
+    padding: 140px var(--pad, 36px) 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .arch-layer-card {
+    background: #ffffff;
+    border: 1px solid #dcdbd8;
+    border-radius: 18px;
+    padding: 36px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 30px -15px rgba(0,0,0,0.06);
+    display: grid;
+    grid-template-columns: 80px 1.2fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .arch-layer-card { grid-template-columns: 1fr; gap: 16px; }
+  }
+  .arch-layer-num {
+    font-size: 38px;
+    font-weight: 600;
+    font-family: var(--font-mono, monospace);
+    color: var(--orange, #e0531c);
+    line-height: 1;
+  }
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+  }
+  .spec-box {
+    background: #fbfaf8;
+    border: 1px solid #e7e6e3;
+    border-radius: 14px;
+    padding: 24px;
+  }
+  .spec-box h4 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    color: #1c1b1a;
+  }
+  .spec-box p {
+    margin: 0;
+    font-size: 13px;
+    color: #62615e;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body class="inner-page">
+<div class="reading-progress" aria-hidden="true"></div>
+<div class="header-space">
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Nova home">
+      <img src="/assets/nova-logo.svg" width="366" height="96" alt="Nova.ai" decoding="async">
+    </a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="/solutions">Solutions</a>
+      <a href="/approach">Approach</a>
+      <a href="/nova">Voice Studio ⚡</a>
+      <a href="/architecture" aria-current="page" style="color: var(--orange, #e0531c); font-weight: 600;">Architecture</a>
+      <a href="/roi">ROI Calculator</a>
+      <a href="/team">Your AI team</a>
+    </nav>
+    <button class="nav-cta" data-open="brief"><span>Let’s talk</span><svg aria-hidden="true"><use href="#diagonal"/></svg></button>
+    <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button>
+  </header>
+</div>
+
+<div class="mobile-menu" id="mobile-menu" hidden>
+  <a href="/solutions">Solutions <small>01</small></a>
+  <a href="/approach">Approach <small>02</small></a>
+  <a href="/nova">Voice Studio <small>03</small></a>
+  <a href="/architecture">Architecture <small>04</small></a>
+  <a href="/roi">ROI Calculator <small>05</small></a>
+  <a href="/team">Your AI team <small>06</small></a>
+</div>
+
+<main id="main">
+  <!-- ARCHITECTURE HERO -->
+  <section class="arch-hero">
+    <div class="section-top">
+      <p class="eyebrow"><i></i> DEEP TECH &amp; SPEECH-TO-SPEECH INFRASTRUCTURE</p>
+      <span class="mono">ARCHITECTURE / 01</span>
+    </div>
+    <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 48px; align-items: end; margin-top: 24px;">
+      <div>
+        <h1 style="font-size: clamp(38px, 4.8vw, 68px); line-height: 1.08; letter-spacing: -0.04em; margin: 0; color: #1c1b1a;">
+          Direct Neural Pipeline.<br>Engineered for &lt;200ms<span class="orange">.</span>
+        </h1>
+      </div>
+      <div>
+        <p style="font-size: 16px; line-height: 1.75; color: #62615e; margin: 0;">
+          Nova replaces the fragile three-stage cascaded setup (STT ➔ LLM ➔ TTS) with an end-to-end neural audio-in, audio-out architecture. Here is how our edge infrastructure delivers sub-200ms human turn-taking and conversational prosody.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LATENCY COMPARISON BENCHMARK -->
+  <section class="editorial-addon-section" style="padding-top: 40px;">
+    <div class="section-top">
+      <p class="eyebrow"><i></i> BENCHMARK PERFORMANCE</p>
+      <span class="mono">LATENCY ANALYSIS</span>
+    </div>
+
+    <div class="pipeline-grid" style="margin-top: 24px;">
+      <!-- Traditional Stack -->
+      <div class="pipeline-card">
+        <span class="pipeline-badge">Legacy Cascaded Stack</span>
+        <h3 style="font-size: 20px; margin: 0 0 10px;">Whisper STT ➔ LLM ➔ ElevenLabs TTS</h3>
+        <p style="font-size: 13px; color: #62615e; line-height: 1.6;">
+          Three separate roundtrips over public internet cause 1,500ms–2,200ms dead air. Interrupting mid-sentence drops audio packets and forces the user to repeat themselves.
+        </p>
+        <div class="pipeline-metrics-list" style="margin-top: 20px;">
+          <div class="pipeline-metric-item"><span>Audio Ingress Buffer</span><strong>350ms</strong></div>
+          <div class="pipeline-metric-item"><span>Speech-to-Text Transcription</span><strong>480ms</strong></div>
+          <div class="pipeline-metric-item"><span>LLM Time-to-First-Token</span><strong>520ms</strong></div>
+          <div class="pipeline-metric-item"><span>Text-to-Speech Generation</span><strong>450ms</strong></div>
+          <div class="pipeline-metric-item"><span>Total Turn-around</span><strong style="color: #dc2626;">1,800ms (High drop-off)</strong></div>
+        </div>
+      </div>
+
+      <!-- Nova S2S -->
+      <div class="pipeline-card highlight">
+        <span class="pipeline-badge">Nova Autonomous Neural S2S</span>
+        <h3 style="font-size: 20px; margin: 0 0 10px; color: var(--orange);">Direct Acoustic Token Pipeline</h3>
+        <p style="font-size: 13px; color: #62615e; line-height: 1.6;">
+          Incoming audio is sliced into continuous 20ms acoustic vectors. The neural core predicts output audio tokens directly without converting to text, preserving natural prosody and instant interruption handling.
+        </p>
+        <div class="pipeline-metrics-list" style="margin-top: 20px;">
+          <div class="pipeline-metric-item"><span>Edge Ingress &amp; VAD</span><strong>22ms</strong></div>
+          <div class="pipeline-metric-item"><span>Neural Acoustic Embedding</span><strong>45ms</strong></div>
+          <div class="pipeline-metric-item"><span>Parallel Tool &amp; Context Look-up</span><strong>65ms (Async)</strong></div>
+          <div class="pipeline-metric-item"><span>Direct Neural Audio Out</span><strong>53ms</strong></div>
+          <div class="pipeline-metric-item"><span>Total Turn-around</span><strong style="color: #10b981;">185ms (Human-speed)</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE 4-LAYER ENTERPRISE ARCHITECTURE STACK -->
+  <section class="editorial-addon-section">
+    <div class="section-top">
+      <p class="eyebrow"><i></i> FULL STACK BREAKDOWN</p>
+      <span class="mono">SYSTEM DESIGN / 02</span>
+    </div>
+
+    <div style="margin-top: 36px;">
+      <!-- Layer 1 -->
+      <div class="arch-layer-card">
+        <div class="arch-layer-num">01</div>
+        <div>
+          <h3 style="font-size: 22px; margin: 0 0 8px;">Edge Telephony &amp; WebRTC Ingress</h3>
+          <p style="font-size: 14px; color: #62615e; line-height: 1.7; margin: 0;">
+            High-availability SIP trunking, Twilio/Telnyx bridge, and low-latency LiveKit WebRTC gateways distributed across 32 global edge regions. Delivers sub-15ms packet transit to Mumbai, Frankfurt, Virginia, and Singapore.
+          </p>
+        </div>
+        <div style="background: #fbfaf8; border: 1px solid #e7e6e3; border-radius: 12px; padding: 18px; font-size: 12px; font-family: var(--font-mono, monospace); color: #555;">
+          <strong>Protocols:</strong> WebRTC, SIP Trunk, Opus 48kHz<br>
+          <strong>Jitter Buffer:</strong> Adaptive &lt;10ms<br>
+          <strong>VAD Accuracy:</strong> 99.4% speech discrimination
+        </div>
+      </div>
+
+      <!-- Layer 2 -->
+      <div class="arch-layer-card">
+        <div class="arch-layer-num">02</div>
+        <div>
+          <h3 style="font-size: 22px; margin: 0 0 8px;">Acoustic Vector Tokenizer &amp; Full-Duplex Engine</h3>
+          <p style="font-size: 14px; color: #62615e; line-height: 1.7; margin: 0;">
+            Extracts tone, inflection, and cadence without transcription bottlenecks. The full-duplex engine listens continuously during speech output, enabling the caller to interrupt mid-sentence without jarring robotic delays.
+          </p>
+        </div>
+        <div style="background: #fbfaf8; border: 1px solid #e7e6e3; border-radius: 12px; padding: 18px; font-size: 12px; font-family: var(--font-mono, monospace); color: #555;">
+          <strong>Vector Window:</strong> 20ms token slices<br>
+          <strong>Barge-in Latency:</strong> 65ms cancellation<br>
+          <strong>Prosody Loss:</strong> 0% (Native acoustic modeling)
+        </div>
+      </div>
+
+      <!-- Layer 3 -->
+      <div class="arch-layer-card">
+        <div class="arch-layer-num">03</div>
+        <div>
+          <h3 style="font-size: 22px; margin: 0 0 8px;">Enterprise Tool Execution &amp; CRM Sync</h3>
+          <p style="font-size: 14px; color: #62615e; line-height: 1.7; margin: 0;">
+            While the voice engine generates conversational audio, background micro-functions query PostgreSQL, Salesforce, HubSpot, or internal REST APIs in parallel. The agent retrieves real-time customer balances, appointment slots, and order shipments without breaking speech flow.
+          </p>
+        </div>
+        <div style="background: #fbfaf8; border: 1px solid #e7e6e3; border-radius: 12px; padding: 18px; font-size: 12px; font-family: var(--font-mono, monospace); color: #555;">
+          <strong>Execution Time:</strong> 40ms–90ms async<br>
+          <strong>Integrations:</strong> Salesforce, HubSpot, SQL, Calendly<br>
+          <strong>Fallback:</strong> Graceful human agent escalation
+        </div>
+      </div>
+
+      <!-- Layer 4 -->
+      <div class="arch-layer-card">
+        <div class="arch-layer-num">04</div>
+        <div>
+          <h3 style="font-size: 22px; margin: 0 0 8px;">Zero-Retention Security &amp; Private Cloud Vault</h3>
+          <p style="font-size: 14px; color: #62615e; line-height: 1.7; margin: 0;">
+            All voice traffic is end-to-end encrypted with AES-256 in transit. Nova complies with HIPAA, SOC-2 Type II, and GDPR, guaranteeing that customer voice sessions are never stored or used for unauthorized public model training.
+          </p>
+        </div>
+        <div style="background: #fbfaf8; border: 1px solid #e7e6e3; border-radius: 12px; padding: 18px; font-size: 12px; font-family: var(--font-mono, monospace); color: #555;">
+          <strong>Compliance:</strong> SOC-2 Type II, HIPAA, GDPR<br>
+          <strong>Deployment:</strong> Dedicated VPC or On-Premise<br>
+          <strong>Encryption:</strong> TLS 1.3 / mTLS / AES-256
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="page-closing">
+    <p class="eyebrow"><i></i> TEST THE ARCHITECTURE</p>
+    <h2>Experience the speed<br>in our Voice Studio<span class="orange">.</span></h2>
+    <div>
+      <p>Test real-time speech-to-speech with Riya, explore latency telemetry, and inspect live audio waveforms.</p>
+      <a class="button primary" href="/nova">Launch Voice Studio <svg aria-hidden="true"><use href="#diagonal"/></svg></a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-top">
+      <a class="brand" href="/" aria-label="Nova home"><img src="/assets/nova-logo.svg" width="366" height="96" alt="Nova.ai" decoding="async"></a>
+      <p>Enterprise Voice &amp; Autonomous AI.<br>Built around you.</p>
+      <nav aria-label="Footer navigation">
+        <a href="/solutions">Solutions</a>
+        <a href="/approach">Approach</a>
+        <a href="/nova">Voice Studio</a>
+        <a href="/architecture">Architecture</a>
+        <a href="/roi">ROI Calculator</a>
+        <a href="/team">Your AI team</a>
+      </nav>
+      <a class="back-top" href="#main">Back to top <svg class="nova-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20V4M5 11l7-7 7 7"/></svg></a>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Nova.ai</span>
+      <span>Enterprise AI. Built from within.</span>
+      <a href="/privacy" target="_blank" rel="noopener">Privacy <svg class="nova-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a>
+    </div>
+  </footer>
+</main>
+<script src="/nova-widget.js?v=riya-clean-2026-v2" defer></script>
+</body>
+</html>
