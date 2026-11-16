@@ -24,6 +24,13 @@ function initHeroWaveform() {
   resize();
   window.addEventListener('resize', resize, { passive: true });
 
+  let mouseX = -1000, mouseY = -1000;
+  window.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+  }, { passive: true });
+
   let step = 0;
   function render() {
     requestAnimationFrame(render);
@@ -32,24 +39,26 @@ function initHeroWaveform() {
     const height = canvas.height;
     const midY = height / 2;
 
-    step += 0.02;
+    step += 0.025;
 
-    // Draw multi-frequency cyan & indigo flowing waves
+    // Draw multi-frequency cyan & indigo flowing waves with mouse reactivity
     const waves = [
-      { color: 'rgba(0, 242, 254, 0.22)', amp: 38, freq: 0.008, speed: 1.2 },
-      { color: 'rgba(99, 102, 241, 0.28)', amp: 26, freq: 0.012, speed: -1.0 },
-      { color: 'rgba(37, 99, 235, 0.18)', amp: 48, freq: 0.005, speed: 0.8 }
+      { color: 'rgba(0, 242, 254, 0.32)', amp: 38, freq: 0.008, speed: 1.2 },
+      { color: 'rgba(99, 102, 241, 0.35)', amp: 26, freq: 0.012, speed: -1.0 },
+      { color: 'rgba(37, 99, 235, 0.22)', amp: 48, freq: 0.005, speed: 0.8 }
     ];
 
     waves.forEach(w => {
       ctx.beginPath();
       ctx.moveTo(0, midY);
       for (let x = 0; x < width; x += 4) {
-        const y = midY + Math.sin(x * w.freq + step * w.speed) * w.amp * Math.sin(x / width * Math.PI);
+        const dist = Math.abs(x - mouseX);
+        const mouseEffect = Math.max(0, 1 - dist / 180) * 35;
+        const y = midY + (Math.sin(x * w.freq + step * w.speed) * (w.amp + mouseEffect)) * Math.sin(x / width * Math.PI);
         ctx.lineTo(x, y);
       }
       ctx.strokeStyle = w.color;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2.2;
       ctx.stroke();
     });
   }
