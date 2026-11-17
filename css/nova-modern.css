@@ -401,9 +401,10 @@ body {
 /* Studio Call Cards Dual */
 .studio-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.75rem;
   margin-bottom: 2rem;
+  width: 100%;
 }
 
 .studio-card {
@@ -417,6 +418,8 @@ body {
   text-align: center;
   position: relative;
   transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .studio-card:hover {
@@ -924,3 +927,188 @@ body {
   font-size: 0.85rem;
   text-align: center;
 }
+
+/* ═══════════ RESPONSIVE MOBILE MEDIA QUERIES ═══════════ */
+@media (max-width: 860px) {
+  .nova-nav {
+    padding: 0.85rem 1rem !important;
+  }
+  .nova-nav-inner {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.65rem !important;
+  }
+  .nova-nav-links {
+    width: 100% !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    gap: 1.1rem !important;
+    padding: 0.25rem 0 0.5rem !important;
+    justify-content: flex-start !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+  .nova-nav-links::-webkit-scrollbar {
+    display: none !important;
+  }
+  .nova-nav-link {
+    font-size: 0.85rem !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .nova-section {
+    padding: 3.5rem 1rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .nova-section#studio {
+    padding-top: 0 !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+  .studio-hero {
+    padding: 6.5rem 1rem 2.5rem !important;
+  }
+  .nova-hero-title {
+    font-size: clamp(2rem, 7.5vw, 3rem) !important;
+    line-height: 1.15 !important;
+  }
+  .nova-hero-sub {
+    font-size: 0.95rem !important;
+    padding: 0 0.5rem !important;
+  }
+
+  /* Centered Studio Container */
+  .nova-studio {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1.5rem 1rem !important;
+    border-radius: 20px !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+  .studio-header {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 1.25rem !important;
+    margin-bottom: 1.5rem !important;
+    padding-bottom: 1.25rem !important;
+  }
+  .studio-title-group {
+    text-align: center !important;
+  }
+  .studio-title {
+    font-size: 1.2rem !important;
+  }
+  .studio-metrics {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 0.45rem !important;
+    width: 100% !important;
+  }
+  .metric-pill {
+    font-size: 0.72rem !important;
+    padding: 0.3rem 0.6rem !important;
+  }
+
+  /* Centered Persona Tabs */
+  .studio-tabs {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 0.45rem !important;
+    margin-bottom: 1.5rem !important;
+    width: 100% !important;
+  }
+  .studio-tab {
+    font-size: 0.78rem !important;
+    padding: 0.45rem 0.85rem !important;
+  }
+
+  /* Centered Studio Cards with Equal Symmetric Margins */
+  .studio-cards {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    gap: 1.5rem !important;
+    margin: 0 auto 1.5rem !important;
+  }
+  .studio-card {
+    width: 100% !important;
+    max-width: 380px !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+    padding: 2.2rem 1.25rem !important;
+    border-radius: 18px !important;
+  }
+  .card-edition {
+    left: 1rem !important;
+    top: 1rem !important;
+    font-size: 0.68rem !important;
+  }
+  .call-hint-label {
+    padding: 0 0.5rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  /* Pricing Grid Responsive */
+  .pricing-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 1.5rem !important;
+    width: 100% !important;
+    margin-top: 2rem !important;
+  }
+  .pricing-card {
+    width: 100% !important;
+    max-width: 380px !important;
+    margin: 0 auto !important;
+    padding: 2rem 1.25rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .use-cases-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .nova-section {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  .nova-section#studio {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  .nova-studio {
+    padding: 1.25rem 10px !important;
+    border-radius: 16px !important;
+  }
+  .studio-card {
+    padding: 2rem 0.85rem !important;
+    border-radius: 16px !important;
+  }
+  .orb-wrapper {
+    width: 140px !important;
+    height: 140px !important;
+    margin: 1.25rem auto 1.25rem !important;
+  }
+  .orb-sphere {
+    width: 110px !important;
+    height: 110px !important;
+  }
+  .card-edition {
+    font-size: 0.64rem !important;
+  }
+}
+

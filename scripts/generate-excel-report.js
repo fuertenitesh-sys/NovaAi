@@ -9,8 +9,8 @@ const executiveSummary = [
   { 'Metric / Parameter': 'Audit & Fix Date', 'Value / Details': new Date().toISOString().split('T')[0], 'Category': 'Audit Metadata' },
   { 'Metric / Parameter': 'Audit Scope', 'Value / Details': 'Full-stack MERN, Mobile Responsiveness, Riya Voice Assistant, DOM, CSS, JS, Audio, SEO, a11y, routing', 'Category': 'Audit Metadata' },
   { 'Metric / Parameter': 'Overall Health Status', 'Value / Details': '100% PRODUCTION READY (All Issues Resolved & Verified)', 'Category': 'Readiness' },
-  { 'Metric / Parameter': 'Total Issues Identified', 'Value / Details': '15 Issues (3 Critical, 6 High, 4 Medium, 2 Low)', 'Category': 'Audit Summary' },
-  { 'Metric / Parameter': 'Total Fixes Applied & Verified', 'Value / Details': '15 Fixes Deployed & Tested Live', 'Category': 'Audit Summary' },
+  { 'Metric / Parameter': 'Total Issues Identified', 'Value / Details': '17 Issues (3 Critical, 8 High, 4 Medium, 2 Low)', 'Category': 'Audit Summary' },
+  { 'Metric / Parameter': 'Total Fixes Applied & Verified', 'Value / Details': '17 Fixes Deployed & Tested Live', 'Category': 'Audit Summary' },
   { 'Metric / Parameter': 'Mobile Responsiveness', 'Value / Details': '100% Responsive on iPhone SE (375px), Android (360px), iPad (768px), Desktop (1440px)', 'Category': 'Device Compatibility' },
   { 'Metric / Parameter': 'Voice Assistant Status', 'Value / Details': 'Riya Native AI Assistant Active (Sub-200ms Neural Speech, Zero Vendor Lockups)', 'Category': 'Voice & AI' },
   { 'Metric / Parameter': 'Backend Architecture', 'Value / Details': 'MERN Stack: MongoDB (Mongoose) + Express.js + React/Modern UI + Node.js', 'Category': 'Architecture' },
@@ -148,6 +148,22 @@ const issuesFound = [
     'Issue Description': 'Python was not installed on system PATH to support backend FastAPI/WebSocket voice microservices.',
     'File / Component': 'System PATH / backend',
     'Impact': 'Backend AI worker scripts could not execute directly.'
+  },
+  {
+    'Issue #': 'ISSUE-16',
+    'Severity': 'HIGH',
+    'Category': 'Mobile UI Glitch',
+    'Issue Description': 'Decorative art-bottom border line cut directly across hero architecture text ("We build it. We help you scale.") on mobile viewports.',
+    'File / Component': 'public/css/nova-enhancements.css & public/index.html',
+    'Impact': 'Degraded mobile reading experience and visual polish on small devices.'
+  },
+  {
+    'Issue #': 'ISSUE-17',
+    'Severity': 'HIGH',
+    'Category': 'Mobile Responsiveness / Alignment',
+    'Issue Description': 'Voice Studio cards on /nova were skewed to the right with asymmetric 72.8px left gap and 0.2px right gap due to 2.5rem padding and minmax(320px, 1fr) grid.',
+    'File / Component': 'public/css/nova-modern.css & public/nova.html',
+    'Impact': 'Cards appeared unaligned with an excessive left gap and right overflow on small mobile screens.'
   }
 ];
 
@@ -272,6 +288,22 @@ const fixesApplied = [
     'Technical Implementation': 'Installed Python 3.12.10 via winget, added to User PATH, and installed all requirements (fastapi, uvicorn, websockets, elevenlabs, deepgram-sdk).',
     'Files Modified': 'System PATH, backend environment',
     'Verification Method': 'python --version returns 3.12.10; backend packages verified.'
+  },
+  {
+    'Fix #': 'FIX-16',
+    'Related Issue': 'ISSUE-16',
+    'Fix Name': 'Hero Architecture Assembly Mobile Restructuring',
+    'Technical Implementation': 'Removed decorative art-bottom border line and transformed assembly field into a clean, unobstructed vertical column on mobile screens (<768px).',
+    'Files Modified': 'public/css/nova-enhancements.css, css/nova-enhancements.css',
+    'Verification Method': 'Screenshot on iPhone 14 Pro verified clean text spacing with zero line intersections.'
+  },
+  {
+    'Fix #': 'FIX-17',
+    'Related Issue': 'ISSUE-17',
+    'Fix Name': 'Voice Studio Mobile Centering & Symmetric Margins',
+    'Technical Implementation': 'Added responsive mobile rules: studio-cards flex column with margin: 0 auto, max-width: 380px, symmetric 12px outer/inner padding, centered persona pills, and non-overflowing horizontal scroll nav.',
+    'Files Modified': 'public/css/nova-modern.css, css/nova-modern.css, public/nova.html, nova.html',
+    'Verification Method': 'Browser subagent verified exact symmetric 22.8px left and right margins; 0px horizontal overflow.'
   }
 ];
 
@@ -291,7 +323,9 @@ const testResults = [
   { 'Test ID': 'TC-12', 'Module / Component': 'Interactive ROI Calculator', 'Test Scenario': 'Move call volume slider (1k to 50k) and duration slider', 'Expected Result': 'Savings recalculate dynamically with formatted values', 'Actual Result': 'Instant calculation with zero lag; formatted figures update.', 'Status': 'PASS' },
   { 'Test ID': 'TC-13', 'Module / Component': 'Dedicated Pages Navigation', 'Test Scenario': 'Visit /solutions, /approach, /nova, /architecture, /roi, /team, /privacy', 'Expected Result': 'All 7 routes load with HTTP 200 without 404s', 'Actual Result': 'All routes verified functional with matching design.', 'Status': 'PASS' },
   { 'Test ID': 'TC-14', 'Module / Component': 'SEO & Crawler Compliance', 'Test Scenario': 'Fetch /robots.txt, /sitemap.xml, and /manifest.json', 'Expected Result': 'Valid plain text robots.txt, XML sitemap, and JSON manifest', 'Actual Result': 'HTTP 200 on all endpoints with correct MIME types.', 'Status': 'PASS' },
-  { 'Test ID': 'TC-15', 'Module / Component': 'Production Cloud Deployment', 'Test Scenario': 'curl -I https://nova-ai-thlt.onrender.com/ and check widget', 'Expected Result': 'HTTP 200 OK, Cloudflare Edge active, new widget live', 'Actual Result': 'HTTP 200 OK, dynamic edge cache, new widget verified.', 'Status': 'PASS' }
+  { 'Test ID': 'TC-15', 'Module / Component': 'Production Cloud Deployment', 'Test Scenario': 'curl -I https://nova-ai-thlt.onrender.com/ and check widget', 'Expected Result': 'HTTP 200 OK, Cloudflare Edge active, new widget live', 'Actual Result': 'HTTP 200 OK, dynamic edge cache, new widget verified.', 'Status': 'PASS' },
+  { 'Test ID': 'TC-16', 'Module / Component': 'Hero Line Overlap Bug', 'Test Scenario': 'Inspect hero typography at 393px (iPhone 14 Pro)', 'Expected Result': 'Zero line slicing through "We build it. We help you scale."', 'Actual Result': 'Clean text with zero overlapping decorative lines.', 'Status': 'PASS' },
+  { 'Test ID': 'TC-17', 'Module / Component': 'Voice Studio Card Mobile Centering', 'Test Scenario': 'Evaluate studioCard.getBoundingClientRect() at 393x852 viewport', 'Expected Result': 'Equal left and right margins; 0px horizontal overflow', 'Actual Result': 'Exact symmetric 22.8px left/right margins; 0px overflow.', 'Status': 'PASS' }
 ];
 
 // 5. PERFORMANCE METRICS & BENCHMARKS SHEET
