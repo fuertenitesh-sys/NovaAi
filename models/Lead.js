@@ -1,0 +1,53 @@
+const mongoose = require('mongoose');
+
+const LeadSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Contact name is required'],
+    trim: true,
+    maxlength: 120
+  },
+  email: {
+    type: String,
+    required: [true, 'Work email is required'],
+    trim: true,
+    lowercase: true,
+    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please provide a valid work email']
+  },
+  company: {
+    type: String,
+    required: [true, 'Company name is required'],
+    trim: true,
+    maxlength: 140
+  },
+  message: {
+    type: String,
+    trim: true,
+    maxlength: 2000,
+    default: ''
+  },
+  context: {
+    type: String,
+    trim: true,
+    default: 'General Enterprise Inquiry'
+  },
+  page: {
+    type: String,
+    default: '/'
+  },
+  status: {
+    type: String,
+    enum: ['NEW', 'CONTACTED', 'QUALIFIED', 'PROPOSAL', 'CLOSED'],
+    default: 'NEW'
+  },
+  ipAddress: {
+    type: String,
+    default: ''
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = mongoose.models.Lead || mongoose.model('Lead', LeadSchema);

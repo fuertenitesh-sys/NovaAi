@@ -1,361 +1,305 @@
 /**
  * ═══════════════════════════════════════════════════════════════════════
- * NOVA.AI — PRODUCTION SERVER
+ * NOVA.AI — ENTERPRISE MERN STACK SERVER (EXPRESS + NODE + MONGODB)
  * ═══════════════════════════════════════════════════════════════════════
- * High-performance Node.js runtime server for Nova.ai Enterprise Platform.
+ * Production-ready Express.js backend powering Nova.ai Enterprise Platform.
  * 
- * Features:
- *  - Real-time WebRTC Voice Gateway (Nova Premium & Nova Duplex Orbs)
- *  - Floating AI Assistant Gateway (Riya Voice & Text Intelligence)
- *  - 3D Interactive Spline Scene Serving (.splinecode)
- *  - Static Asset Streaming with HTTP Caching & Range Support
- *  - Multi-language Speech-to-Speech orchestration
+ * Stack:
+ *  - M (MongoDB): Mongoose ODM for enterprise leads, contact briefs & telemetry
+ *  - E (Express.js): High-throughput REST API & WebRTC token proxies
+ *  - R (React / Modern UI): Frontend Voice Studio, Dual Flame Orbs, 3D WebGL
+ *  - N (Node.js): Asynchronous event-driven runtime
  * ═══════════════════════════════════════════════════════════════════════
  */
 
-const http = require('http');
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
 const https = require('https');
-const fs = require('fs');
 const path = require('path');
-const url = require('url');
+const fs = require('fs');
+const mongoose = require('mongoose');
 
+const Lead = require('./models/Lead');
+
+const app = express();
 const PORT = process.env.PORT || 5500;
 const PUBLIC_DIR = path.resolve(__dirname, 'public');
 
-// Configuration
+// Global Configuration
 const CONFIG = {
   agentId: process.env.NOVA_AGENT_ID || '01a1d8a0-eb07-7a44-9066-fb2420c08c97',
   apiKey: process.env.NOVA_API_KEY || 'ak_a579c7540418ffa23147b97a01d984d21a023319cf51aad5c0950da3f26cb965',
   apiHost: 'api.ravan.ai',
   brandName: 'Nova.ai',
-  assistantName: 'Riya'
+  assistantName: 'Riya',
+  mongoUri: process.env.MONGODB_URI || ''
 };
 
-const mimeTypes = {
-  '.html': 'text/html; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.js': 'application/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.webp': 'image/webp',
-  '.svg': 'image/svg+xml',
-  '.woff2': 'font/woff2',
-  '.woff': 'font/woff',
-  '.mp4': 'video/mp4',
-  '.mp3': 'audio/mpeg',
-  '.splinecode': 'application/octet-stream'
-};
+// In-memory lead store fallback when MongoDB URI is not configured
+const leadsMemoryStore = [];
 
-const server = http.createServer((req, res) => {
-  const parsedUrl = url.parse(req.url, true);
-  const pathname = parsedUrl.pathname;
+// 1. Connect MongoDB if URI provided
+if (CONFIG.mongoUri) {
+  mongoose.connect(CONFIG.mongoUri)
+    .then(() => console.log('🍃 [MongoDB] Connected to Cloud Cluster successfully!'))
+    .catch(err => console.warn('⚠️ [MongoDB] Connection warning, using fallback store:', err.message));
+} else {
+  console.log('📦 [MongoDB] Running with in-memory lead store. (Set MONGODB_URI in .env to connect to Atlas)');
+}
 
-  // Set global CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PATCH');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Api-Key, Authorization');
+// 2. Middleware
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'X-Api-Key', 'Authorization']
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204);
-    res.end();
-    return;
-  }
-
-  // 1. Nova Voice Web-Call API (/api/nova/web-call and /api/agni/web-call)
-  // Powers the interactive Nova Premium and Nova Duplex flame orbs on /nova
-  if (pathname === '/api/nova/web-call' || pathname === '/api/agni/web-call') {
-    let body = '';
-    req.on('data', chunk => { body += chunk; });
-    req.on('end', () => {
-      let incoming = {};
-      try { incoming = JSON.parse(body || '{}'); } catch (e) {}
-      const isDuplex = incoming.agent === 'duplex' || (incoming.usecase && incoming.usecase.includes('duplex'));
-
-      const payload = JSON.stringify({
-        agent_id: CONFIG.agentId,
-        type: 'web_call',
-        prompt_dynamic_variables: {
-          agent_name: CONFIG.assistantName,
-          company_name: CONFIG.brandName,
-          assistant_name: CONFIG.assistantName,
-          company: 'Nova',
-          system_name: isDuplex ? 'Nova Duplex' : 'Nova Premium',
-          brand: CONFIG.brandName
-        }
-      });
-
-      const proxyReq = https.request({
-        hostname: CONFIG.apiHost,
-        path: '/api/v1/calling/create-call',
-        method: 'POST',
-        family: 4,
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(payload),
-          'X-Api-Key': CONFIG.apiKey,
-          'Origin': 'https://www.ravan.ai',
-          'Referer': 'https://www.ravan.ai/'
-        }
-      }, proxyRes => {
-        let respData = '';
-        proxyRes.on('data', d => respData += d);
-        proxyRes.on('end', () => {
-          try {
-            const parsed = JSON.parse(respData);
-            if (parsed && parsed.data && parsed.data.access_token) {
-              const formatted = JSON.stringify({
-                token: parsed.data.access_token,
-                url: parsed.data.url,
-                access_token: parsed.data.access_token,
-                room_id: parsed.data.room_id,
-                session_id: parsed.data.session_id,
-                success: true
-              });
-              res.writeHead(200, {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-store, no-cache, must-revalidate'
-              });
-              res.end(formatted);
-              return;
-            }
-          } catch (e) {}
-
-          res.writeHead(proxyRes.statusCode || 500, { 'Content-Type': 'application/json' });
-          res.end(respData);
-        });
-      });
-
-      proxyReq.on('error', err => {
-        console.error('Voice web-call error:', err);
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: err.message }));
-      });
-
-      proxyReq.write(payload);
-      proxyReq.end();
-    });
-    return;
-  }
-
-  // 2. Floating AI Assistant Call Creator (/api/create-room/ and /api/create-room)
-  // Powers the bottom-right floating Riya voice assistant widget
-  if (pathname === '/api/create-room/' || pathname === '/api/create-room' || pathname.startsWith('/api/create-room')) {
-    let body = '';
-    req.on('data', c => body += c);
-    req.on('end', () => {
-      const callPayload = JSON.stringify({
-        agent_id: CONFIG.agentId,
-        type: 'web_call',
-        prompt_dynamic_variables: {
-          agent_name: CONFIG.assistantName,
-          company_name: CONFIG.brandName,
-          assistant_name: CONFIG.assistantName,
-          company: 'Nova',
-          brand: CONFIG.brandName
-        }
-      });
-
-      const proxyReq = https.request({
-        hostname: CONFIG.apiHost,
-        path: '/api/v1/calling/create-call',
-        method: 'POST',
-        family: 4,
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(callPayload),
-          'X-Api-Key': CONFIG.apiKey,
-          'Origin': 'https://www.ravan.ai',
-          'Referer': 'https://www.ravan.ai/'
-        }
-      }, proxyRes => {
-        let respData = '';
-        proxyRes.on('data', d => respData += d);
-        proxyRes.on('end', () => {
-          try {
-            const parsed = JSON.parse(respData);
-            if (parsed && parsed.data && parsed.data.access_token) {
-              const formatted = JSON.stringify({
-                success: true,
-                response: {
-                  success: true,
-                  token: parsed.data.access_token,
-                  url: parsed.data.url,
-                  call_id: parsed.data.room_id,
-                  room_id: parsed.data.room_id,
-                  session_id: parsed.data.session_id
-                }
-              });
-              res.writeHead(200, {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-store, no-cache, must-revalidate'
-              });
-              res.end(formatted);
-              return;
-            }
-          } catch (e) {}
-
-          res.writeHead(proxyRes.statusCode || 500, { 'Content-Type': 'application/json' });
-          res.end(respData);
-        });
-      });
-
-      proxyReq.on('error', err => {
-        console.error('Call create error:', err);
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: err.message }));
-      });
-
-      proxyReq.write(callPayload);
-      proxyReq.end();
-    });
-    return;
-  }
-
-  // 3. Floating Widget Settings Endpoint
-  if (pathname.startsWith('/api/thunder-widget-settings')) {
-    const settings = {
-      success: true,
-      response: {
-        bot_name: CONFIG.assistantName,
-        bot_tagline: CONFIG.assistantName,
-        bot_logo: '/assets/nova-avatar.jpg',
-        bot_button_color: '#2563eb',
-        bot_button_hover_color: '#1d4ed8',
-        bot_border_color: '#2563eb',
-        bot_text_color: '#20221f',
-        bot_status_bar_color: '#2563eb',
-        bot_background_color: '#faf9f6',
-        show_is_power_by: false,
-        svg_logo: null,
-        voice_animation_color: '#2563eb'
-      }
-    };
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(settings));
-    return;
-  }
-
-  // 4. Widget Configuration
-  if (pathname === '/api/widget-config') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ market: 'in' }));
-    return;
-  }
-
-  // 5. Agent Info Endpoint
-  if (pathname.startsWith('/api/get-agent')) {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({
-      success: true,
-      name: `${CONFIG.assistantName} Voice Intelligence`,
-      brand: CONFIG.brandName
-    }));
-    return;
-  }
-
-  // 6. Patched Widget IIFE Script Serving
-  if (pathname === '/react-widget-uv.iife.js' || pathname === '/assets/react-widget-uv.iife.js' || pathname.endsWith('react-widget-uv.iife.js')) {
-    const uvPath = path.join(PUBLIC_DIR, 'assets', 'react-widget-uv.js');
-    fs.readFile(uvPath, (err, data) => {
-      if (err) {
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Error loading widget bundle');
-        return;
-      }
-      res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8' });
-      res.end(data);
-    });
-    return;
-  }
-
-  // 7. HTML Page Routing
-  let pageFile = null;
-  if (pathname === '/' || pathname === '/index.html') {
-    pageFile = 'index.html';
-  } else if (pathname === '/nova' || pathname === '/nova.html' || pathname === '/products' || pathname === '/agni') {
-    pageFile = 'nova.html';
-  } else if (pathname === '/approach' || pathname === '/approach.html') {
-    pageFile = 'approach.html';
-  } else if (pathname === '/solutions' || pathname === '/solutions.html') {
-    pageFile = 'solutions.html';
-  } else if (pathname === '/architecture' || pathname === '/architecture.html') {
-    pageFile = 'architecture.html';
-  } else if (pathname === '/roi' || pathname === '/roi.html') {
-    pageFile = 'roi.html';
-  } else if (pathname === '/team' || pathname === '/team.html') {
-    pageFile = 'team.html';
-  } else if (pathname === '/privacy' || pathname === '/privacy.html') {
-    pageFile = 'privacy.html';
-  }
-
-  if (pageFile) {
-    const filePath = path.join(PUBLIC_DIR, pageFile);
-    fs.readFile(filePath, (err, data) => {
-      if (err) {
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end(`Error loading ${pageFile}`);
-        return;
-      }
-      res.writeHead(200, {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-cache, must-revalidate'
-      });
-      res.end(data);
-    });
-    return;
-  }
-
-  // 8. Static File Resolution (public, public/assets, public/css, public/js)
-  const relPath = pathname.replace(/^\/+/, '');
-  const candidatePaths = [
-    path.join(PUBLIC_DIR, relPath),
-    path.join(PUBLIC_DIR, 'assets', relPath),
-    path.join(PUBLIC_DIR, 'css', relPath),
-    path.join(PUBLIC_DIR, 'js', relPath)
-  ];
-
-  let resolvedPath = null;
-  for (const cp of candidatePaths) {
-    if (fs.existsSync(cp) && fs.statSync(cp).isFile()) {
-      resolvedPath = cp;
-      break;
+// 3. Static Asset Serving with High-Performance HTTP Caching
+app.use(express.static(PUBLIC_DIR, {
+  maxAge: '7d',
+  setHeaders: (res, filePath) => {
+    const ext = path.extname(filePath).toLowerCase();
+    if (ext === '.html') {
+      res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+    } else if (['.woff2', '.woff', '.mp3', '.mp4', '.png', '.jpg', '.svg'].includes(ext)) {
+      res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+    } else if (['.css', '.js'].includes(ext)) {
+      res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=86400');
     }
   }
+}));
 
-  if (!resolvedPath) {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('404 Not Found: ' + pathname);
-    return;
-  }
+// ═══════════════════════════════════════════════════════════════
+// REST API ROUTES
+// ═══════════════════════════════════════════════════════════════
 
-  const ext = path.extname(resolvedPath).toLowerCase();
-  const contentType = mimeTypes[ext] || 'application/octet-stream';
-
-  // Smart caching: aggressive caching for immutable static assets (images, fonts, audio, video)
-  let cacheControl = 'public, max-age=86400, stale-while-revalidate=604800';
-  if (ext === '.woff2' || ext === '.woff' || ext === '.mp3' || ext === '.mp4' || ext === '.png' || ext === '.jpg' || ext === '.svg') {
-    cacheControl = 'public, max-age=604800, immutable';
-  } else if (ext === '.css' || ext === '.js') {
-    cacheControl = 'public, max-age=86400, stale-while-revalidate=86400';
-  }
-
-  res.writeHead(200, {
-    'Content-Type': contentType,
-    'Cache-Control': cacheControl
+/**
+ * Health Check API
+ */
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'HEALTHY',
+    service: 'Nova.ai Enterprise MERN Server',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    database: mongoose.connection.readyState === 1 ? 'CONNECTED' : 'IN_MEMORY_FALLBACK'
   });
-
-  const stream = fs.createReadStream(resolvedPath);
-  stream.pipe(res);
 });
 
-server.listen(PORT, () => {
+/**
+ * Enterprise Demo Request / Contact Brief API
+ * Receives form submission from contact.js (#brief-dialog)
+ */
+app.post('/api/demo-request', async (req, res) => {
+  try {
+    const { name, email, company, message, context, page, website } = req.body;
+
+    // Honeypot anti-spam check
+    if (website) {
+      return res.status(200).json({ ok: true });
+    }
+
+    // Validation
+    if (!name || !email || !company) {
+      return res.status(400).json({
+        ok: false,
+        code: 'validation',
+        error: 'Name, work email, and company name are required.'
+      });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        ok: false,
+        code: 'validation',
+        error: 'Please provide a valid work email address.'
+      });
+    }
+
+    const leadData = {
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      company: company.trim(),
+      message: (message || '').trim(),
+      context: context || 'General Enterprise Inquiry',
+      page: page || '/',
+      ipAddress: req.ip || req.headers['x-forwarded-for'] || '',
+      createdAt: new Date()
+    };
+
+    let savedId = Date.now().toString();
+
+    // Save to MongoDB if connected
+    if (mongoose.connection.readyState === 1) {
+      const lead = new Lead(leadData);
+      const saved = await lead.save();
+      savedId = saved._id;
+    } else {
+      leadsMemoryStore.unshift({ _id: savedId, ...leadData });
+    }
+
+    console.log(`📩 [Lead Received] ${leadData.name} (${leadData.company}) — ${leadData.email}`);
+
+    res.status(200).json({
+      ok: true,
+      id: savedId,
+      message: 'Thank you! Your enterprise deployment brief has been registered.'
+    });
+  } catch (error) {
+    console.error('Error processing demo request:', error);
+    res.status(500).json({ ok: false, error: 'Internal server error processing brief.' });
+  }
+});
+
+/**
+ * Admin: Get All Captured Enterprise Leads
+ */
+app.get('/api/leads', async (req, res) => {
+  try {
+    if (mongoose.connection.readyState === 1) {
+      const leads = await Lead.find().sort({ createdAt: -1 }).limit(50);
+      return res.json({ success: true, count: leads.length, leads });
+    }
+    res.json({ success: true, count: leadsMemoryStore.length, leads: leadsMemoryStore });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * Nova Voice Web-Call API (LiveKit Cloud Gateway)
+ */
+const handleVoiceCall = (req, res) => {
+  const incoming = req.body || {};
+  const isDuplex = incoming.agent === 'duplex' || (incoming.usecase && incoming.usecase.includes('duplex'));
+
+  const payload = JSON.stringify({
+    agent_id: CONFIG.agentId,
+    type: 'web_call',
+    prompt_dynamic_variables: {
+      agent_name: CONFIG.assistantName,
+      company_name: CONFIG.brandName,
+      assistant_name: CONFIG.assistantName,
+      company: 'Nova',
+      system_name: isDuplex ? 'Nova Duplex' : 'Nova Premium',
+      brand: CONFIG.brandName
+    }
+  });
+
+  const proxyReq = https.request({
+    hostname: CONFIG.apiHost,
+    path: '/api/v1/calling/create-call',
+    method: 'POST',
+    family: 4,
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(payload),
+      'X-Api-Key': CONFIG.apiKey,
+      'Origin': 'https://www.ravan.ai',
+      'Referer': 'https://www.ravan.ai/'
+    }
+  }, proxyRes => {
+    let respData = '';
+    proxyRes.on('data', d => respData += d);
+    proxyRes.on('end', () => {
+      try {
+        const parsed = JSON.parse(respData);
+        if (parsed && parsed.data && parsed.data.access_token) {
+          return res.json({
+            token: parsed.data.access_token,
+            url: parsed.data.url,
+            access_token: parsed.data.access_token,
+            room_id: parsed.data.room_id,
+            session_id: parsed.data.session_id,
+            success: true
+          });
+        }
+      } catch (e) {}
+
+      res.status(proxyRes.statusCode || 500).send(respData);
+    });
+  });
+
+  proxyReq.on('error', err => {
+    console.error('Voice web-call error:', err);
+    res.status(500).json({ error: err.message });
+  });
+
+  proxyReq.write(payload);
+  proxyReq.end();
+};
+
+app.post('/api/nova/web-call', handleVoiceCall);
+app.post('/api/agni/web-call', handleVoiceCall);
+
+/**
+ * Floating Riya Widget Settings API
+ */
+app.get('/api/thunder-widget-settings', (req, res) => {
+  res.json({
+    success: true,
+    response: {
+      bot_name: CONFIG.assistantName,
+      bot_tagline: CONFIG.assistantName,
+      bot_logo: '/assets/nova-avatar.jpg',
+      bot_button_color: '#2563eb',
+      bot_button_hover_color: '#1d4ed8',
+      bot_border_color: '#2563eb',
+      bot_text_color: '#20221f',
+      bot_status_bar_color: '#2563eb',
+      bot_background_color: '#faf9f6',
+      show_is_power_by: false,
+      svg_logo: null,
+      voice_animation_color: '#2563eb'
+    }
+  });
+});
+
+app.get('/api/widget-config', (req, res) => {
+  res.json({ market: 'in' });
+});
+
+app.get('/api/get-agent', (req, res) => {
+  res.json({
+    success: true,
+    name: `${CONFIG.assistantName} Voice Intelligence`,
+    brand: CONFIG.brandName
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// PAGE ROUTING
+// ═══════════════════════════════════════════════════════════════
+const servePage = page => (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, page));
+};
+
+app.get(['/', '/index.html'], servePage('index.html'));
+app.get(['/nova', '/nova.html', '/products', '/agni'], servePage('nova.html'));
+app.get(['/solutions', '/solutions.html'], servePage('solutions.html'));
+app.get(['/approach', '/approach.html'], servePage('approach.html'));
+app.get(['/architecture', '/architecture.html'], servePage('architecture.html'));
+app.get(['/roi', '/roi.html'], servePage('roi.html'));
+app.get(['/team', '/team.html'], servePage('team.html'));
+app.get(['/privacy', '/privacy.html'], servePage('privacy.html'));
+
+// Fallback 404 handler
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
+
+// Start Server
+app.listen(PORT, () => {
   console.log(`\n======================================================`);
-  console.log(`  🚀 Nova.ai Enterprise Platform is running!`);
+  console.log(`  🚀 Nova.ai Enterprise MERN Stack Server Running!`);
   console.log(`  🔗 Main URL:    http://localhost:${PORT}/`);
   console.log(`  🎙️ Voice Demo:  http://localhost:${PORT}/nova`);
   console.log(`  ⚡ Voice Engine: LiveKit WebRTC Cloud Gateway`);
   console.log(`  🤖 Assistant:   ${CONFIG.assistantName} (${CONFIG.brandName})`);
+  console.log(`  🍃 Database:    MongoDB / Mongoose ready`);
   console.log(`======================================================\n`);
 });

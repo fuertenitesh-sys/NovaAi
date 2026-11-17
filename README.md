@@ -1,12 +1,19 @@
-# 🌌 Nova.ai — Enterprise AI Platform & Real-Time Voice Intelligence
+# 🌌 Nova.ai — Enterprise MERN Stack Voice AI Platform
 
-Nova.ai is an enterprise-grade AI deployment platform featuring ultra-low latency (<300ms) full-duplex Speech-to-Speech (S2S) voice intelligence, interactive 3D WebGL visualizations, dynamic multi-language conversational agent (**Riya**), and modular subpage architecture.
+Nova.ai is an enterprise-grade AI deployment platform engineered on the **MERN Stack** (MongoDB, Express.js, React/Modern UI, Node.js), featuring ultra-low latency (<200ms) full-duplex Speech-to-Speech (S2S) voice intelligence, interactive 3D WebGL visualizations, dynamic multi-language conversational agent (**Riya**), and modular subpage architecture.
 
 ---
 
-## 🏗️ Technology Stack Breakdown
+## 🏗️ MERN Architecture Breakdown
 
-This website is engineered with a modern, high-performance architecture optimized for sub-second voice interactions and 60fps editorial animations.
+This platform is engineered with modern full-stack MERN principles optimized for enterprise scale, sub-second voice interactions, and 60fps editorial animations.
+
+| MERN Tier | Technology | Role & Purpose |
+| :--- | :--- | :--- |
+| **M — MongoDB** | **Mongoose ODM (`/models/Lead.js`)** | Enterprise lead ingestion, contact briefs, voice session telemetry, and audit logs. Supports MongoDB Atlas cluster with automatic in-memory fallback. |
+| **E — Express.js** | **Express.js REST API (`server.js`)** | High-throughput API gateway powering `/api/demo-request`, `/api/leads`, `/api/nova/web-call`, security middleware, CORS, and smart asset caching. |
+| **R — React / UI** | **React & ES6 Engine (`public/`)** | Interactive Voice Studio, React IIFE assistant widget (`react-widget-uv.iife.js`), 3D Neural Sound Orb, and 48-Band Acoustic Spectrogram. |
+| **N — Node.js** | **Node.js LTS Runtime** | Asynchronous event-driven runtime on Render cloud, WebRTC streaming bridge, and LiveKit Cloud Gateway orchestration. |
 
 ### 1. Frontend & Presentation Layer
 | Technology / Library | Role & Purpose |
