@@ -590,7 +590,387 @@
   color: var(--dark, #1c1b1a);
 }
 
-/* ══════════════ 5. ENTERPRISE ARCHITECTURAL PRODUCTION MATRIX ══════════════ */
+/* ══════════════ 5. ENTERPRISE DARK EDITORIAL GRID ══════════════ */
+
+/* Dark section shell */
+.ent-dark-section {
+  background: #09090b;
+  padding: 100px 24px 110px;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Subtle grid noise bg */
+.ent-dark-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 72px 72px;
+  pointer-events: none;
+}
+
+/* Ambient glow blobs */
+.ent-dark-section::after {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: 15%;
+  width: 600px;
+  height: 500px;
+  background: radial-gradient(ellipse, rgba(37,99,235,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.ent-dark-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header area */
+.ent-dark-header {
+  margin-bottom: 64px;
+  max-width: 900px;
+}
+
+.ent-dark-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 20px;
+}
+
+.ent-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 10px #22c55e, 0 0 20px rgba(34,197,94,0.4);
+  animation: entPulse 2s infinite;
+  flex-shrink: 0;
+}
+@keyframes entPulse {
+  0%,100%{ opacity: 1; transform: scale(1); }
+  50%{ opacity: 0.6; transform: scale(1.3); }
+}
+
+.ent-eyebrow-text {
+  color: rgba(255,255,255,0.65);
+  font-weight: 700;
+}
+
+.ent-eyebrow-sep {
+  color: rgba(255,255,255,0.15);
+}
+
+.ent-dark-title {
+  font-size: clamp(2.1rem, 3.8vw, 3.4rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: #f5f5f5;
+  margin: 0 0 18px;
+}
+
+.ent-title-em {
+  font-style: normal;
+  background: linear-gradient(135deg, #60a5fa 0%, #818cf8 50%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ent-dark-desc {
+  font-size: 16px;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.45);
+  max-width: 620px;
+  margin: 0 0 28px;
+}
+
+/* Compliance badge strip */
+.ent-compliance-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.ent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.ent-badge-live {
+  color: #4ade80;
+  border-color: rgba(74,222,128,0.25);
+  background: rgba(74,222,128,0.07);
+}
+
+.ent-pulse {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 6px #4ade80;
+  animation: entPulse 1.8s infinite;
+}
+
+/* ───── 6-Card Grid ───── */
+.ent-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+@media (max-width: 1100px) {
+  .ent-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 680px) {
+  .ent-grid { grid-template-columns: 1fr; }
+}
+
+/* Individual card */
+.ent-card {
+  position: relative;
+  background: #0e0e10;
+  overflow: hidden;
+  transition: background 0.3s ease;
+}
+
+.ent-card:hover {
+  background: #131316;
+}
+
+/* Per-sector glow */
+.ent-card-glow {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(50px);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.ent-card:hover .ent-card-glow { opacity: 1; }
+
+.ent-card--fintech   .ent-card-glow { background: radial-gradient(circle, rgba(37,99,235,0.35), transparent); }
+.ent-card--health    .ent-card-glow { background: radial-gradient(circle, rgba(5,150,105,0.35), transparent); }
+.ent-card--estate    .ent-card-glow { background: radial-gradient(circle, rgba(217,119,6,0.35), transparent); }
+.ent-card--logistics .ent-card-glow { background: radial-gradient(circle, rgba(124,58,237,0.35), transparent); }
+.ent-card--retail    .ent-card-glow { background: radial-gradient(circle, rgba(225,29,72,0.35), transparent); }
+.ent-card--saas      .ent-card-glow { background: radial-gradient(circle, rgba(8,145,178,0.35), transparent); }
+
+/* Top border accent line per sector */
+.ent-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.ent-card:hover::before { opacity: 1; }
+.ent-card--fintech::before   { background: linear-gradient(90deg, transparent, #2563eb, transparent); }
+.ent-card--health::before    { background: linear-gradient(90deg, transparent, #059669, transparent); }
+.ent-card--estate::before    { background: linear-gradient(90deg, transparent, #d97706, transparent); }
+.ent-card--logistics::before { background: linear-gradient(90deg, transparent, #7c3aed, transparent); }
+.ent-card--retail::before    { background: linear-gradient(90deg, transparent, #e11d48, transparent); }
+.ent-card--saas::before      { background: linear-gradient(90deg, transparent, #0891b2, transparent); }
+
+.ent-card-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 28px 28px 24px;
+  gap: 20px;
+}
+
+/* Card head: icon + tags */
+.ent-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ent-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.ent-icon--fintech   { background: rgba(37,99,235,0.15); color: #60a5fa; }
+.ent-icon--health    { background: rgba(5,150,105,0.15); color: #34d399; }
+.ent-icon--estate    { background: rgba(217,119,6,0.15); color: #fbbf24; }
+.ent-icon--logistics { background: rgba(124,58,237,0.15); color: #a78bfa; }
+.ent-icon--retail    { background: rgba(225,29,72,0.15); color: #fb7185; }
+.ent-icon--saas      { background: rgba(8,145,178,0.15); color: #38bdf8; }
+
+.ent-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.ent-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.ent-tag--green {
+  color: #4ade80;
+  border-color: rgba(74,222,128,0.2);
+  background: rgba(74,222,128,0.07);
+}
+
+/* Card body */
+.ent-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ent-sector {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  font-weight: 600;
+}
+
+.ent-card-title {
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: rgba(255,255,255,0.88);
+  margin: 0;
+}
+
+.ent-card-copy {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.38);
+  margin: 0;
+}
+
+/* Card footer: metrics + CTA */
+.ent-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.ent-metrics {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ent-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ent-metric-val {
+  font-family: var(--font-mono, monospace);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: rgba(255,255,255,0.9);
+  line-height: 1;
+}
+
+.ent-metric-key {
+  font-family: var(--font-mono, monospace);
+  font-size: 9.5px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ent-metric-sep {
+  width: 1px;
+  height: 28px;
+  background: rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+.ent-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.ent-cta:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.22);
+  transform: translateX(2px);
+}
+
+/* ── Keep old classes working as fallbacks ── */
 .enterprise-matrix-section {
   padding: 88px 24px;
   background: #fbfbfa;

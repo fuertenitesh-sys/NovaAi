@@ -17,7 +17,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   initNeuralSoundstage();
-  initHeroVoiceSampler();
+  // initHeroVoiceSampler() — removed per design directive (clean hero, no sampler card)
   initLiveTelemetryJitter();
   initCursorSpotlight();
   initCountUpMetrics();
@@ -544,8 +544,8 @@ function initNeuralSoundstage() {
     card.addEventListener('click', () => setPersona(card.dataset.persona));
   });
 
-  // Connect Enterprise Bento Cards to Persona Switcher
-  document.querySelectorAll('.bento-audition-btn').forEach(btn => {
+  // Connect Enterprise Cards to Persona Switcher (both old .bento-audition-btn and new .ent-cta)
+  document.querySelectorAll('.bento-audition-btn, .ent-cta[data-switch-persona]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const personaKey = btn.dataset.switchPersona || 'support';
