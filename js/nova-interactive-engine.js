@@ -226,6 +226,24 @@ function initNeuralSoundstage() {
     if (callTimer) callTimer.textContent = `Active WebRTC Session · ${m}:${s}`;
   }, 1000);
 
+  // Performance: IntersectionObserver pauses canvas animation loops when off-screen
+  let isSoundstageVisible = true;
+  let orbRafRunning = true;
+  let specRafRunning = true;
+
+  if ('IntersectionObserver' in window && container) {
+    const soundstageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        isSoundstageVisible = entry.isIntersecting;
+        if (isSoundstageVisible) {
+          if (!orbRafRunning && orbCanvas) { orbRafRunning = true; requestAnimationFrame(drawOrb); }
+          if (!specRafRunning && specCanvas) { specRafRunning = true; requestAnimationFrame(drawSpec); }
+        }
+      });
+    }, { threshold: 0.05 });
+    soundstageObserver.observe(container);
+  }
+
   // 1. 3D Neural Sound Orb Canvas Loop
   if (orbCanvas) {
     const ctx = orbCanvas.getContext('2d');
@@ -236,6 +254,10 @@ function initNeuralSoundstage() {
     orbCanvas.addEventListener('mouseleave', () => orbHover = false);
 
     function drawOrb() {
+      if (!isSoundstageVisible) {
+        orbRafRunning = false;
+        return;
+      }
       requestAnimationFrame(drawOrb);
       const w = orbCanvas.width;
       const h = orbCanvas.height;
@@ -303,17 +325,28 @@ function initNeuralSoundstage() {
     drawOrb();
   }
 
-  // 2. 48-Band Acoustic Spectrogram Canvas Loop
+  // 2. 48-Band Acoustic Spectrogram Canvas Loop (Cached resize, no per-frame recalculation)
   if (specCanvas) {
     const ctx = specCanvas.getContext('2d');
     let specStep = 0;
+    let cachedSpecW = specCanvas.parentElement ? specCanvas.parentElement.offsetWidth : 400;
+    specCanvas.width = cachedSpecW;
+    specCanvas.height = 85;
+
+    window.addEventListener('resize', () => {
+      cachedSpecW = specCanvas.parentElement ? specCanvas.parentElement.offsetWidth : 400;
+      specCanvas.width = cachedSpecW;
+      specCanvas.height = 85;
+    }, { passive: true });
 
     function drawSpec() {
+      if (!isSoundstageVisible) {
+        specRafRunning = false;
+        return;
+      }
       requestAnimationFrame(drawSpec);
-      specCanvas.width = specCanvas.parentElement.offsetWidth || 400;
-      specCanvas.height = 85;
-      const w = specCanvas.width;
-      const h = specCanvas.height;
+      const w = cachedSpecW;
+      const h = 85;
       ctx.clearRect(0, 0, w, h);
 
       specStep += 0.08;
@@ -348,6 +381,7 @@ function initNeuralSoundstage() {
 
   // 3. Speech Synthesis & Authentic Neural Audio Player (Riya AI)
   let currentAudioObj = null;
+  let simOrbInterval = null;
 
   function speakAudioOrText(audioId, text, lang, onEndCallback) {
     stopCurrentSpeech();
@@ -367,29 +401,36 @@ function initNeuralSoundstage() {
       currentAudioObj = audio;
       audio.playbackRate = soundstageRate;
 
-      let simOrb = setInterval(() => {
+      if (simOrbInterval) {
+        clearInterval(simOrbInterval);
+        simOrbInterval = null;
+      }
+      simOrbInterval = setInterval(() => {
         if (!soundstageIsSpeaking || audio.paused || audio.ended) {
-          clearInterval(simOrb);
+          if (simOrbInterval) {
+            clearInterval(simOrbInterval);
+            simOrbInterval = null;
+          }
         } else {
           orbAudioLevel = 0.35 + Math.random() * 0.55;
         }
       }, 50);
 
       audio.onended = () => {
-        clearInterval(simOrb);
+        if (simOrbInterval) { clearInterval(simOrbInterval); simOrbInterval = null; }
         stopCurrentSpeech();
         if (onEndCallback) onEndCallback();
       };
 
       audio.onerror = () => {
-        clearInterval(simOrb);
+        if (simOrbInterval) { clearInterval(simOrbInterval); simOrbInterval = null; }
         console.warn('Audio asset error, falling back to female TTS:', audioUrl);
         currentAudioObj = null;
         fallbackFemaleTTS(text, lang, onEndCallback);
       };
 
       audio.play().catch(err => {
-        clearInterval(simOrb);
+        if (simOrbInterval) { clearInterval(simOrbInterval); simOrbInterval = null; }
         console.warn('Audio playback error, falling back to female TTS:', err);
         currentAudioObj = null;
         fallbackFemaleTTS(text, lang, onEndCallback);
@@ -442,10 +483,15 @@ function initNeuralSoundstage() {
   function stopCurrentSpeech() {
     soundstageIsSpeaking = false;
     orbAudioLevel = 0;
+    if (simOrbInterval) {
+      clearInterval(simOrbInterval);
+      simOrbInterval = null;
+    }
     if (currentAudioObj) {
       try {
         currentAudioObj.pause();
         currentAudioObj.currentTime = 0;
+        currentAudioObj.src = '';
       } catch(e) {}
       currentAudioObj = null;
     }
@@ -850,7 +896,7 @@ function initLiveTelemetryJitter() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// 5. AMBIENT CURSOR SPOTLIGHT AURA
+// 5. AMBIENT CURSOR SPOTLIGHT AURA (Throttled via requestAnimationFrame)
 // ═══════════════════════════════════════════════════════════════
 function initCursorSpotlight() {
   let overlay = document.querySelector('.cursor-spotlight-overlay');
@@ -859,9 +905,16 @@ function initCursorSpotlight() {
     overlay.className = 'cursor-spotlight-overlay';
     document.body.appendChild(overlay);
   }
+  let ticking = false;
   window.addEventListener('pointermove', e => {
-    document.documentElement.style.setProperty('--cursor-x', `${e.clientX}px`);
-    document.documentElement.style.setProperty('--cursor-y', `${e.clientY}px`);
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        document.documentElement.style.setProperty('--cursor-x', `${e.clientX}px`);
+        document.documentElement.style.setProperty('--cursor-y', `${e.clientY}px`);
+        ticking = false;
+      });
+      ticking = true;
+    }
   }, { passive: true });
 }
 

@@ -286,6 +286,8 @@ const server = http.createServer((req, res) => {
     pageFile = 'roi.html';
   } else if (pathname === '/team' || pathname === '/team.html') {
     pageFile = 'team.html';
+  } else if (pathname === '/privacy' || pathname === '/privacy.html') {
+    pageFile = 'privacy.html';
   }
 
   if (pageFile) {
@@ -296,7 +298,10 @@ const server = http.createServer((req, res) => {
         res.end(`Error loading ${pageFile}`);
         return;
       }
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache, must-revalidate'
+      });
       res.end(data);
     });
     return;
@@ -328,9 +333,17 @@ const server = http.createServer((req, res) => {
   const ext = path.extname(resolvedPath).toLowerCase();
   const contentType = mimeTypes[ext] || 'application/octet-stream';
 
+  // Smart caching: aggressive caching for immutable static assets (images, fonts, audio, video)
+  let cacheControl = 'public, max-age=86400, stale-while-revalidate=604800';
+  if (ext === '.woff2' || ext === '.woff' || ext === '.mp3' || ext === '.mp4' || ext === '.png' || ext === '.jpg' || ext === '.svg') {
+    cacheControl = 'public, max-age=604800, immutable';
+  } else if (ext === '.css' || ext === '.js') {
+    cacheControl = 'public, max-age=86400, stale-while-revalidate=86400';
+  }
+
   res.writeHead(200, {
     'Content-Type': contentType,
-    'Cache-Control': 'no-cache, no-store, must-revalidate'
+    'Cache-Control': cacheControl
   });
 
   const stream = fs.createReadStream(resolvedPath);
