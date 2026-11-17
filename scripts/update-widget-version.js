@@ -7,14 +7,10 @@ const path = require('path');
   files.forEach(f => {
     const p = path.join(dirPath, f);
     let content = fs.readFileSync(p, 'utf8');
-    let changed = false;
-    if (content.includes('nova-enhancements.css')) {
-      content = content.replace(/nova-enhancements\.css(\?v=[^"']*)?/g, 'nova-enhancements.css?v=responsive-v11');
-      changed = true;
-    }
-    if (changed) {
+    if (content.includes('nova-widget.js')) {
+      content = content.replace(/nova-widget\.js(\?v=[^"']*)?/g, 'nova-widget.js?v=riya-voice-call-v4');
       fs.writeFileSync(p, content, 'utf8');
-      console.log('Bumped CSS:', p);
+      console.log('Bumped widget:', p);
     }
   });
 });

@@ -237,9 +237,73 @@ app.post('/api/nova/web-call', handleVoiceCall);
 app.post('/api/agni/web-call', handleVoiceCall);
 
 /**
- * Floating Riya Widget Settings API
+ * Floating Riya Voice Assistant Call Creator (/api/create-room and subpaths)
  */
-app.get('/api/thunder-widget-settings', (req, res) => {
+const handleCreateRoom = (req, res) => {
+  const callPayload = JSON.stringify({
+    agent_id: CONFIG.agentId,
+    type: 'web_call',
+    prompt_dynamic_variables: {
+      agent_name: CONFIG.assistantName,
+      company_name: CONFIG.brandName,
+      assistant_name: CONFIG.assistantName,
+      company: 'Nova',
+      brand: CONFIG.brandName
+    }
+  });
+
+  const proxyReq = https.request({
+    hostname: CONFIG.apiHost,
+    path: '/api/v1/calling/create-call',
+    method: 'POST',
+    family: 4,
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(callPayload),
+      'X-Api-Key': CONFIG.apiKey,
+      'Origin': 'https://www.ravan.ai',
+      'Referer': 'https://www.ravan.ai/'
+    }
+  }, proxyRes => {
+    let respData = '';
+    proxyRes.on('data', d => respData += d);
+    proxyRes.on('end', () => {
+      try {
+        const parsed = JSON.parse(respData);
+        if (parsed && parsed.data && parsed.data.access_token) {
+          return res.json({
+            success: true,
+            response: {
+              success: true,
+              token: parsed.data.access_token,
+              url: parsed.data.url,
+              call_id: parsed.data.room_id,
+              room_id: parsed.data.room_id,
+              session_id: parsed.data.session_id
+            }
+          });
+        }
+      } catch (e) {}
+
+      res.status(proxyRes.statusCode || 500).send(respData);
+    });
+  });
+
+  proxyReq.on('error', err => {
+    console.error('Call create error:', err);
+    res.status(500).json({ error: err.message });
+  });
+
+  proxyReq.write(callPayload);
+  proxyReq.end();
+};
+
+app.use('/api/create-room', handleCreateRoom);
+
+/**
+ * Floating Riya Widget Settings API (supports all subpaths e.g. /:schema/:agentId)
+ */
+const handleWidgetSettings = (req, res) => {
   res.json({
     success: true,
     response: {
@@ -257,19 +321,26 @@ app.get('/api/thunder-widget-settings', (req, res) => {
       voice_animation_color: '#2563eb'
     }
   });
-});
+};
+
+app.use('/api/thunder-widget-settings', handleWidgetSettings);
 
 app.get('/api/widget-config', (req, res) => {
   res.json({ market: 'in' });
 });
 
-app.get('/api/get-agent', (req, res) => {
+/**
+ * Agent Info API (supports all subpaths e.g. /:agentId)
+ */
+const handleGetAgent = (req, res) => {
   res.json({
     success: true,
     name: `${CONFIG.assistantName} Voice Intelligence`,
     brand: CONFIG.brandName
   });
-});
+};
+
+app.use('/api/get-agent', handleGetAgent);
 
 // ═══════════════════════════════════════════════════════════════
 // PAGE ROUTING
