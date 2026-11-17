@@ -1,0 +1,31 @@
+{
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json, render.yaml, .npmrc",
+    ".env": ".env.example, .env.*",
+    "README.md": "DEPLOYMENT.md, CHANGELOG.md, LICENSE*",
+    "index.html": "homepage.css, homepage.js, refinement.css, scene.js, film.js, brand.js, brand.css, contact.js, contact.css, icons.css, clients.css, style.css, styles.css, app.js, navigation.js, page-scenes.js, pages.js, pages.css, adoption-weave.js, approach-system.js, formation-story.js, team-assembly.js, work-sculpture.js, robots.txt, sitemap.xml, manifest.json, _redirects",
+    "nova.html": "nova-widget.js, react-widget-uv.iife.js",
+    "server.js": "start.bat, push_to_github.bat, deploy_to_cloudflare.bat",
+    "main.py": "requirements.txt, .env.example"
+  },
+  "files.associations": {
+    "*.html": "html",
+    "*.css": "css",
+    "*.js": "javascript",
+    "*.py": "python",
+    "_redirects": "plaintext"
+  },
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "ms-python.python"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.wrangler": true
+  }
+}
