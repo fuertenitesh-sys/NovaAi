@@ -9,8 +9,8 @@ const executiveSummary = [
   { 'Metric / Parameter': 'Audit & Fix Date', 'Value / Details': new Date().toISOString().split('T')[0], 'Category': 'Audit Metadata' },
   { 'Metric / Parameter': 'Audit Scope', 'Value / Details': 'Full-stack MERN, Mobile Responsiveness, Riya Voice Assistant, DOM, CSS, JS, Audio, SEO, a11y, routing', 'Category': 'Audit Metadata' },
   { 'Metric / Parameter': 'Overall Health Status', 'Value / Details': '100% PRODUCTION READY (All Issues Resolved & Verified)', 'Category': 'Readiness' },
-  { 'Metric / Parameter': 'Total Issues Identified', 'Value / Details': '17 Issues (3 Critical, 8 High, 4 Medium, 2 Low)', 'Category': 'Audit Summary' },
-  { 'Metric / Parameter': 'Total Fixes Applied & Verified', 'Value / Details': '17 Fixes Deployed & Tested Live', 'Category': 'Audit Summary' },
+  { 'Metric / Parameter': 'Total Issues Identified', 'Value / Details': '18 Issues (3 Critical, 9 High, 4 Medium, 2 Low)', 'Category': 'Audit Summary' },
+  { 'Metric / Parameter': 'Total Fixes Applied & Verified', 'Value / Details': '18 Fixes Deployed & Tested Live', 'Category': 'Audit Summary' },
   { 'Metric / Parameter': 'Mobile Responsiveness', 'Value / Details': '100% Responsive on iPhone SE (375px), Android (360px), iPad (768px), Desktop (1440px)', 'Category': 'Device Compatibility' },
   { 'Metric / Parameter': 'Voice Assistant Status', 'Value / Details': 'Riya Native AI Assistant Active (Sub-200ms Neural Speech, Zero Vendor Lockups)', 'Category': 'Voice & AI' },
   { 'Metric / Parameter': 'Backend Architecture', 'Value / Details': 'MERN Stack: MongoDB (Mongoose) + Express.js + React/Modern UI + Node.js', 'Category': 'Architecture' },
@@ -164,6 +164,14 @@ const issuesFound = [
     'Issue Description': 'Voice Studio cards on /nova were skewed to the right with asymmetric 72.8px left gap and 0.2px right gap due to 2.5rem padding and minmax(320px, 1fr) grid.',
     'File / Component': 'public/css/nova-modern.css & public/nova.html',
     'Impact': 'Cards appeared unaligned with an excessive left gap and right overflow on small mobile screens.'
+  },
+  {
+    'Issue #': 'ISSUE-18',
+    'Severity': 'HIGH',
+    'Category': 'Mobile Typography / Metric Pills',
+    'Issue Description': 'Voice Studio sandbox metrics pills ("Sentiment: Positive / Empathetic") were cramped in unformatted inline flex on mobile, causing words to wrap awkwardly and get cut off.',
+    'File / Component': 'public/css/nova-modern.css & public/nova.html',
+    'Impact': 'Broken sentiment and latency text readability on mobile devices.'
   }
 ];
 
@@ -304,6 +312,14 @@ const fixesApplied = [
     'Technical Implementation': 'Added responsive mobile rules: studio-cards flex column with margin: 0 auto, max-width: 380px, symmetric 12px outer/inner padding, centered persona pills, and non-overflowing horizontal scroll nav.',
     'Files Modified': 'public/css/nova-modern.css, css/nova-modern.css, public/nova.html, nova.html',
     'Verification Method': 'Browser subagent verified exact symmetric 22.8px left and right margins; 0px horizontal overflow.'
+  },
+  {
+    'Fix #': 'FIX-18',
+    'Related Issue': 'ISSUE-18',
+    'Fix Name': 'Voice Studio 2x2 Responsive Metrics Grid',
+    'Technical Implementation': 'Refactored metrics into clean 2x2 grid with .metric-label badges, centered values, hyphens: none, word-break: normal, and ample padding preventing any text clipping.',
+    'Files Modified': 'public/css/nova-modern.css, css/nova-modern.css, public/nova.html, nova.html',
+    'Verification Method': 'Verified on 393px mobile screen: 2x2 tiles with full Sentiment text visibility.'
   }
 ];
 
@@ -325,7 +341,8 @@ const testResults = [
   { 'Test ID': 'TC-14', 'Module / Component': 'SEO & Crawler Compliance', 'Test Scenario': 'Fetch /robots.txt, /sitemap.xml, and /manifest.json', 'Expected Result': 'Valid plain text robots.txt, XML sitemap, and JSON manifest', 'Actual Result': 'HTTP 200 on all endpoints with correct MIME types.', 'Status': 'PASS' },
   { 'Test ID': 'TC-15', 'Module / Component': 'Production Cloud Deployment', 'Test Scenario': 'curl -I https://nova-ai-thlt.onrender.com/ and check widget', 'Expected Result': 'HTTP 200 OK, Cloudflare Edge active, new widget live', 'Actual Result': 'HTTP 200 OK, dynamic edge cache, new widget verified.', 'Status': 'PASS' },
   { 'Test ID': 'TC-16', 'Module / Component': 'Hero Line Overlap Bug', 'Test Scenario': 'Inspect hero typography at 393px (iPhone 14 Pro)', 'Expected Result': 'Zero line slicing through "We build it. We help you scale."', 'Actual Result': 'Clean text with zero overlapping decorative lines.', 'Status': 'PASS' },
-  { 'Test ID': 'TC-17', 'Module / Component': 'Voice Studio Card Mobile Centering', 'Test Scenario': 'Evaluate studioCard.getBoundingClientRect() at 393x852 viewport', 'Expected Result': 'Equal left and right margins; 0px horizontal overflow', 'Actual Result': 'Exact symmetric 22.8px left/right margins; 0px overflow.', 'Status': 'PASS' }
+  { 'Test ID': 'TC-17', 'Module / Component': 'Voice Studio Card Mobile Centering', 'Test Scenario': 'Evaluate studioCard.getBoundingClientRect() at 393x852 viewport', 'Expected Result': 'Equal left and right margins; 0px horizontal overflow', 'Actual Result': 'Exact symmetric 22.8px left/right margins; 0px overflow.', 'Status': 'PASS' },
+  { 'Test ID': 'TC-18', 'Module / Component': 'Voice Studio Metrics Formatting', 'Test Scenario': 'Verify 2x2 grid layout and Sentiment pill text wrapping at 393x852', 'Expected Result': 'Full "Positive / Empathetic" text visible with zero word slicing', 'Actual Result': '100% visible text in balanced 2x2 tile grid; zero clipping.', 'Status': 'PASS' }
 ];
 
 // 5. PERFORMANCE METRICS & BENCHMARKS SHEET
