@@ -125,7 +125,8 @@ export async function mountFormationStory({THREE, geometry}) {
   }
   function start(){if(!raf&&onScreen&&!document.hidden){last=performance.now();raf=requestAnimationFrame(tick);}}
   const observer=new IntersectionObserver(entries=>{onScreen=entries[0].isIntersecting;if(onScreen){updateTarget();start();}else{cancelAnimationFrame(raf);raf=0;}},{threshold:0});observer.observe(section);
-  window.addEventListener('scroll',()=>{updateTarget();start();},{passive:true});
+  let scrollThrottle = false;
+  window.addEventListener('scroll',()=>{if(!scrollThrottle){scrollThrottle=true;requestAnimationFrame(()=>{updateTarget();start();scrollThrottle=false;});}},{passive:true});
   new ResizeObserver(sampleType).observe(art);
   document.addEventListener('visibilitychange',start);
   reduced.addEventListener('change',()=>{updateTarget();start();});
