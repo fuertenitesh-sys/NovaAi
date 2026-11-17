@@ -51,27 +51,32 @@ const SOUNDSTAGE_PERSONAS = {
   support: {
     name: 'Riya',
     roleBadge: 'Customer Operations',
+    greetingAudioId: 'support_greeting',
     greeting: "Hello! Thanks for connecting with Nova Support. I see your express delivery #NC-4928 is out for delivery today. How would you like me to assist you?",
     lang: 'en-US',
     rate: 1.05,
     prompts: [
       {
-        label: '💬 "Send live GPS tracking link to my phone"',
+        audioId: 'support_1',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Send live GPS tracking link to my phone"',
         reply: 'Can you send a live GPS tracking link to my phone?',
         response: "Absolutely! I've just sent a direct real-time GPS tracking link to your registered mobile number ending in 4102. You can track the courier vehicle right now."
       },
       {
-        label: '💬 "What if I\'m not home to sign?"',
+        audioId: 'support_2',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "What if I\'m not home to sign?"',
         reply: 'What happens if I\'m not home to sign for the delivery?',
         response: "No problem at all! Would you like me to authorize a contactless delivery to your porch, or should I reschedule the delivery for tomorrow morning at 10:00 AM?"
       },
       {
-        label: '💬 "Reschedule delivery for tomorrow"',
+        audioId: 'support_3',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Reschedule delivery for tomorrow"',
         reply: 'Can you reschedule the delivery for tomorrow morning?',
         response: "Done! I've rescheduled package #NC-4928 for tomorrow between 9:00 AM and 11:30 AM with your local courier hub. Anything else I can do for you?"
       },
       {
-        label: '💬 "Transfer to human supervisor"',
+        audioId: 'support_4',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Transfer to human supervisor"',
         reply: 'I need to speak with a human supervisor immediately.',
         response: "I understand completely. I am transferring your context and delivery notes directly to senior operations manager Sarah right now. Estimated hold time is under 15 seconds."
       }
@@ -80,27 +85,32 @@ const SOUNDSTAGE_PERSONAS = {
   realestate: {
     name: 'Riya',
     roleBadge: 'Real Estate Concierge',
+    greetingAudioId: 'realestate_greeting',
     greeting: "Namaste! Welcome to Nova Living. Are you exploring our 3-BHK luxury penthouses in Downtown, or would you like to schedule an exclusive in-person site visit this Saturday?",
     lang: 'hi-IN',
     rate: 1.02,
     prompts: [
       {
-        label: '💬 "Show 3-BHK penthouse pricing & sizes"',
+        audioId: 'realestate_1',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Show 3-BHK penthouse pricing & sizes"',
         reply: 'What is the starting price and square footage of the 3-BHK penthouses?',
-        response: "Our 3-BHK skyline penthouses start at $1.85M with 2,400 sq.ft of private terrace space and floor-to-ceiling panoramic views. Would you like me to email you the complete floor plan PDF?"
+        response: "Our 3-BHK skyline penthouses start at 1.85 million dollars with 2,400 square feet of private terrace space and floor-to-ceiling panoramic views. Would you like me to email you the complete floor plan PDF?"
       },
       {
-        label: '💬 "Book private site visit for Saturday"',
+        audioId: 'realestate_2',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Book private site visit for Saturday"',
         reply: 'Can I book an exclusive site visit this Saturday at 2:00 PM?',
         response: "Confirmed! I've reserved a VIP private viewing for Saturday at 2:00 PM with our senior property director. I will WhatsApp your digital entry pass immediately."
       },
       {
-        label: '💬 "What are the flexible payment plans?"',
+        audioId: 'realestate_3',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "What are the flexible payment plans?"',
         reply: 'Do you offer flexible construction-linked payment plans?',
         response: "Yes! We offer a 20:80 flexible construction-linked structure with zero EMI until possession. Would you like me to connect you with our financing specialist?"
       },
       {
-        label: '💬 "Send brochure on WhatsApp"',
+        audioId: 'realestate_4',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Send brochure on WhatsApp"',
         reply: 'Please send the high-res brochure and amenity deck to my WhatsApp.',
         response: "Sending right away! I've dispatched the 2026 Architectural Brochure and Virtual Reality Walkthrough link to your registered mobile number."
       }
@@ -109,58 +119,68 @@ const SOUNDSTAGE_PERSONAS = {
   clinical: {
     name: 'Dr. Riya',
     roleBadge: 'Clinical Intake Triage',
+    greetingAudioId: 'clinical_greeting',
     greeting: "Hello, this is Dr. Riya from Clinical Concierge. Let's get your doctor consultation or prescription triage arranged immediately. How can I assist with your care today?",
     lang: 'en-GB',
     rate: 1.0,
     prompts: [
       {
-        label: '💬 "Book routine checkup with Dr. Sharma"',
+        audioId: 'clinical_1',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Book routine checkup with Dr. Sharma"',
         reply: 'I need to schedule my annual follow-up consultation with Dr. Sharma.',
         response: "Certainly. Dr. Sharma has open slots this Thursday at 10:15 AM or Friday at 3:30 PM. Which time suits your schedule best?"
       },
       {
-        label: '💬 "Urgent prescription refill request"',
+        audioId: 'clinical_2',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Urgent prescription refill request"',
         reply: 'Can I request an urgent 30-day refill for my blood pressure medication?',
-        response: "I've verified your prescription history and transmitted an electronic refill authorization directly to your designated pharmacy. It will be ready for pickup in 45 minutes."
+        response: "I can process that refill immediately with your pharmacy. Is this for Lisinopril 10 milligrams, or your daily inhaler?"
       },
       {
-        label: '💬 "Verify insurance pre-authorization"',
-        reply: 'Does my BlueCross plan cover the upcoming diagnostic MRI scan?',
-        response: "Yes, your pre-authorization has already cleared under in-network benefits with a standard $25 co-pay. Your referral documents are already attached to your file."
-      },
-      {
-        label: '💬 "Report mild postoperative symptoms"',
+        audioId: 'clinical_3',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Report mild postoperative symptoms"',
         reply: 'I had minor surgery yesterday and am feeling mild nausea.',
-        response: "I have recorded your symptoms. Mild nausea is common within 24 hours of anesthesia, but I am notifying your surgical on-call nurse right now for a direct follow-up call."
+        response: "I am logging these symptoms as high priority. A triage nurse is reviewing your vitals and will connect with you in under 90 seconds."
+      },
+      {
+        audioId: 'clinical_4',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Verify insurance pre-authorization"',
+        reply: 'Does my BlueCross plan cover the upcoming diagnostic MRI scan?',
+        response: "Your insurance coverage with BlueCross BlueShield is active. Your estimated copay for this specialized visit is zero dollars."
       }
     ]
   },
   banking: {
-    name: 'Vikram',
+    name: 'Riya',
     roleBadge: 'Fraud Intervention',
-    greeting: "Security Alert from Nova Banking: We detected an unfamiliar transaction of $420.00 in Singapore at 2:15 AM on card ending in 4102. Did you authorize this charge?",
+    greetingAudioId: 'banking_greeting',
+    greeting: "Nova Security Operations. We've detected an uncharacteristic debit attempt of $1,420 from an unfamiliar terminal in London. Did you authorize this transaction?",
     lang: 'en-US',
-    rate: 1.08,
+    rate: 1.05,
     prompts: [
       {
-        label: '💬 "No, I did NOT authorize this charge!"',
+        audioId: 'banking_1',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "No, I did NOT authorize this charge!"',
         reply: 'No, I did not make that purchase! Please block it immediately.',
-        response: "Understood! I have instantly frozen your card to prevent further charges, reversed the $420 transaction, and initiated a replacement card dispatch via express courier to your home address."
+        response: "Understood. I have immediately frozen that terminal authorization and blocked card ending in 8819. Zero funds have been deducted from your account."
       },
       {
-        label: '💬 "Lock all my credit and debit cards"',
+        audioId: 'banking_2',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Lock all my credit and debit cards"',
         reply: 'Please lock all active cards on my account right now.',
-        response: "All active cards associated with account #8941 have been locked with emergency security holds. No further funds can leave the account until you authenticate."
+        response: "I've flagged this transaction for your review in the Nova Mobile app. Your card remains active for authorized merchant transactions."
       },
       {
-        label: '💬 "Yes, that was me traveling"',
-        reply: 'Yes, that was me traveling overseas. The transaction is valid.',
-        response: "Thank you for authenticating! I have approved the $420 transaction and updated your travel itinerary through next Tuesday so your card functions seamlessly without further flags."
+        audioId: 'banking_3',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Order immediate replacement card"',
+        reply: 'Can you dispatch a replacement card with voice biometrics?',
+        response: "A replacement debit card with contactless voice biometrics has been dispatched via priority overnight courier to your primary address."
       },
       {
-        label: '💬 "Transfer to human fraud specialist"',
-        reply: 'Can I speak directly with a human fraud investigator?',
-        response: "Connecting you immediately. I am handing off your encrypted authentication credentials to senior investigator Davis. Please stay on the line for 5 seconds."
+        audioId: 'banking_4',
+        label: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Confirm voice biometric verification"',
+        reply: 'I am speaking to authenticate with my registered voiceprint.',
+        response: "Thank you for confirming your voice biometric print. Your security status is verified and all pending holds have been cleared."
       }
     ]
   }
@@ -326,8 +346,10 @@ function initNeuralSoundstage() {
     drawSpec();
   }
 
-  // 3. Speech Synthesis Speaker Helper
-  function speakText(text, lang, onEndCallback) {
+  // 3. Speech Synthesis & Authentic Neural Audio Player (Riya AI)
+  let currentAudioObj = null;
+
+  function speakAudioOrText(audioId, text, lang, onEndCallback) {
     stopCurrentSpeech();
     soundstageIsSpeaking = true;
     if (mainPlayBtn) {
@@ -338,15 +360,65 @@ function initNeuralSoundstage() {
       orbIndicator.innerHTML = `<span style="color:#00f2fe;">● Nova Neural Voice Active · Streaming Speech</span>`;
     }
 
+    // 1. Play authentic studio neural MP3 file (Crystal-clear Riya female voice)
+    if (audioId) {
+      const audioUrl = `/audio/${audioId}.mp3`;
+      const audio = new Audio(audioUrl);
+      currentAudioObj = audio;
+      audio.playbackRate = soundstageRate;
+
+      let simOrb = setInterval(() => {
+        if (!soundstageIsSpeaking || audio.paused || audio.ended) {
+          clearInterval(simOrb);
+        } else {
+          orbAudioLevel = 0.35 + Math.random() * 0.55;
+        }
+      }, 50);
+
+      audio.onended = () => {
+        clearInterval(simOrb);
+        stopCurrentSpeech();
+        if (onEndCallback) onEndCallback();
+      };
+
+      audio.onerror = () => {
+        clearInterval(simOrb);
+        console.warn('Audio asset error, falling back to female TTS:', audioUrl);
+        currentAudioObj = null;
+        fallbackFemaleTTS(text, lang, onEndCallback);
+      };
+
+      audio.play().catch(err => {
+        clearInterval(simOrb);
+        console.warn('Audio playback error, falling back to female TTS:', err);
+        currentAudioObj = null;
+        fallbackFemaleTTS(text, lang, onEndCallback);
+      });
+      return;
+    }
+
+    fallbackFemaleTTS(text, lang, onEndCallback);
+  }
+
+  function fallbackFemaleTTS(text, lang, onEndCallback) {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
       u.lang = lang || 'en-US';
       u.rate = soundstageRate;
-      u.pitch = 1.02;
+      u.pitch = 1.12;
 
       const voices = window.speechSynthesis.getVoices();
-      const match = voices.find(v => v.lang.startsWith((lang || 'en').slice(0, 2)));
+      let match = null;
+      if (lang && lang.startsWith('hi')) {
+        match = voices.find(v => /swara|neerja|kalpana|heera|priya|riya|geeta|google हिन्दी|hindi/i.test(v.name));
+      }
+      if (!match) {
+        match = voices.find(v => /aria|jenny|zira|samantha|karen|victoria|ava|emma|sonia|natasha|heera|neerja|google us english|female/i.test(v.name));
+      }
+      if (!match) {
+        match = voices.find(v => !/david|mark|george|guy|ravi|prabhat|male/i.test(v.name));
+      }
       if (match) u.voice = match;
 
       u.onend = () => {
@@ -363,12 +435,20 @@ function initNeuralSoundstage() {
       setTimeout(() => {
         stopCurrentSpeech();
         if (onEndCallback) onEndCallback();
-      }, 5000);
+      }, 4000);
     }
   }
 
   function stopCurrentSpeech() {
     soundstageIsSpeaking = false;
+    orbAudioLevel = 0;
+    if (currentAudioObj) {
+      try {
+        currentAudioObj.pause();
+        currentAudioObj.currentTime = 0;
+      } catch(e) {}
+      currentAudioObj = null;
+    }
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
@@ -402,7 +482,7 @@ function initNeuralSoundstage() {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'prompt-pill';
-      btn.textContent = p.label;
+      btn.innerHTML = p.label;
       btn.addEventListener('click', () => {
         // User clicks this option!
         appendChatBubble('YOU (ENTERPRISE USER)', p.reply, true);
@@ -430,7 +510,7 @@ function initNeuralSoundstage() {
             }
           }, 90);
 
-          speakText(p.response, persona.lang);
+          speakAudioOrText(p.audioId, p.response, persona.lang);
         }, 140);
       });
       pillsGrid.appendChild(btn);
@@ -464,6 +544,25 @@ function initNeuralSoundstage() {
     card.addEventListener('click', () => setPersona(card.dataset.persona));
   });
 
+  // Connect Enterprise Bento Cards to Persona Switcher
+  document.querySelectorAll('.bento-audition-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const personaKey = btn.dataset.switchPersona || 'support';
+      const consoleEl = document.getElementById('demo-console');
+      if (consoleEl) {
+        consoleEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      setTimeout(() => {
+        setPersona(personaKey);
+        const persona = SOUNDSTAGE_PERSONAS[personaKey];
+        if (persona) {
+          speakAudioOrText(persona.greetingAudioId, persona.greeting, persona.lang);
+        }
+      }, 450);
+    });
+  });
+
   // 6. Action Controls: Play Button, Interrupt, Mute
   if (mainPlayBtn) {
     mainPlayBtn.addEventListener('click', () => {
@@ -471,7 +570,7 @@ function initNeuralSoundstage() {
         stopCurrentSpeech();
       } else {
         const persona = SOUNDSTAGE_PERSONAS[activePersonaKey];
-        speakText(persona.greeting, persona.lang);
+        speakAudioOrText(persona.greetingAudioId, persona.greeting, persona.lang);
       }
     });
   }

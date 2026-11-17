@@ -590,34 +590,438 @@
   color: var(--dark, #1c1b1a);
 }
 
-/* ══════════════ 5. ENTERPRISE SECTORS PROOF ══════════════ */
-.enterprise-sectors-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-  margin-top: 24px;
+/* ══════════════ 5. ENTERPRISE ARCHITECTURAL PRODUCTION MATRIX ══════════════ */
+.enterprise-matrix-section {
+  padding: 88px 24px;
+  background: #fbfbfa;
+  border-top: 1px solid #eeede9;
+  border-bottom: 1px solid #eeede9;
+  position: relative;
 }
 
-.sector-pill-item {
+.enterprise-matrix-container {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.enterprise-matrix-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.matrix-header-left {
+  max-width: 720px;
+}
+
+.matrix-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: #64625d;
+  margin-bottom: 14px;
+}
+
+.matrix-tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: #ffffff;
-  border: 1px solid #e2e1de;
+  border: 1px solid #dedcd7;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: #1a1918;
+}
+
+.matrix-beacon {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0284c7;
+  box-shadow: 0 0 8px #0284c7;
+}
+
+.matrix-sep {
+  color: #b5b3ad;
+}
+
+.matrix-tag-sub {
+  color: #8c8984;
+}
+
+.matrix-title {
+  font-family: var(--font-display, inherit);
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: #141312;
+  margin-bottom: 16px;
+}
+
+.matrix-title-gradient {
+  background: linear-gradient(135deg, #141312 30%, #0284c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.matrix-description {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #5c5a55;
+  max-width: 640px;
+  margin: 0;
+}
+
+.matrix-header-hud {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e5e3de;
   border-radius: 12px;
   padding: 16px 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  min-width: 320px;
+}
+
+.matrix-hud-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-family: var(--font-mono, monospace);
+}
+
+.matrix-hud-item:not(:last-child) {
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0eee9;
+}
+
+.mhud-label {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: #8a8882;
+  text-transform: uppercase;
+}
+
+.mhud-val {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a1918;
+}
+
+.mhud-val.green {
+  color: #059669;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #059669;
+  display: inline-block;
+  box-shadow: 0 0 6px rgba(5, 150, 105, 0.6);
+}
+
+/* 6 Bento Grid Cards */
+.enterprise-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .enterprise-bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .enterprise-bento-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bento-card {
+  background: #ffffff;
+  border: 1px solid #e7e5e0;
+  border-radius: 16px;
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+.bento-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  transition: background 0.25s ease;
+}
+
+.bento-card:hover {
+  border-color: #1c1b1a;
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px -12px rgba(0, 0, 0, 0.07);
+}
+
+.bento-card.bento-fintech:hover::before { background: #0284c7; }
+.bento-card.bento-health:hover::before { background: #059669; }
+.bento-card.bento-estate:hover::before { background: #d97706; }
+.bento-card.bento-logistics:hover::before { background: #7c3aed; }
+.bento-card.bento-retail:hover::before { background: #e11d48; }
+.bento-card.bento-saas:hover::before { background: #0891b2; }
+
+.bento-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.bento-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
+  justify-content: center;
+}
+
+.fintech-glow {
+  background: rgba(2, 132, 199, 0.08);
+  color: #0284c7;
+  border: 1px solid rgba(2, 132, 199, 0.2);
+}
+
+.health-glow {
+  background: rgba(5, 150, 105, 0.08);
+  color: #059669;
+  border: 1px solid rgba(5, 150, 105, 0.2);
+}
+
+.estate-glow {
+  background: rgba(217, 119, 6, 0.08);
+  color: #d97706;
+  border: 1px solid rgba(217, 119, 6, 0.2);
+}
+
+.logistics-glow {
+  background: rgba(124, 58, 237, 0.08);
+  color: #7c3aed;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+.retail-glow {
+  background: rgba(225, 29, 72, 0.08);
+  color: #e11d48;
+  border: 1px solid rgba(225, 29, 72, 0.2);
+}
+
+.saas-glow {
+  background: rgba(8, 145, 178, 0.08);
+  color: #0891b2;
+  border: 1px solid rgba(8, 145, 178, 0.2);
+}
+
+.bento-badge-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.bento-spec-badge {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #f4f3f0;
+  color: #55534e;
+  border: 1px solid #e6e4df;
+}
+
+.bento-spec-badge.hipaa {
+  background: rgba(5, 150, 105, 0.08);
+  color: #047857;
+  border-color: rgba(5, 150, 105, 0.2);
+}
+
+.bento-sector-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8c8984;
+  margin-bottom: 6px;
+}
+
+.bento-card-title {
+  font-family: var(--font-display, inherit);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #141312;
+  margin: 0 0 10px;
+}
+
+.bento-card-copy {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #5c5a55;
+  margin: 0 0 24px;
+}
+
+.bento-card-footer {
+  border-top: 1px solid #f0eee9;
+  padding-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 12px;
+}
+
+.bento-metrics {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.metric-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-num {
+  font-family: var(--font-mono, monospace);
+  font-size: 15px;
+  font-weight: 700;
+  color: #141312;
+  letter-spacing: -0.02em;
+}
+
+.metric-lbl {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #8a8882;
+}
+
+.metric-divider {
+  width: 1px;
+  height: 24px;
+  background: #e7e5e0;
+}
+
+.bento-audition-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0284c7;
+  background: rgba(2, 132, 199, 0.06);
+  border: 1px solid rgba(2, 132, 199, 0.2);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.bento-audition-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+/* Soundstage Persona SVG Icon Styling (NO EMOJIS) */
+.persona-icon-svg {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   transition: all 0.2s ease;
 }
 
-.sector-pill-item:hover {
-  border-color: #1c1b1a;
-  transform: translateY(-2px);
+.support-svg {
+  background: rgba(14, 165, 233, 0.12);
+  color: #0ea5e9;
+  border: 1px solid rgba(14, 165, 233, 0.25);
 }
 
-.sector-pill-item span {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--dark, #1c1b1a);
+.estate-svg {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.health-svg {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.fraud-svg {
+  background: rgba(99, 102, 241, 0.12);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.persona-card:hover .persona-icon-svg,
+.persona-card.active .persona-icon-svg {
+  transform: scale(1.08);
+}
+
+/* Hero Trust Badges */
+.hero-trust-badges {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11.5px;
+  color: #6a6863;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.hero-trust-badges span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trust-sep {
+  color: #c7c5bf;
+}
+
+.pill-wave-icon {
+  margin-right: 6px;
+  vertical-align: middle;
+  display: inline-block;
+  color: #00f2fe;
 }
 
 

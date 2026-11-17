@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="contact.css?v=1">
 <link rel="stylesheet" href="icons.css?v=1">
 <link rel="stylesheet" href="clients.css?v=1">
-<link rel="stylesheet" href="css/nova-enhancements.css?v=soundstage-v8">
+<link rel="stylesheet" href="css/nova-enhancements.css?v=enterprise-matrix-v9">
 <script src="app.js" defer></script>
 <script src="homepage.js?v=buyer-review-2" defer></script>
 <script type="module" src="scene.js?v=assembly-fix-v5"></script>
@@ -26,7 +26,7 @@
 <script defer src="contact.js?v=1"></script>
 <script src="assets/livekit-client.umd.js"></script>
 <script defer src="js/nova-modern.js?v=4"></script>
-<script defer src="js/nova-interactive-engine.js?v=soundstage-v8"></script>
+<script defer src="js/nova-interactive-engine.js?v=enterprise-matrix-v9"></script>
 
 <link rel="canonical" href="/">
 <meta name="robots" content="index,follow,max-image-preview:large">
@@ -90,32 +90,12 @@
           <a class="text-link" href="#demo-console">Listen to live audio <span><svg class="nova-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M5 13l7 7 7-7"/></svg></span></a>
         </div>
 
-        <!-- 1-Click Interactive Hero Voice Sampler -->
-        <div class="hero-voice-sampler" id="heroVoiceSampler">
-          <div class="sampler-top">
-            <div class="sampler-status-label">
-              <span class="sampler-wave-icon">
-                <span></span><span></span><span></span><span></span>
-              </span>
-              <span>LIVE VOICE SAMPLER (1-CLICK AUDITION)</span>
-            </div>
-            <div class="sampler-pills">
-              <button type="button" class="sampler-pill active" data-lang="en-US" data-sample="Hello! Thanks for connecting with Nova AI. I operate at 178 milliseconds direct speech latency, resolving customer inquiries with zero robotic pause.">English 🇺🇸</button>
-              <button type="button" class="sampler-pill" data-lang="hi-IN" data-sample="नमस्ते! मैं रिया हूँ। नोवा का रियल-टाइम स्पीच इंजन बिना किसी रुकावट के स्वाभाविक हिंदी और इंग्लिश में तुरंत जवाब देता है।">हिंदी 🇮🇳</button>
-              <button type="button" class="sampler-pill" data-lang="es-ES" data-sample="¡Hola! Soy Riya de Nova. Nuestro modelo neural procesa voz en tiempo real con latencia inferior a doscientos milisegundos.">Español 🇪🇸</button>
-              <button type="button" class="sampler-pill" data-lang="de-DE" data-sample="Hallo! Ich bin Riya von Nova. Unsere autonome Sprach-KI reagiert in Echtzeit mit nativer Prosodie.">Deutsch 🇩🇪</button>
-            </div>
-          </div>
-          <div class="sampler-controls">
-            <button type="button" class="sampler-play-btn" id="heroSamplerPlayBtn">
-              <svg class="play-svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M8 5v14l11-7z"/></svg>
-              <span>Play Live Voice (178ms)</span>
-            </button>
-            <div class="sampler-canvas-container">
-              <canvas id="heroSamplerCanvas" height="36"></canvas>
-            </div>
-          </div>
-          <p class="sampler-live-caption" id="heroSamplerCaption">"Click 'Play Live Voice' to stream neural speech synthesis in real-time."</p>
+        <div class="hero-trust-badges">
+          <span><svg class="trust-check" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="#059669" stroke-width="2"><path d="M3 8l3.5 3.5L13 4"/></svg> SOC-2 Type II Certified</span>
+          <span class="trust-sep">·</span>
+          <span><svg class="trust-check" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="#059669" stroke-width="2"><path d="M3 8l3.5 3.5L13 4"/></svg> Sub-200ms WebRTC Pipeline</span>
+          <span class="trust-sep">·</span>
+          <span><svg class="trust-check" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="#059669" stroke-width="2"><path d="M3 8l3.5 3.5L13 4"/></svg> 99.99% Cloud Uptime SLA</span>
         </div>
       </div>
     </div>
@@ -152,54 +132,289 @@
     </div>
   </section>
 
-  <!-- ═══════════ ENTERPRISE DOMAINS ═══════════ -->
-  <section class="client-proof" id="clients" aria-labelledby="clients-title">
-    <div class="client-proof-heading">
-      <h2 class="eyebrow" id="clients-title"><i aria-hidden="true"></i> ENTERPRISE DOMAINS</h2>
-      <p>High-volume industries powered by Nova AI.</p>
-    </div>
-    <div class="enterprise-sectors-grid">
-      <div class="sector-pill-item">
-        <span style="font-size: 1.25rem;">🏦</span>
-        <div>
-          <span>Banking &amp; Fintech</span>
-          <small style="display:block; font-size:11px; color:#858482;">Voice Biometrics &amp; Fraud</small>
+  <!-- ═══════════ ENTERPRISE DOMAINS & ARCHITECTURAL PRODUCTION MATRIX ═══════════ -->
+  <section class="enterprise-matrix-section" id="clients" aria-labelledby="clients-title">
+    <div class="enterprise-matrix-container">
+      
+      <div class="enterprise-matrix-header">
+        <div class="matrix-header-left">
+          <div class="matrix-eyebrow">
+            <span class="matrix-tag-badge"><span class="matrix-beacon"></span> ENTERPRISE PRODUCTION MATRIX</span>
+            <span class="matrix-sep">/</span>
+            <span class="matrix-tag-sub">MISSION-CRITICAL INDUSTRY DEPLOYMENTS</span>
+          </div>
+          <h2 class="matrix-title" id="clients-title">
+            Institutional-Grade Voice AI.<br>
+            <span class="matrix-title-gradient">Hardened for High-Velocity Sectors.</span>
+          </h2>
+          <p class="matrix-description">
+            Domain-specific foundational neural models, zero-day CRM &amp; EHR connectors, and regulatory security frameworks pre-configured for global enterprises handling millions of voice interactions monthly.
+          </p>
+        </div>
+        
+        <div class="matrix-header-hud">
+          <div class="matrix-hud-item">
+            <span class="mhud-label">COMPLIANCE STANDARDS</span>
+            <span class="mhud-val">SOC-2 Type II · HIPAA · PCI-DSS L1 · GDPR</span>
+          </div>
+          <div class="matrix-hud-item">
+            <span class="mhud-label">VOICE INTERCEPTION SLA</span>
+            <span class="mhud-val green"><i class="hud-dot"></i> &lt;140ms Biometric Intercept</span>
+          </div>
+          <div class="matrix-hud-item">
+            <span class="mhud-label">MONTHLY SCALE</span>
+            <span class="mhud-val">14.8M+ Autonomous Voice Turns</span>
+          </div>
         </div>
       </div>
-      <div class="sector-pill-item">
-        <span style="font-size: 1.25rem;">🏥</span>
-        <div>
-          <span>Healthcare &amp; Clinical</span>
-          <small style="display:block; font-size:11px; color:#858482;">HIPAA Patient Intake</small>
-        </div>
-      </div>
-      <div class="sector-pill-item">
-        <span style="font-size: 1.25rem;">🏡</span>
-        <div>
-          <span>Real Estate &amp; PropTech</span>
-          <small style="display:block; font-size:11px; color:#858482;">Lead Qualification &amp; Tours</small>
-        </div>
-      </div>
-      <div class="sector-pill-item">
-        <span style="font-size: 1.25rem;">🚚</span>
-        <div>
-          <span>Logistics &amp; Supply Chain</span>
-          <small style="display:block; font-size:11px; color:#858482;">Automated Dispatching</small>
-        </div>
-      </div>
-      <div class="sector-pill-item">
-        <span style="font-size: 1.25rem;">🛍️</span>
-        <div>
-          <span>E-Commerce &amp; Retail</span>
-          <small style="display:block; font-size:11px; color:#858482;">Order Triage &amp; Returns</small>
-        </div>
-      </div>
-      <div class="sector-pill-item">
-        <span style="font-size: 1.25rem;">⚡</span>
-        <div>
-          <span>Enterprise SaaS</span>
-          <small style="display:block; font-size:11px; color:#858482;">24/7 Tier-1 Technical Support</small>
-        </div>
+
+      <!-- 6 High-Performance Enterprise Bento Cards -->
+      <div class="enterprise-bento-grid">
+        
+        <!-- 1. Banking & Fintech -->
+        <article class="bento-card bento-fintech">
+          <div class="bento-card-top">
+            <div class="bento-icon-wrapper fintech-glow">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <div class="bento-badge-group">
+              <span class="bento-spec-badge">FIDO2 BIOMETRICS</span>
+              <span class="bento-spec-badge">PCI-DSS L1</span>
+            </div>
+          </div>
+          <div class="bento-card-body">
+            <div class="bento-sector-name">Global Banking &amp; Fintech</div>
+            <h3 class="bento-card-title">Autonomous Voice Biometrics &amp; Real-Time Fraud Interception</h3>
+            <p class="bento-card-copy">
+              Sub-140ms continuous voiceprint authentication neutralizing deepfake audio cloning and account takeover attacks, while autonomously adjudicating multi-currency dispute workflows.
+            </p>
+          </div>
+          <div class="bento-card-footer">
+            <div class="bento-metrics">
+              <div class="metric-col">
+                <span class="metric-num">$420M+</span>
+                <span class="metric-lbl">Flow Protected</span>
+              </div>
+              <div class="metric-divider"></div>
+              <div class="metric-col">
+                <span class="metric-num">0.02%</span>
+                <span class="metric-lbl">False Accept</span>
+              </div>
+            </div>
+            <button type="button" class="bento-audition-btn" data-switch-persona="banking" aria-label="Audition Banking & Fraud Voice Agent">
+              <span>Audition Agent</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- 2. Healthcare & Clinical Intake -->
+        <article class="bento-card bento-health">
+          <div class="bento-card-top">
+            <div class="bento-icon-wrapper health-glow">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+              </svg>
+            </div>
+            <div class="bento-badge-group">
+              <span class="bento-spec-badge hipaa">HIPAA READY</span>
+              <span class="bento-spec-badge">EPIC / CERNER FHIR</span>
+            </div>
+          </div>
+          <div class="bento-card-body">
+            <div class="bento-sector-name">Healthcare &amp; Hospital Networks</div>
+            <h3 class="bento-card-title">HIPAA-Compliant Patient Intake &amp; Clinical Routing</h3>
+            <p class="bento-card-copy">
+              Bi-directional conversational patient triage integrated with EHR systems. Validates clinical insurance eligibility and coordinates post-discharge care protocols without clinician burnout.
+            </p>
+          </div>
+          <div class="bento-card-footer">
+            <div class="bento-metrics">
+              <div class="metric-col">
+                <span class="metric-num">99.4%</span>
+                <span class="metric-lbl">Triage Accuracy</span>
+              </div>
+              <div class="metric-divider"></div>
+              <div class="metric-col">
+                <span class="metric-num">0 min</span>
+                <span class="metric-lbl">Queue Drop</span>
+              </div>
+            </div>
+            <button type="button" class="bento-audition-btn" data-switch-persona="clinical" aria-label="Audition Clinical Intake Voice Agent">
+              <span>Audition Agent</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- 3. PropTech & Luxury Real Estate -->
+        <article class="bento-card bento-estate">
+          <div class="bento-card-top">
+            <div class="bento-icon-wrapper estate-glow">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+            </div>
+            <div class="bento-badge-group">
+              <span class="bento-spec-badge">MULTI-DIALECT ENGINE</span>
+              <span class="bento-spec-badge">CALENDAR SYNC</span>
+            </div>
+          </div>
+          <div class="bento-card-body">
+            <div class="bento-sector-name">PropTech &amp; Institutional Real Estate</div>
+            <h3 class="bento-card-title">High-Value Conversational Leasing &amp; Automated Tours</h3>
+            <p class="bento-card-copy">
+              Pre-qualifies luxury property buyers in fluent native dialects (English &amp; Hinglish), answers floor plan specifications in sub-200ms, and books verified in-person site visits directly into agent calendars.
+            </p>
+          </div>
+          <div class="bento-card-footer">
+            <div class="bento-metrics">
+              <div class="metric-col">
+                <span class="metric-num">4.2x</span>
+                <span class="metric-lbl">Tour Conversion</span>
+              </div>
+              <div class="metric-divider"></div>
+              <div class="metric-col">
+                <span class="metric-num">&lt;30s</span>
+                <span class="metric-lbl">Lead Contact</span>
+              </div>
+            </div>
+            <button type="button" class="bento-audition-btn" data-switch-persona="realestate" aria-label="Audition Real Estate Voice Agent">
+              <span>Audition Agent</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- 4. Logistics & Supply Chain -->
+        <article class="bento-card bento-logistics">
+          <div class="bento-card-top">
+            <div class="bento-icon-wrapper logistics-glow">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="3" width="15" height="13"/>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                <circle cx="5.5" cy="18.5" r="2.5"/>
+                <circle cx="18.5" cy="18.5" r="2.5"/>
+              </svg>
+            </div>
+            <div class="bento-badge-group">
+              <span class="bento-spec-badge">TMS WEBHOOKS</span>
+              <span class="bento-spec-badge">WEBRTC DISPATCH</span>
+            </div>
+          </div>
+          <div class="bento-card-body">
+            <div class="bento-sector-name">Autonomous Logistics &amp; Freight Ops</div>
+            <h3 class="bento-card-title">Voice-Driven Fleet Dispatch &amp; Exception Escalation</h3>
+            <p class="bento-card-copy">
+              Hands-free voice telemetry for commercial freight drivers. Instantly routes transit exceptions, issues dynamic arrival ETA updates, and dispatches live GPS tracking links via SMS &amp; WhatsApp.
+            </p>
+          </div>
+          <div class="bento-card-footer">
+            <div class="bento-metrics">
+              <div class="metric-col">
+                <span class="metric-num">88%</span>
+                <span class="metric-lbl">Auto Dispatch</span>
+              </div>
+              <div class="metric-divider"></div>
+              <div class="metric-col">
+                <span class="metric-num">180ms</span>
+                <span class="metric-lbl">Voice Turn Latency</span>
+              </div>
+            </div>
+            <button type="button" class="bento-audition-btn" data-switch-persona="support" aria-label="Audition Logistics Voice Agent">
+              <span>Audition Agent</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- 5. E-Commerce & Omnichannel Retail -->
+        <article class="bento-card bento-retail">
+          <div class="bento-card-top">
+            <div class="bento-icon-wrapper retail-glow">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"/>
+                <circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              </svg>
+            </div>
+            <div class="bento-badge-group">
+              <span class="bento-spec-badge">SHOPIFY &amp; SAP ERP</span>
+              <span class="bento-spec-badge">INSTANT WHATSAPP</span>
+            </div>
+          </div>
+          <div class="bento-card-body">
+            <div class="bento-sector-name">High-Volume Retail &amp; E-Commerce</div>
+            <h3 class="bento-card-title">Sub-200ms Order Triage &amp; Automated Return Authorization</h3>
+            <p class="bento-card-copy">
+              Replaces slow chatbot forms with human-speed voice empathy. Authenticates customer accounts, checks multi-warehouse inventory, and generates return labels instantly during inbound calls.
+            </p>
+          </div>
+          <div class="bento-card-footer">
+            <div class="bento-metrics">
+              <div class="metric-col">
+                <span class="metric-num">82%</span>
+                <span class="metric-lbl">First-Call Fix</span>
+              </div>
+              <div class="metric-divider"></div>
+              <div class="metric-col">
+                <span class="metric-num">4.9 / 5.0</span>
+                <span class="metric-lbl">Verified CSAT</span>
+              </div>
+            </div>
+            <button type="button" class="bento-audition-btn" data-switch-persona="support" aria-label="Audition Customer Support Voice Agent">
+              <span>Audition Agent</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- 6. Mission-Critical SaaS & Cloud Infra -->
+        <article class="bento-card bento-saas">
+          <div class="bento-card-top">
+            <div class="bento-icon-wrapper saas-glow">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+                <line x1="6" y1="6" x2="6.01" y2="6"/>
+                <line x1="6" y1="18" x2="6.01" y2="18"/>
+              </svg>
+            </div>
+            <div class="bento-badge-group">
+              <span class="bento-spec-badge">PAGERDUTY / DATADOG</span>
+              <span class="bento-spec-badge">&lt;45S MTTR</span>
+            </div>
+          </div>
+          <div class="bento-card-body">
+            <div class="bento-sector-name">Enterprise Cloud &amp; High-Scale SaaS</div>
+            <h3 class="bento-card-title">24/7 Autonomous Tier-1 Diagnostics &amp; Escalation</h3>
+            <p class="bento-card-copy">
+              Direct technical error triage through voice. Guides enterprise developers through API key authentication, parses stack traces in real time, and hot-transfers unresolved incidents to on-call engineers.
+            </p>
+          </div>
+          <div class="bento-card-footer">
+            <div class="bento-metrics">
+              <div class="metric-col">
+                <span class="metric-num">76%</span>
+                <span class="metric-lbl">Tier-1 Deflection</span>
+              </div>
+              <div class="metric-divider"></div>
+              <div class="metric-col">
+                <span class="metric-num">&lt;45s</span>
+                <span class="metric-lbl">Mean Triage Time</span>
+              </div>
+            </div>
+            <button type="button" class="bento-audition-btn" data-switch-persona="support" aria-label="Audition SaaS Technical Support Voice Agent">
+              <span>Audition Agent</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </article>
+
       </div>
     </div>
   </section>
@@ -281,17 +496,17 @@
           <div class="prompt-pills-wrap">
             <span class="prompt-pills-label">CHOOSE A RESPONSE TO TEST MULTI-TURN CONVERSATION:</span>
             <div class="prompt-pills-grid" id="promptPillsGrid">
-              <button type="button" class="prompt-pill" data-reply="Can you send a live GPS tracking link to my phone?" data-response="Absolutely! I've sent a live GPS tracking link to your registered mobile number ending in 4102. You can track the delivery van right now.">
-                💬 "Send live GPS tracking link to my phone"
+              <button type="button" class="prompt-pill" data-audio-id="support_1" data-reply="Can you send a live GPS tracking link to my phone?" data-response="Absolutely! I've just sent a direct real-time GPS tracking link to your registered mobile number ending in 4102. You can track the courier vehicle right now.">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Send live GPS tracking link to my phone"
               </button>
-              <button type="button" class="prompt-pill" data-reply="What happens if I'm not home to sign for the delivery?" data-response="No problem at all! Would you like me to authorize a contactless delivery to your porch, or reschedule for tomorrow morning at 10:00 AM?">
-                💬 "What if I'm not home to sign?"
+              <button type="button" class="prompt-pill" data-audio-id="support_2" data-reply="What happens if I'm not home to sign for the delivery?" data-response="No problem at all! Would you like me to authorize a contactless delivery to your porch, or should I reschedule the delivery for tomorrow morning at 10:00 AM?">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "What if I'm not home to sign?"
               </button>
-              <button type="button" class="prompt-pill" data-reply="Can you reschedule the delivery for tomorrow morning?" data-response="Done! I've rescheduled package #NC-4928 for tomorrow between 9:00 AM and 11:30 AM with your local courier hub. Anything else I can do?">
-                💬 "Reschedule delivery for tomorrow"
+              <button type="button" class="prompt-pill" data-audio-id="support_3" data-reply="Can you reschedule the delivery for tomorrow morning?" data-response="Done! I've rescheduled package #NC-4928 for tomorrow between 9:00 AM and 11:30 AM with your local courier hub. Anything else I can do for you?">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Reschedule delivery for tomorrow"
               </button>
-              <button type="button" class="prompt-pill" data-reply="I need to speak with a human supervisor immediately." data-response="I understand completely. I am transferring your context and delivery notes directly to senior operations lead Sarah right now. Hold time is under 15 seconds.">
-                💬 "Transfer to human supervisor"
+              <button type="button" class="prompt-pill" data-audio-id="support_4" data-reply="I need to speak with a human supervisor immediately." data-response="I understand completely. I am transferring your context and delivery notes directly to senior operations manager Sarah right now. Estimated hold time is under 15 seconds.">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" class="pill-wave-icon"><path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4"/></svg> "Transfer to human supervisor"
               </button>
             </div>
           </div>
@@ -324,28 +539,36 @@
             </div>
             <div class="persona-cards-grid">
               <button type="button" class="persona-card active" data-persona="support">
-                <span class="persona-icon">🎧</span>
+                <span class="persona-icon-svg support-svg">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                </span>
                 <div>
                   <div class="persona-name">Customer Operations</div>
                   <small>Order triage &amp; refunds (English US)</small>
                 </div>
               </button>
               <button type="button" class="persona-card" data-persona="realestate">
-                <span class="persona-icon">🏡</span>
+                <span class="persona-icon-svg estate-svg">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </span>
                 <div>
                   <div class="persona-name">Real Estate Concierge</div>
                   <small>Luxury site visits (Hinglish / Hindi)</small>
                 </div>
               </button>
               <button type="button" class="persona-card" data-persona="clinical">
-                <span class="persona-icon">🩺</span>
+                <span class="persona-icon-svg health-svg">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                </span>
                 <div>
                   <div class="persona-name">Clinical Intake Triage</div>
                   <small>HIPAA triage &amp; consults (English UK)</small>
                 </div>
               </button>
               <button type="button" class="persona-card" data-persona="banking">
-                <span class="persona-icon">🛡️</span>
+                <span class="persona-icon-svg fraud-svg">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                </span>
                 <div>
                   <div class="persona-name">Fraud Intervention</div>
                   <small>Urgent transaction freeze (English)</small>
