@@ -289,23 +289,13 @@ app.post('/api/phone-call', async (req, res) => {
       const accountSid = process.env.TWILIO_ACCOUNT_SID;
       const authToken = process.env.TWILIO_AUTH_TOKEN;
       const twilioNumber = process.env.TWILIO_PHONE_NUMBER;
-      const twimlContent = process.env.TWILIO_TWIML_CONTENT || `
-<Response>
-  <Say voice="Polly.Aditi" language="hi-IN">Namaste! Main Nova AI se Riya bol rahi hoon. Aapka phone call successfully connect ho gaya hai. Nova AI voice intelligence ke trial me aapka swagat hai!</Say>
-  <Pause length="1"/>
-  <Say voice="Polly.Aditi" language="en-IN">Thank you for testing Nova AI telephony system. Our real-time voice intelligence is now live and working.</Say>
-</Response>`.trim();
+      const twimlUrl = process.env.TWILIO_TWIML_URL || 'https://nova-ai-thlt.onrender.com/api/twiml/riya';
 
       const postParams = {
         To: fullNumber,
-        From: twilioNumber
+        From: twilioNumber,
+        Url: twimlUrl
       };
-
-      if (process.env.TWILIO_TWIML_URL) {
-        postParams.Url = process.env.TWILIO_TWIML_URL;
-      } else {
-        postParams.Twiml = twimlContent;
-      }
 
       const postData = new URLSearchParams(postParams).toString();
 
@@ -377,6 +367,22 @@ app.post('/api/phone-call', async (req, res) => {
     res.status(500).json({ ok: false, error: 'Internal server error processing call request.' });
   }
 });
+
+/**
+ * TwiML Webhook for Twilio Voice Outbound Calls (Riya Voice Response)
+ */
+const handleTwimlRiya = (req, res) => {
+  res.type('text/xml');
+  res.send(`<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say voice="Polly.Aditi" language="hi-IN">Namaste Nitesh ji! Main Nova AI se Riya bol rahi hoon. Aapka phone call successfully connect ho gaya hai. Nova AI me aapka swagat hai!</Say>
+  <Pause length="1"/>
+  <Say voice="Polly.Aditi" language="en-IN">Thank you for testing Nova AI voice intelligence. The outbound telephony call is now live and working seamlessly.</Say>
+</Response>`);
+};
+
+app.get(['/api/twiml/riya', '/twiml', '/api/twiml'], handleTwimlRiya);
+app.post(['/api/twiml/riya', '/twiml', '/api/twiml'], handleTwimlRiya);
 
 /**
  * Nova Voice Web-Call API (LiveKit Cloud Gateway)
