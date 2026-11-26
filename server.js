@@ -409,18 +409,16 @@ app.get('/api/call-status/:callId', (req, res) => {
 });
 
 /**
- * TwiML Webhook for Twilio Voice Outbound Calls (Riya Neural Voice Response)
+ * TwiML Webhook for Twilio Voice Outbound Calls (Riya Generative Voice Response)
  */
 const handleTwimlRiya = (req, res) => {
   res.type('text/xml');
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Gather input="speech" timeout="4" language="en-IN" action="/api/twiml/riya/respond" method="POST">
-    <Say voice="Polly.Kajal-Neural" language="hi-IN">Hey Nitesh ji! Main Nova.ai se Riya bol rahi hoon.</Say>
-    <Pause length="1"/>
-    <Say voice="Polly.Kajal-Neural" language="en-IN">How can I help your business today?</Say>
+  <Gather input="speech" timeout="5" speechTimeout="auto" language="en-US" action="/api/twiml/riya/respond" method="POST">
+    <Say voice="Polly.Ruth-Generative" language="en-US">Hey! I'm Riya from Nova.ai. How can I help your business today?</Say>
   </Gather>
-  <Say voice="Polly.Kajal-Neural" language="en-IN">Thank you for connecting with Nova.ai autonomous voice intelligence. Have a wonderful day!</Say>
+  <Say voice="Polly.Ruth-Generative" language="en-US">Thank you for connecting with Nova.ai. We engineer and deploy autonomous voice intelligence for enterprises. Have a wonderful day!</Say>
 </Response>`);
 };
 
@@ -428,9 +426,7 @@ const handleTwimlRiyaRespond = (req, res) => {
   res.type('text/xml');
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="Polly.Kajal-Neural" language="en-IN">That sounds great! At Nova.ai, we engineer and deploy sub-200 millisecond speech-to-speech voice agents and autonomous workflow infrastructure for enterprises.</Say>
-  <Pause length="1"/>
-  <Say voice="Polly.Kajal-Neural" language="hi-IN">Nova.ai ke trial testing me judne ke liye bohot shukriya! Aapka din shubh ho.</Say>
+  <Say voice="Polly.Ruth-Generative" language="en-US">That sounds great! At Nova.ai, we engineer and deploy sub-200 millisecond conversational voice agents and autonomous workflow infrastructure for modern enterprises. Thank you for testing our live voice demo! Have a wonderful day.</Say>
 </Response>`);
 };
 
