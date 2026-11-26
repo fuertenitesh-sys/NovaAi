@@ -27,4 +27,123 @@
     }catch(e){error(e.name==='AbortError'?'We couldn’t confirm delivery in time. Your details are still here; please try again.':e.message==='Failed to fetch'?'We couldn’t connect. Check your connection and try again.':e.message||'Something went wrong. Please try again.');}
     finally{clearTimeout(timeout);busy=false;submit.disabled=false;form.removeAttribute('aria-busy');submit.querySelector('span').textContent='Request a conversation';}
   });
+
+  // Direct Phone Call Dialog Handler
+  const phoneDialog = document.querySelector('#phone-dialog');
+  if (phoneDialog) {
+    const phoneForm = phoneDialog.querySelector('#home-phone-form');
+    const numberInput = phoneDialog.querySelector('#home-phone-number');
+    const countrySelect = phoneDialog.querySelector('#home-country-code');
+    const phoneSubmit = phoneDialog.querySelector('#home-phone-submit');
+    const errorSpan = phoneDialog.querySelector('#home-phone-error');
+    const tracker = phoneDialog.querySelector('#home-call-tracker');
+    const trackerStep = phoneDialog.querySelector('#home-tracker-step');
+    const trackerText = phoneDialog.querySelector('#home-tracker-text');
+    const closeBtn = phoneDialog.querySelector('.contact-close');
+
+    let callTimeouts = [];
+
+    function clearTimeouts() {
+      callTimeouts.forEach(t => clearTimeout(t));
+      callTimeouts = [];
+    }
+
+    function openPhoneDialog() {
+      document.querySelectorAll('dialog[open]').forEach(d => d.close());
+      const menu = document.querySelector('.mobile-menu'), toggle = document.querySelector('.menu-toggle');
+      if (menu) menu.hidden = true;
+      if (toggle) { toggle.setAttribute('aria-expanded', 'false'); toggle.setAttribute('aria-label', 'Open menu'); }
+      document.documentElement.classList.add('contact-open');
+      phoneDialog.showModal();
+      if (numberInput) numberInput.focus({ preventScroll: true });
+    }
+
+    document.querySelectorAll('[data-open="phone-call"]').forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        openPhoneDialog();
+      });
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => phoneDialog.close());
+    }
+
+    phoneDialog.addEventListener('close', () => {
+      document.documentElement.classList.remove('contact-open');
+      clearTimeouts();
+      if (tracker) tracker.style.display = 'none';
+      if (phoneSubmit) {
+        phoneSubmit.disabled = false;
+        const span = phoneSubmit.querySelector('span');
+        if (span) span.textContent = 'Call My Phone Now';
+      }
+    });
+
+    phoneDialog.addEventListener('click', event => {
+      if (event.target !== phoneDialog) return;
+      const r = phoneDialog.getBoundingClientRect();
+      if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) phoneDialog.close();
+    });
+
+    if (phoneForm) {
+      phoneForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const rawNumber = (numberInput.value || '').trim();
+        const countryCode = countrySelect ? countrySelect.value : '+91';
+
+        if (!rawNumber || rawNumber.length < 7) {
+          if (errorSpan) errorSpan.textContent = ' — Please enter a valid number';
+          numberInput.focus();
+          return;
+        }
+        if (errorSpan) errorSpan.textContent = '';
+
+        phoneSubmit.disabled = true;
+        const submitSpan = phoneSubmit.querySelector('span');
+        if (submitSpan) submitSpan.textContent = 'Connecting Carrier...';
+
+        try {
+          const response = await fetch('/api/phone-call', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              phoneNumber: rawNumber,
+              countryCode: countryCode,
+              persona: 'Customer Support Specialist'
+            })
+          });
+
+          const data = await response.json();
+          if (!data.ok && !data.success) {
+            throw new Error(data.error || 'Failed to initiate call');
+          }
+
+          if (tracker) tracker.style.display = 'block';
+          if (trackerStep) trackerStep.textContent = 'STEP 1 / INITIALIZING GATEWAY';
+          if (trackerText) trackerText.textContent = `Carrier Gateway connected. Preparing dial to ${data.phoneNumber}...`;
+
+          callTimeouts.push(setTimeout(() => {
+            if (trackerStep) trackerStep.textContent = 'STEP 2 / DIALING MOBILE';
+            if (trackerText) trackerText.textContent = `Dialing ${data.phoneNumber} across cellular network...`;
+          }, 1200));
+
+          callTimeouts.push(setTimeout(() => {
+            if (trackerStep) trackerStep.textContent = 'STEP 3 / HANDSET RINGING';
+            if (trackerText) trackerText.textContent = `Handset ringing! Please answer your mobile to speak with Riya.`;
+          }, 3500));
+
+          callTimeouts.push(setTimeout(() => {
+            if (trackerStep) trackerStep.textContent = 'STEP 4 / AGENT CONNECTED';
+            if (trackerText) trackerText.textContent = `Call Connected. Riya is speaking with you live!`;
+          }, 7000));
+
+        } catch (err) {
+          alert('Call error: ' + err.message);
+          phoneSubmit.disabled = false;
+          if (submitSpan) submitSpan.textContent = 'Call My Phone Now';
+        }
+      });
+    }
+  }
 })();
