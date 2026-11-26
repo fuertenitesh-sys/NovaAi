@@ -161,7 +161,10 @@
 
           callTimeouts.push(setTimeout(() => {
             if (trackerStep) trackerStep.textContent = 'STEP 4 / AGENT CONNECTED';
-            if (trackerText) trackerText.textContent = `Call Connected. Riya is speaking with you live!`;
+            if (trackerText) trackerText.textContent = `Call Connected! Riya is speaking with you live. Window will close in 3s...`;
+            callTimeouts.push(setTimeout(() => {
+              if (phoneDialog && phoneDialog.open) phoneDialog.close();
+            }, 3000));
           }, 7000));
 
           const setCallFinished = (message) => {
@@ -172,16 +175,19 @@
               trackerStep.style.color = '#15803d';
             }
             if (trackerText) {
-              trackerText.textContent = message || 'Call ended. Thanks for speaking with Riya!';
+              trackerText.textContent = (message || 'Call ended. Thanks for speaking with Riya!') + ' Closing window...';
             }
             if (tracker) {
               tracker.style.background = '#f0fdf4';
               tracker.style.borderLeftColor = '#22c55e';
             }
             if (phoneSubmit) {
-              phoneSubmit.disabled = false;
-              if (submitSpan) submitSpan.textContent = 'Call Again';
+              phoneSubmit.disabled = true;
+              if (submitSpan) submitSpan.textContent = 'Call Placed';
             }
+            callTimeouts.push(setTimeout(() => {
+              if (phoneDialog && phoneDialog.open) phoneDialog.close();
+            }, 2500));
           };
 
           // Poll call status from backend every 2.5s

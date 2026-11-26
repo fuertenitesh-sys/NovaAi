@@ -175,6 +175,8 @@ app.get('/api/leads', async (req, res) => {
  * Places an automated cellular/phone call to the user-supplied mobile number.
  * Supports: Vapi.ai, Twilio, and Smart Interactive Simulation Mode.
  */
+const activeCallCooldowns = new Map();
+
 app.post('/api/phone-call', async (req, res) => {
   try {
     const { phoneNumber, countryCode, name, persona } = req.body;
@@ -198,6 +200,18 @@ app.post('/api/phone-call', async (req, res) => {
     if (cleanDigits.length < 7 || cleanDigits.length > 15) {
       return res.status(400).json({ ok: false, error: 'Please enter a valid phone number (7 to 15 digits).' });
     }
+
+    // Anti-spam cooldown: prevent multiple calls to the same number within 60 seconds
+    const now = Date.now();
+    const lastCall = activeCallCooldowns.get(fullNumber);
+    if (lastCall && (now - lastCall) < 60000) {
+      const waitSec = Math.ceil((60000 - (now - lastCall)) / 1000);
+      return res.status(429).json({
+        ok: false,
+        error: `A call to ${fullNumber} was recently placed. Please wait ${waitSec}s to avoid spam.`
+      });
+    }
+    activeCallCooldowns.set(fullNumber, now);
 
     const callRecord = {
       phone: fullNumber,
