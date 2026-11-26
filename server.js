@@ -409,6 +409,46 @@ app.get('/api/call-status/:callId', (req, res) => {
 });
 
 /**
+ * Intelligent Conversational AI Knowledge Engine for Riya Telephony
+ */
+function generateRiyaAnswer(query = '') {
+  const q = (query || '').toLowerCase().trim();
+
+  // 1. Company Information / About Nova.ai / Identity
+  if (q.includes('company') || q.includes('who are you') || q.includes('what is nova') || q.includes('tell me about')) {
+    return "Nova.ai is an enterprise AI deployment and engineering company. We architect and deploy sub-200 millisecond conversational voice agents and autonomous workflows that integrate directly into your software stack. Would you like to know more about our voice agents, or our enterprise workflow automation?";
+  }
+
+  // 2. Services / Capabilities
+  if (q.includes('service') || q.includes('product') || q.includes('feature') || q.includes('what do you do') || q.includes('offer') || q.includes('build')) {
+    return "We specialize in three core areas: sub-200 millisecond Speech-to-Speech Voice Intelligence for customer operations, Multimodal Enterprise Vision systems, and Autonomous AI Workforce for end-to-end task execution. Which of these areas are you most interested in?";
+  }
+
+  // 3. Pricing / Cost / ROI
+  if (q.includes('price') || q.includes('pricing') || q.includes('cost') || q.includes('charge') || q.includes('rate') || q.includes('roi')) {
+    return "Our enterprise solutions are tailored to your call volume and workflow complexity. Most of our enterprise clients see a positive return on investment within 90 days. You can explore our interactive ROI calculator on our website, or schedule a strategy consultation with our engineers.";
+  }
+
+  // 4. Voice Intelligence / Technology / Latency
+  if (q.includes('voice') || q.includes('latency') || q.includes('speech') || q.includes('call') || q.includes('telephony') || q.includes('riya')) {
+    return "Our speech-to-speech engine delivers ultra-low sub-200 millisecond latency, speaks over 100 languages with native fluency, and integrates seamlessly into CRM and telephony systems like Twilio and LiveKit. Would you like to discuss a custom voice deployment for your company?";
+  }
+
+  // 5. Contact / Booking a meeting / Demo
+  if (q.includes('contact') || q.includes('meet') || q.includes('demo') || q.includes('talk') || q.includes('hire') || q.includes('email') || q.includes('phone') || q.includes('website')) {
+    return "You can schedule an engineering deep dive with our founding team directly on our website at nova-ai-thlt.onrender.com by clicking 'Let's talk'. We can build a custom proof of concept for your business in days.";
+  }
+
+  // 6. Good / Yes / Okay / Thanks / Greeting / Bye
+  if (q.includes('thank') || q.includes('thanks') || q.includes('good') || q.includes('great') || q.includes('bye') || q.includes('okay') || q.includes('ok')) {
+    return "You are very welcome! It was a pleasure speaking with you. Whenever you are ready to deploy autonomous voice AI for your enterprise, visit us at nova-ai-thlt.onrender.com. Have a fantastic day!";
+  }
+
+  // 7. General / Fallback
+  return "That is a great question. At Nova.ai, our engineers build custom autonomous voice systems and enterprise workflows designed for mission-critical operations. What specific challenge or operational goal is your business looking to solve?";
+}
+
+/**
  * TwiML Webhook for Twilio Voice Outbound Calls (Riya Generative Voice Response)
  */
 const handleTwimlRiya = (req, res) => {
@@ -423,10 +463,18 @@ const handleTwimlRiya = (req, res) => {
 };
 
 const handleTwimlRiyaRespond = (req, res) => {
+  const speech = (req.body && (req.body.SpeechResult || req.body.speech)) || req.query.SpeechResult || '';
+  console.log(`🎙️ [Twilio Speech Received] User said: "${speech}"`);
+  const rawAnswer = generateRiyaAnswer(speech);
+  const cleanAnswer = rawAnswer.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
   res.type('text/xml');
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="Polly.Ruth-Generative" language="en-US">That sounds great! At Nova.ai, we engineer and deploy sub-200 millisecond conversational voice agents and autonomous workflow infrastructure for modern enterprises. Thank you for testing our live voice demo! Have a wonderful day.</Say>
+  <Gather input="speech" timeout="5" speechTimeout="auto" language="en-US" action="/api/twiml/riya/respond" method="POST">
+    <Say voice="Polly.Ruth-Generative" language="en-US">${cleanAnswer}</Say>
+  </Gather>
+  <Say voice="Polly.Ruth-Generative" language="en-US">Thank you for speaking with Nova.ai voice intelligence. Have a wonderful day!</Say>
 </Response>`);
 };
 
