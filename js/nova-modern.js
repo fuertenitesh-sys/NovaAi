@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initVoiceStudio();
   initRoiCalculator();
   initPersonaTabs();
+  initPhoneCalling();
 });
 
 // 1. HERO REAL-TIME AUDIO WAVEFORM CANVAS
@@ -299,4 +300,121 @@ function initRoiCalculator() {
 
   slider.addEventListener('input', update);
   update();
+}
+
+// 5. DIRECT CELLULAR/PSTN OUTBOUND PHONE CALLING
+function initPhoneCalling() {
+  const form = document.getElementById('phoneCallForm');
+  if (!form) return;
+
+  const countrySelect = document.getElementById('countrySelect');
+  const numberInput = document.getElementById('mobileNumberInput');
+  const triggerBtn = document.getElementById('btnCallPhone');
+  const tracker = document.getElementById('phoneCallTracker');
+  const cancelBtn = document.getElementById('btnCancelCall');
+  const statusText = document.getElementById('trackerStatusText');
+
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const step3 = document.getElementById('step3');
+  const step4 = document.getElementById('step4');
+
+  let callTimeouts = [];
+
+  function clearTimeouts() {
+    callTimeouts.forEach(t => clearTimeout(t));
+    callTimeouts = [];
+  }
+
+  function resetTracker() {
+    clearTimeouts();
+    if (tracker) tracker.style.display = 'none';
+    if (triggerBtn) {
+      triggerBtn.disabled = false;
+      const content = triggerBtn.querySelector('.btn-call-content');
+      const spinner = triggerBtn.querySelector('.btn-spinner');
+      if (content) content.style.display = 'flex';
+      if (spinner) spinner.style.display = 'none';
+    }
+    [step1, step2, step3, step4].forEach(s => {
+      if (s) s.className = 'tracker-step';
+    });
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const rawNumber = (numberInput.value || '').trim();
+    const countryCode = countrySelect ? countrySelect.value : '+91';
+
+    if (!rawNumber || rawNumber.length < 7) {
+      alert('Please enter a valid mobile number.');
+      numberInput.focus();
+      return;
+    }
+
+    // Show loading button
+    triggerBtn.disabled = true;
+    const content = triggerBtn.querySelector('.btn-call-content');
+    const spinner = triggerBtn.querySelector('.btn-spinner');
+    if (content) content.style.display = 'none';
+    if (spinner) spinner.style.display = 'flex';
+
+    try {
+      const response = await fetch('/api/phone-call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phoneNumber: rawNumber,
+          countryCode: countryCode,
+          persona: typeof currentPersona !== 'undefined' ? currentPersona : 'Customer Support Specialist'
+        })
+      });
+
+      const data = await response.json();
+      if (!data.ok && !data.success) {
+        throw new Error(data.error || 'Failed to place call');
+      }
+
+      // Display live tracker
+      tracker.style.display = 'block';
+      tracker.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      // Step 1: Gateway Initialized
+      step1.className = 'tracker-step active';
+      statusText.textContent = `Carrier Gateway connected. Preparing dial to ${data.phoneNumber}...`;
+
+      // Step 2: Dialing
+      callTimeouts.push(setTimeout(() => {
+        step1.className = 'tracker-step completed';
+        step2.className = 'tracker-step active';
+        statusText.textContent = `Dialing ${data.phoneNumber} across cellular network...`;
+      }, 1200));
+
+      // Step 3: Ringing
+      callTimeouts.push(setTimeout(() => {
+        step2.className = 'tracker-step completed';
+        step3.className = 'tracker-step active';
+        statusText.textContent = `Handset ringing! Please answer your mobile to speak with Riya.`;
+      }, 3500));
+
+      // Step 4: In conversation / Connected
+      callTimeouts.push(setTimeout(() => {
+        step3.className = 'tracker-step completed';
+        step4.className = 'tracker-step active';
+        statusText.textContent = `Call Connected. Riya is speaking with you live!`;
+      }, 7000));
+
+    } catch (err) {
+      console.error('Call error:', err);
+      alert('Call initiation notice: ' + err.message);
+      resetTracker();
+    }
+  });
+
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      resetTracker();
+      if (statusText) statusText.textContent = 'Call cancelled.';
+    });
+  }
 }

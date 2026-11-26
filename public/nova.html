@@ -226,6 +226,92 @@
             </div>
           </div>
         </div>
+
+        <!-- ═══════════ DIRECT PHONE CALL CONSOLE ═══════════ -->
+        <div class="phone-call-section" id="phoneCallSection">
+          <div class="phone-call-card">
+            <div class="phone-card-glow"></div>
+            <div class="phone-call-header">
+              <div class="phone-icon-orb">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+              </div>
+              <div class="phone-call-meta">
+                <div class="phone-badge-row">
+                  <span class="phone-badge">DIRECT CELLULAR / PSTN DEMO</span>
+                  <span class="phone-badge-pulse"></span>
+                  <span class="phone-sub-badge">⚡ Sub-5s Dialing</span>
+                </div>
+                <h3 class="phone-title">Receive an Instant Phone Call from Riya</h3>
+                <p class="phone-desc">Experience Nova's conversational voice agent on your real mobile phone. Enter your phone number below and our autonomous agent will dial your handset immediately.</p>
+              </div>
+            </div>
+
+            <form id="phoneCallForm" class="phone-form" onsubmit="return false;">
+              <div class="phone-input-row">
+                <div class="country-wrapper">
+                  <select id="countrySelect" class="country-select" aria-label="Country Code">
+                    <option value="+91" selected>🇮🇳 +91 (India)</option>
+                    <option value="+1">🇺🇸 +1 (US / Canada)</option>
+                    <option value="+44">🇬🇧 +44 (UK)</option>
+                    <option value="+971">🇦🇪 +971 (UAE)</option>
+                    <option value="+65">🇸🇬 +65 (Singapore)</option>
+                    <option value="+61">🇦🇺 +61 (Australia)</option>
+                    <option value="+49">🇩🇪 +49 (Germany)</option>
+                  </select>
+                </div>
+
+                <div class="number-input-wrapper">
+                  <input type="tel" id="mobileNumberInput" class="phone-input" placeholder="Enter 10-digit mobile number (e.g. 9876543210)" required autocomplete="tel">
+                </div>
+
+                <button type="submit" id="btnCallPhone" class="btn-call-trigger">
+                  <span class="btn-call-content">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <span>Call My Phone Now</span>
+                  </span>
+                  <span class="btn-spinner" style="display: none;">
+                    <svg class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+                    <span>Connecting...</span>
+                  </span>
+                </button>
+              </div>
+
+              <div class="phone-meta-row">
+                <span class="meta-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> No app install needed</span>
+                <span class="meta-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Speaks fluent Hindi &amp; English</span>
+                <span class="meta-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 100% Free Demo Call</span>
+              </div>
+            </form>
+
+            <!-- Dynamic Telephony Call Progress Tracker -->
+            <div id="phoneCallTracker" class="call-tracker" style="display: none;">
+              <div class="tracker-steps">
+                <div class="tracker-step active" id="step1">
+                  <div class="step-dot"></div>
+                  <span>1. Initializing Gateway</span>
+                </div>
+                <div class="tracker-step" id="step2">
+                  <div class="step-dot"></div>
+                  <span>2. Dialing Mobile</span>
+                </div>
+                <div class="tracker-step" id="step3">
+                  <div class="step-dot"></div>
+                  <span>3. Handset Ringing</span>
+                </div>
+                <div class="tracker-step" id="step4">
+                  <div class="step-dot"></div>
+                  <span>4. Agent Connected</span>
+                </div>
+              </div>
+              <div class="tracker-status-box" id="trackerStatusBox">
+                <div class="tracker-status-text" id="trackerStatusText">Queued: Contacting telephony carrier...</div>
+                <button type="button" class="btn-cancel-call" id="btnCancelCall">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 

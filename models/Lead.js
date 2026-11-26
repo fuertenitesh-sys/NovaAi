@@ -9,16 +9,20 @@ const LeadSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, 'Work email is required'],
     trim: true,
     lowercase: true,
-    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please provide a valid work email']
+    default: ''
   },
   company: {
     type: String,
-    required: [true, 'Company name is required'],
     trim: true,
-    maxlength: 140
+    maxlength: 140,
+    default: 'Independent'
+  },
+  phone: {
+    type: String,
+    trim: true,
+    default: ''
   },
   message: {
     type: String,

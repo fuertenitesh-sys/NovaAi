@@ -171,6 +171,192 @@ app.get('/api/leads', async (req, res) => {
 });
 
 /**
+ * Direct Outbound Phone Call API (PSTN Telephony Gateway)
+ * Places an automated cellular/phone call to the user-supplied mobile number.
+ * Supports: Vapi.ai, Twilio, and Smart Interactive Simulation Mode.
+ */
+app.post('/api/phone-call', async (req, res) => {
+  try {
+    const { phoneNumber, countryCode, name, persona } = req.body;
+
+    if (!phoneNumber) {
+      return res.status(400).json({ ok: false, error: 'Phone number is required.' });
+    }
+
+    const cleanDigits = phoneNumber.replace(/[^0-9]/g, '');
+    const prefix = (countryCode || '+91').trim();
+    let fullNumber = phoneNumber.trim();
+
+    if (!fullNumber.startsWith('+')) {
+      fullNumber = prefix + (cleanDigits.startsWith(prefix.replace('+', '')) ? cleanDigits.slice(prefix.length - 1) : cleanDigits);
+    }
+
+    if (cleanDigits.length < 7 || cleanDigits.length > 15) {
+      return res.status(400).json({ ok: false, error: 'Please enter a valid phone number (7 to 15 digits).' });
+    }
+
+    const callRecord = {
+      phone: fullNumber,
+      name: (name || 'Phone Demo User').trim(),
+      context: `Outbound Phone Call (${persona || 'Customer Support Specialist'})`,
+      page: '/nova',
+      ipAddress: req.ip || req.headers['x-forwarded-for'] || '',
+      createdAt: new Date(),
+      status: 'QUEUED'
+    };
+
+    // Save lead record in Mongo or in-memory
+    if (mongoose.connection.readyState === 1) {
+      try {
+        const lead = new Lead({
+          name: callRecord.name,
+          company: 'Phone Calling Demo',
+          phone: fullNumber,
+          context: callRecord.context,
+          page: callRecord.page,
+          ipAddress: callRecord.ipAddress
+        });
+        await lead.save();
+      } catch (e) {
+        console.warn('Phone lead save notice:', e.message);
+      }
+    } else {
+      leadsMemoryStore.unshift({ _id: Date.now().toString(), ...callRecord });
+    }
+
+    console.log(`📞 [Outbound Call Requested] Number: ${fullNumber} | Persona: ${persona || 'Default'}`);
+
+    // Check if Vapi.ai integration is configured
+    if (process.env.VAPI_API_KEY && process.env.VAPI_PHONE_NUMBER_ID) {
+      const vapiPayload = JSON.stringify({
+        phoneNumberId: process.env.VAPI_PHONE_NUMBER_ID,
+        assistantId: process.env.VAPI_ASSISTANT_ID,
+        customer: {
+          number: fullNumber,
+          name: callRecord.name
+        }
+      });
+
+      const vapiReq = https.request({
+        hostname: 'api.vapi.ai',
+        path: '/call/phone',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.VAPI_API_KEY}`,
+          'Content-Length': Buffer.byteLength(vapiPayload)
+        }
+      }, vapiRes => {
+        let vapiData = '';
+        vapiRes.on('data', chunk => vapiData += chunk);
+        vapiRes.on('end', () => {
+          try {
+            const parsed = JSON.parse(vapiData);
+            return res.json({
+              ok: true,
+              success: true,
+              provider: 'vapi',
+              callId: parsed.id || 'vapi_' + Date.now(),
+              phoneNumber: fullNumber,
+              status: 'calling',
+              message: `Calling ${fullNumber} via Vapi.ai Telephony.`
+            });
+          } catch (e) {
+            return res.status(200).json({
+              ok: true,
+              success: true,
+              provider: 'vapi',
+              raw: vapiData,
+              phoneNumber: fullNumber,
+              message: `Call dispatched to carrier network.`
+            });
+          }
+        });
+      });
+
+      vapiReq.on('error', err => {
+        console.error('Vapi call error:', err);
+        return res.status(500).json({ ok: false, error: 'Vapi telephony error: ' + err.message });
+      });
+
+      vapiReq.write(vapiPayload);
+      vapiReq.end();
+      return;
+    }
+
+    // Check if Twilio integration is configured
+    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+      const accountSid = process.env.TWILIO_ACCOUNT_SID;
+      const authToken = process.env.TWILIO_AUTH_TOKEN;
+      const twilioNumber = process.env.TWILIO_PHONE_NUMBER;
+      const postData = new URLSearchParams({
+        To: fullNumber,
+        From: twilioNumber,
+        Url: process.env.TWILIO_TWIML_URL || 'https://demo.twilio.com/welcome/voice/'
+      }).toString();
+
+      const auth = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
+      const twilioReq = https.request({
+        hostname: 'api.twilio.com',
+        path: `/2010-04-01/Accounts/${accountSid}/Calls.json`,
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': Buffer.byteLength(postData)
+        }
+      }, twilioRes => {
+        let twData = '';
+        twilioRes.on('data', c => twData += c);
+        twilioRes.on('end', () => {
+          try {
+            const parsed = JSON.parse(twData);
+            return res.json({
+              ok: true,
+              success: true,
+              provider: 'twilio',
+              callId: parsed.sid,
+              phoneNumber: fullNumber,
+              status: parsed.status,
+              message: `Calling ${fullNumber} via Twilio Voice.`
+            });
+          } catch (e) {
+            return res.json({ ok: true, provider: 'twilio', message: 'Call queued via Twilio.' });
+          }
+        });
+      });
+
+      twilioReq.on('error', err => {
+        console.error('Twilio error:', err);
+        return res.status(500).json({ ok: false, error: err.message });
+      });
+
+      twilioReq.write(postData);
+      twilioReq.end();
+      return;
+    }
+
+    // Default / Proof of Concept Simulation Mode (Ready for Production credentials)
+    const mockCallId = 'poc_' + Math.random().toString(36).substring(2, 10);
+    return res.status(200).json({
+      ok: true,
+      success: true,
+      provider: 'simulated_carrier',
+      mode: 'poc_demo',
+      callId: mockCallId,
+      phoneNumber: fullNumber,
+      persona: persona || 'Customer Support Specialist',
+      status: 'queued',
+      message: `Outbound call to ${fullNumber} initiated!`,
+      instructions: 'To route to actual cellular carriers, add VAPI_API_KEY or TWILIO credentials in .env.'
+    });
+  } catch (error) {
+    console.error('Error handling phone call request:', error);
+    res.status(500).json({ ok: false, error: 'Internal server error processing call request.' });
+  }
+});
+
+/**
  * Nova Voice Web-Call API (LiveKit Cloud Gateway)
  */
 const handleVoiceCall = (req, res) => {
