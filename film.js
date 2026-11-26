@@ -12,8 +12,12 @@
  function sync() {
   if (visible && !document.hidden && !reduced.matches && !paused) {
    const source = video.querySelector('source[data-src]');
-   if (source) { source.src = source.dataset.src; source.removeAttribute('data-src'); video.load(); }
-   if (video.paused) video.play().catch(() => { /* Preserve the quiet poster fallback. */ });
+   if (source && source.dataset.src) {
+     source.src = source.dataset.src;
+     source.removeAttribute('data-src');
+     video.load();
+     if (video.paused) video.play().catch(() => { /* Preserve the quiet poster fallback. */ });
+   }
   } else video.pause();
  }
  new IntersectionObserver(entries => {

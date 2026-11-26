@@ -674,6 +674,7 @@ app.use('/api/create-room', handleCreateRoom);
  * Floating Riya Widget Settings API (supports all subpaths e.g. /:schema/:agentId)
  */
 const handleWidgetSettings = (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=3600');
   res.json({
     success: true,
     response: {
@@ -696,6 +697,7 @@ const handleWidgetSettings = (req, res) => {
 app.use('/api/thunder-widget-settings', handleWidgetSettings);
 
 app.get('/api/widget-config', (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=3600');
   res.json({ market: 'in' });
 });
 
@@ -703,6 +705,7 @@ app.get('/api/widget-config', (req, res) => {
  * Agent Info API (supports all subpaths e.g. /:agentId)
  */
 const handleGetAgent = (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=3600');
   res.json({
     success: true,
     name: `${CONFIG.assistantName} Voice Intelligence`,
@@ -716,6 +719,7 @@ app.use('/api/get-agent', handleGetAgent);
 // PAGE ROUTING
 // ═══════════════════════════════════════════════════════════════
 const servePage = page => (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, must-revalidate');
   res.sendFile(path.join(PUBLIC_DIR, page));
 };
 

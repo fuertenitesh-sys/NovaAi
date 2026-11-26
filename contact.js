@@ -12,7 +12,7 @@
   dialog.querySelector('.contact-close').addEventListener('click',()=>dialog.close());dialog.querySelector('[data-contact-done]').addEventListener('click',()=>dialog.close());
   dialog.addEventListener('close',()=>{document.documentElement.classList.remove('contact-open');if(trigger&&trigger.isConnected)trigger.focus({preventScroll:true})});
   dialog.addEventListener('click',event=>{if(event.target!==dialog)return;const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close()});
-  function error(text){status.replaceChildren(document.createTextNode(text+' '));const a=document.createElement('a');a.href='mailto:info@ravan.ai?subject=Enterprise%20AI%20enquiry';a.textContent='Email us instead.';status.append(a);status.hidden=false;}
+  function error(text){status.replaceChildren(document.createTextNode(text+' '));const a=document.createElement('a');a.href='mailto:info@nova.ai?subject=Enterprise%20AI%20enquiry';a.textContent='Email us instead.';status.append(a);status.hidden=false;}
   form.addEventListener('submit',async event=>{
     event.preventDefault();if(busy||complete)return;
     const invalid=fields.filter(field=>!validate(field));if(invalid.length){invalid[0].focus();return}
