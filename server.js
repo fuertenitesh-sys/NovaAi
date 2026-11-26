@@ -373,20 +373,35 @@ app.post('/api/phone-call', async (req, res) => {
 });
 
 /**
- * TwiML Webhook for Twilio Voice Outbound Calls (Riya Voice Response)
+ * TwiML Webhook for Twilio Voice Outbound Calls (Riya Neural Voice Response)
  */
 const handleTwimlRiya = (req, res) => {
   res.type('text/xml');
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="Polly.Aditi" language="hi-IN">Namaste Nitesh ji! Main Nova AI se Riya bol rahi hoon. Aapka phone call successfully connect ho gaya hai. Nova AI me aapka swagat hai!</Say>
+  <Gather input="speech" timeout="4" language="en-IN" action="/api/twiml/riya/respond" method="POST">
+    <Say voice="Polly.Kajal-Neural" language="hi-IN">Hey Nitesh ji! Main Nova.ai se Riya bol rahi hoon.</Say>
+    <Pause length="1"/>
+    <Say voice="Polly.Kajal-Neural" language="en-IN">How can I help your business today?</Say>
+  </Gather>
+  <Say voice="Polly.Kajal-Neural" language="en-IN">Thank you for connecting with Nova.ai autonomous voice intelligence. Have a wonderful day!</Say>
+</Response>`);
+};
+
+const handleTwimlRiyaRespond = (req, res) => {
+  res.type('text/xml');
+  res.send(`<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say voice="Polly.Kajal-Neural" language="en-IN">That sounds great! At Nova.ai, we engineer and deploy sub-200 millisecond speech-to-speech voice agents and autonomous workflow infrastructure for enterprises.</Say>
   <Pause length="1"/>
-  <Say voice="Polly.Aditi" language="en-IN">Thank you for testing Nova AI voice intelligence. The outbound telephony call is now live and working seamlessly.</Say>
+  <Say voice="Polly.Kajal-Neural" language="hi-IN">Nova.ai ke trial testing me judne ke liye bohot shukriya! Aapka din shubh ho.</Say>
 </Response>`);
 };
 
 app.get(['/api/twiml/riya', '/twiml', '/api/twiml'], handleTwimlRiya);
 app.post(['/api/twiml/riya', '/twiml', '/api/twiml'], handleTwimlRiya);
+app.post('/api/twiml/riya/respond', handleTwimlRiyaRespond);
+app.get('/api/twiml/riya/respond', handleTwimlRiyaRespond);
 
 /**
  * Nova Voice Web-Call API (LiveKit Cloud Gateway)
