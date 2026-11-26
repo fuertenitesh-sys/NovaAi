@@ -289,11 +289,25 @@ app.post('/api/phone-call', async (req, res) => {
       const accountSid = process.env.TWILIO_ACCOUNT_SID;
       const authToken = process.env.TWILIO_AUTH_TOKEN;
       const twilioNumber = process.env.TWILIO_PHONE_NUMBER;
-      const postData = new URLSearchParams({
+      const twimlContent = process.env.TWILIO_TWIML_CONTENT || `
+<Response>
+  <Say voice="Polly.Aditi" language="hi-IN">Namaste! Main Nova AI se Riya bol rahi hoon. Aapka phone call successfully connect ho gaya hai. Nova AI voice intelligence ke trial me aapka swagat hai!</Say>
+  <Pause length="1"/>
+  <Say voice="Polly.Aditi" language="en-IN">Thank you for testing Nova AI telephony system. Our real-time voice intelligence is now live and working.</Say>
+</Response>`.trim();
+
+      const postParams = {
         To: fullNumber,
-        From: twilioNumber,
-        Url: process.env.TWILIO_TWIML_URL || 'https://demo.twilio.com/welcome/voice/'
-      }).toString();
+        From: twilioNumber
+      };
+
+      if (process.env.TWILIO_TWIML_URL) {
+        postParams.Url = process.env.TWILIO_TWIML_URL;
+      } else {
+        postParams.Twiml = twimlContent;
+      }
+
+      const postData = new URLSearchParams(postParams).toString();
 
       const auth = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
       const twilioReq = https.request({
@@ -311,15 +325,23 @@ app.post('/api/phone-call', async (req, res) => {
         twilioRes.on('end', () => {
           try {
             const parsed = JSON.parse(twData);
-            return res.json({
-              ok: true,
-              success: true,
-              provider: 'twilio',
-              callId: parsed.sid,
-              phoneNumber: fullNumber,
-              status: parsed.status,
-              message: `Calling ${fullNumber} via Twilio Voice.`
-            });
+            if (parsed.sid) {
+              return res.json({
+                ok: true,
+                success: true,
+                provider: 'twilio',
+                callId: parsed.sid,
+                phoneNumber: fullNumber,
+                status: parsed.status,
+                message: `Calling ${fullNumber} via Twilio Voice.`
+              });
+            } else {
+              return res.status(400).json({
+                ok: false,
+                error: parsed.message || 'Twilio call failed',
+                code: parsed.code
+              });
+            }
           } catch (e) {
             return res.json({ ok: true, provider: 'twilio', message: 'Call queued via Twilio.' });
           }
