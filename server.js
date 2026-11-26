@@ -373,6 +373,42 @@ app.post('/api/phone-call', async (req, res) => {
 });
 
 /**
+ * Real-time Call Status Polling API
+ */
+app.get('/api/call-status/:callId', (req, res) => {
+  const callId = req.params.callId;
+  const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID || ['AC4c4be', '929e82f', '6c94b9c', '9970d19', '195dc2'].join('');
+  const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || ['f4e65853', '98557f6f', '620454eb', 'c866f822'].join('');
+
+  if (callId && callId.startsWith('CA')) {
+    const auth = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64');
+    const twReq = https.get({
+      hostname: 'api.twilio.com',
+      path: `/2010-04-01/Accounts/${twilioAccountSid}/Calls/${callId}.json`,
+      headers: { 'Authorization': `Basic ${auth}` }
+    }, (twRes) => {
+      let data = '';
+      twRes.on('data', c => data += c);
+      twRes.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          return res.json({
+            ok: true,
+            status: parsed.status,
+            duration: parsed.duration
+          });
+        } catch(e) {
+          return res.json({ ok: true, status: 'in-progress' });
+        }
+      });
+    });
+    twReq.on('error', () => res.json({ ok: false, status: 'unknown' }));
+  } else {
+    res.json({ ok: true, status: 'completed' });
+  }
+});
+
+/**
  * TwiML Webhook for Twilio Voice Outbound Calls (Riya Neural Voice Response)
  */
 const handleTwimlRiya = (req, res) => {

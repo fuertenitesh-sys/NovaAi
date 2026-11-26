@@ -69,10 +69,27 @@
       closeBtn.addEventListener('click', () => phoneDialog.close());
     }
 
+    let pollInterval = null;
+    const stopPolling = () => {
+      if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+      }
+    };
+
     phoneDialog.addEventListener('close', () => {
       document.documentElement.classList.remove('contact-open');
       clearTimeouts();
-      if (tracker) tracker.style.display = 'none';
+      stopPolling();
+      if (tracker) {
+        tracker.style.display = 'none';
+        tracker.style.background = '#fbf1e8';
+        tracker.style.borderLeftColor = '#b4462e';
+      }
+      if (trackerStep) {
+        trackerStep.textContent = 'STEP 1 / INITIALIZING GATEWAY';
+        trackerStep.style.color = '#a24a28';
+      }
       if (phoneSubmit) {
         phoneSubmit.disabled = false;
         const span = phoneSubmit.querySelector('span');
@@ -99,6 +116,8 @@
         }
         if (errorSpan) errorSpan.textContent = '';
 
+        stopPolling();
+        clearTimeouts();
         phoneSubmit.disabled = true;
         const submitSpan = phoneSubmit.querySelector('span');
         if (submitSpan) submitSpan.textContent = 'Connecting Carrier...';
@@ -119,8 +138,15 @@
             throw new Error(data.error || 'Failed to initiate call');
           }
 
-          if (tracker) tracker.style.display = 'block';
-          if (trackerStep) trackerStep.textContent = 'STEP 1 / INITIALIZING GATEWAY';
+          if (tracker) {
+            tracker.style.display = 'block';
+            tracker.style.background = '#fbf1e8';
+            tracker.style.borderLeftColor = '#b4462e';
+          }
+          if (trackerStep) {
+            trackerStep.textContent = 'STEP 1 / INITIALIZING GATEWAY';
+            trackerStep.style.color = '#a24a28';
+          }
           if (trackerText) trackerText.textContent = `Carrier Gateway connected. Preparing dial to ${data.phoneNumber}...`;
 
           callTimeouts.push(setTimeout(() => {
@@ -137,6 +163,50 @@
             if (trackerStep) trackerStep.textContent = 'STEP 4 / AGENT CONNECTED';
             if (trackerText) trackerText.textContent = `Call Connected. Riya is speaking with you live!`;
           }, 7000));
+
+          const setCallFinished = (message) => {
+            stopPolling();
+            clearTimeouts();
+            if (trackerStep) {
+              trackerStep.textContent = 'CALL COMPLETED';
+              trackerStep.style.color = '#15803d';
+            }
+            if (trackerText) {
+              trackerText.textContent = message || 'Call ended. Thanks for speaking with Riya!';
+            }
+            if (tracker) {
+              tracker.style.background = '#f0fdf4';
+              tracker.style.borderLeftColor = '#22c55e';
+            }
+            if (phoneSubmit) {
+              phoneSubmit.disabled = false;
+              if (submitSpan) submitSpan.textContent = 'Call Again';
+            }
+          };
+
+          // Poll call status from backend every 2.5s
+          if (data.callId) {
+            pollInterval = setInterval(async () => {
+              try {
+                const sRes = await fetch(`/api/call-status/${data.callId}`);
+                if (sRes.ok) {
+                  const sData = await sRes.json();
+                  const s = sData.status;
+                  if (s === 'completed' || s === 'canceled') {
+                    const dur = sData.duration ? ` (${sData.duration}s)` : '';
+                    setCallFinished(`Call finished${dur}. Riya has concluded the conversation.`);
+                  } else if (s === 'busy' || s === 'no-answer' || s === 'failed') {
+                    setCallFinished(`Call was not answered (${s}). Click below to try again.`);
+                  }
+                }
+              } catch (e) {}
+            }, 2500);
+
+            // Safety timeout after 45s
+            callTimeouts.push(setTimeout(() => {
+              setCallFinished('Call finished. Click below to place another call.');
+            }, 45000));
+          }
 
         } catch (err) {
           alert('Call error: ' + err.message);
