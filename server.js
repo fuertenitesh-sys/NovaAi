@@ -409,44 +409,101 @@ app.get('/api/call-status/:callId', (req, res) => {
 });
 
 /**
- * Intelligent Conversational AI Knowledge Engine for Riya Telephony
+ * Intelligent Conversational AI Knowledge Engine for Riya Telephony (Bilingual: English + Hindi)
  */
 function generateRiyaAnswer(query = '') {
   const q = (query || '').toLowerCase().trim();
 
-  // 1. Company Information / About Nova.ai / Identity
+  // Detect Hindi / Hinglish keywords
+  const isHindi = /kya|hai|haan|kaise|batao|karta|karte|madad|shukriya|namaste|naam|kuch|kaun|chahiye|puchna|bhai/.test(q);
+
+  if (isHindi) {
+    if (q.includes('company') || q.includes('nova') || q.includes('kya hai') || q.includes('kya karti')) {
+      return {
+        text: "Nova.ai ek enterprise AI deployment aur engineering company hai. Hum enterprises ke liye sub-200 millisecond voice agents aur autonomous workflows deploy karte hain. Kya aap hamare voice agents ke bare me janna chahte hain?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+    if (q.includes('service') || q.includes('product') || q.includes('kaam') || q.includes('feature')) {
+      return {
+        text: "Hum teen core areas me specialize karte hain: Speech-to-Speech Voice Intelligence, Multimodal Enterprise Vision systems, aur Autonomous AI Workforce. Inme se kis cheez me aapki company ko interest hai?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+    if (q.includes('price') || q.includes('cost') || q.includes('paisa') || q.includes('kharcha')) {
+      return {
+        text: "Hamara pricing aapke call volume aur workflow complexity par depend karta hai. Most enterprises ko 90 din ke andar positive return on investment mil jata hai. Aap hamari website par ROI calculator bhi dekh sakte hain.",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+    return {
+      text: "Yeh bohot accha sawal hai! Nova.ai par hamare engineers custom voice systems aur autonomous enterprise AI build karte hain. Aap apne business ke liye kis tarah ka automation dhundh rahe hain?",
+      voice: "Polly.Kajal-Neural",
+      lang: "hi-IN"
+    };
+  }
+
+  // English Intents (Default)
   if (q.includes('company') || q.includes('who are you') || q.includes('what is nova') || q.includes('tell me about')) {
-    return "Nova.ai is an enterprise AI deployment and engineering company. We architect and deploy sub-200 millisecond conversational voice agents and autonomous workflows that integrate directly into your software stack. Would you like to know more about our voice agents, or our enterprise workflow automation?";
+    return {
+      text: "Nova.ai is an enterprise AI deployment and engineering company. We architect and deploy sub-200 millisecond conversational voice agents and autonomous workflows that integrate directly into your software stack. Would you like to know more about our voice agents, or our enterprise workflow automation?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
   }
 
-  // 2. Services / Capabilities
   if (q.includes('service') || q.includes('product') || q.includes('feature') || q.includes('what do you do') || q.includes('offer') || q.includes('build')) {
-    return "We specialize in three core areas: sub-200 millisecond Speech-to-Speech Voice Intelligence for customer operations, Multimodal Enterprise Vision systems, and Autonomous AI Workforce for end-to-end task execution. Which of these areas are you most interested in?";
+    return {
+      text: "We specialize in three core areas: sub-200 millisecond Speech-to-Speech Voice Intelligence for customer operations, Multimodal Enterprise Vision systems, and Autonomous AI Workforce for end-to-end task execution. Which of these areas are you most interested in?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
   }
 
-  // 3. Pricing / Cost / ROI
   if (q.includes('price') || q.includes('pricing') || q.includes('cost') || q.includes('charge') || q.includes('rate') || q.includes('roi')) {
-    return "Our enterprise solutions are tailored to your call volume and workflow complexity. Most of our enterprise clients see a positive return on investment within 90 days. You can explore our interactive ROI calculator on our website, or schedule a strategy consultation with our engineers.";
+    return {
+      text: "Our enterprise solutions are tailored to your call volume and workflow complexity. Most of our enterprise clients see a positive return on investment within 90 days. You can explore our interactive ROI calculator on our website, or schedule a strategy consultation with our engineers.",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
   }
 
-  // 4. Voice Intelligence / Technology / Latency
   if (q.includes('voice') || q.includes('latency') || q.includes('speech') || q.includes('call') || q.includes('telephony') || q.includes('riya')) {
-    return "Our speech-to-speech engine delivers ultra-low sub-200 millisecond latency, speaks over 100 languages with native fluency, and integrates seamlessly into CRM and telephony systems like Twilio and LiveKit. Would you like to discuss a custom voice deployment for your company?";
+    return {
+      text: "Our speech-to-speech engine delivers ultra-low sub-200 millisecond latency, speaks over 100 languages with native fluency, and integrates seamlessly into CRM and telephony systems like Twilio and LiveKit. Would you like to discuss a custom voice deployment for your company?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
   }
 
-  // 5. Contact / Booking a meeting / Demo
   if (q.includes('contact') || q.includes('meet') || q.includes('demo') || q.includes('talk') || q.includes('hire') || q.includes('email') || q.includes('phone') || q.includes('website')) {
-    return "You can schedule an engineering deep dive with our founding team directly on our website at nova-ai-thlt.onrender.com by clicking 'Let's talk'. We can build a custom proof of concept for your business in days.";
+    return {
+      text: "You can schedule an engineering deep dive with our founding team directly on our website at nova-ai-thlt.onrender.com by clicking Let's talk. We can build a custom proof of concept for your business in days.",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
   }
 
-  // 6. Good / Yes / Okay / Thanks / Greeting / Bye
   if (q.includes('thank') || q.includes('thanks') || q.includes('good') || q.includes('great') || q.includes('bye') || q.includes('okay') || q.includes('ok')) {
-    return "You are very welcome! It was a pleasure speaking with you. Whenever you are ready to deploy autonomous voice AI for your enterprise, visit us at nova-ai-thlt.onrender.com. Have a fantastic day!";
+    return {
+      text: "You are very welcome! It was a pleasure speaking with you. Whenever you are ready to deploy autonomous voice AI for your enterprise, visit us at nova-ai-thlt.onrender.com. Have a fantastic day!",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
   }
 
-  // 7. General / Fallback
-  return "That is a great question. At Nova.ai, our engineers build custom autonomous voice systems and enterprise workflows designed for mission-critical operations. What specific challenge or operational goal is your business looking to solve?";
+  // Default English response
+  return {
+    text: "That is a great question. At Nova.ai, our engineers build custom autonomous voice systems and enterprise workflows designed for mission-critical operations. What specific challenge or operational goal is your business looking to solve?",
+    voice: "Polly.Ruth-Generative",
+    lang: "en-US"
+  };
 }
+
+const RIYA_ACTION_URL = 'https://nova-ai-thlt.onrender.com/api/twiml/riya/respond';
 
 /**
  * TwiML Webhook for Twilio Voice Outbound Calls (Riya Generative Voice Response)
@@ -455,7 +512,7 @@ const handleTwimlRiya = (req, res) => {
   res.type('text/xml');
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Gather input="speech" timeout="5" speechTimeout="auto" language="en-US" action="/api/twiml/riya/respond" method="POST">
+  <Gather input="speech" timeout="5" speechTimeout="auto" action="${RIYA_ACTION_URL}" method="POST">
     <Say voice="Polly.Ruth-Generative" language="en-US">Hey! I'm Riya from Nova.ai. How can I help your business today?</Say>
   </Gather>
   <Say voice="Polly.Ruth-Generative" language="en-US">Thank you for connecting with Nova.ai. We engineer and deploy autonomous voice intelligence for enterprises. Have a wonderful day!</Say>
@@ -465,16 +522,16 @@ const handleTwimlRiya = (req, res) => {
 const handleTwimlRiyaRespond = (req, res) => {
   const speech = (req.body && (req.body.SpeechResult || req.body.speech)) || req.query.SpeechResult || '';
   console.log(`🎙️ [Twilio Speech Received] User said: "${speech}"`);
-  const rawAnswer = generateRiyaAnswer(speech);
-  const cleanAnswer = rawAnswer.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const resObj = generateRiyaAnswer(speech);
+  const cleanAnswer = resObj.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   res.type('text/xml');
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Gather input="speech" timeout="5" speechTimeout="auto" language="en-US" action="/api/twiml/riya/respond" method="POST">
-    <Say voice="Polly.Ruth-Generative" language="en-US">${cleanAnswer}</Say>
+  <Gather input="speech" timeout="5" speechTimeout="auto" action="${RIYA_ACTION_URL}" method="POST">
+    <Say voice="${resObj.voice}" language="${resObj.lang}">${cleanAnswer}</Say>
   </Gather>
-  <Say voice="Polly.Ruth-Generative" language="en-US">Thank you for speaking with Nova.ai voice intelligence. Have a wonderful day!</Say>
+  <Say voice="${resObj.voice}" language="${resObj.lang}">Thank you for speaking with Nova.ai voice intelligence. Have a wonderful day!</Say>
 </Response>`);
 };
 
