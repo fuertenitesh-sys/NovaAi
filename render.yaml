@@ -9,3 +9,7 @@ services:
     envVars:
       - key: PORT
         value: 10000
+      - key: TWILIO_PHONE_NUMBER
+        value: +17372508034
+      - key: TWILIO_TWIML_URL
+        value: https://nova-ai-thlt.onrender.com/api/twiml/riya
