@@ -425,59 +425,259 @@ app.get('/api/call-status/:callId', (req, res) => {
 /**
  * Intelligent Conversational AI Knowledge Engine for Riya Telephony (Bilingual: English + Hindi)
  */
+let riyaFallbackCounter = 0;
+
 function generateRiyaAnswer(query = '') {
-  const q = (query || '').toLowerCase().trim();
+  const rawQ = (query || '').trim();
+  const q = rawQ.toLowerCase();
+
+  // Helper for whole-word / phrase matching to eliminate substring false positives
+  const has = (...words) => words.some(w => {
+    if (w.includes(' ')) return q.includes(w);
+    return new RegExp('(^|[^a-z0-9])' + w + '([^a-z0-9]|$)', 'i').test(q);
+  });
+
+  // If user said nothing or speech recognition caught empty audio / silence
+  if (!rawQ || q.length < 2) {
+    return {
+      text: "I'm sorry, I didn't quite catch that. Could you please repeat your question? I'm listening.",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
 
   // Detect Hindi / Hinglish keywords
-  const isHindi = /kya|hai|haan|kaise|batao|karta|karte|madad|shukriya|namaste|naam|kuch|kaun|chahiye|puchna|bhai/.test(q);
+  const isHindi = has('kya', 'hai', 'haan', 'kaise', 'kaisi', 'batao', 'karta', 'karte', 'madad', 'shukriya', 'namaste', 'naam', 'kuch', 'kaun', 'chahiye', 'puchna', 'bhai', 'bolo', 'kahan', 'theek', 'achha', 'nahi', 'kaunsi', 'kisko', 'kitna', 'paisa', 'kharcha', 'dhanyawad', 'alvida');
 
   if (isHindi) {
-    if (q.includes('company') || q.includes('nova') || q.includes('kya hai') || q.includes('kya karti')) {
+    // 1. Identity & Name
+    if (has('naam', 'kaun ho', 'kya naam', 'aap kaun', 'tum kaun')) {
+      return {
+        text: "Mera naam Riya hai! Main Nova.ai ki autonomous AI voice agent hu. Main real-time me bina kisi delay ke bilkul humans ki tarah baat kar sakti hu. Aap mere bare me ya hamare enterprise AI ke bare me kya janna chahte hain?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 2. How are you / Hal chal
+    if (has('kaise ho', 'kaisi ho', 'kya haal', 'sab theek', 'kaisa chal raha')) {
+      return {
+        text: "Main bilkul badhiya hu, poochne ke liye bohot shukriya! Main live hu aur aapki madad karne ke liye taiyar hu. Aap batayiye, aapka din kaisa chal raha hai aur main aapki kya help kar sakti hu?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 3. Are you real or AI / Robot
+    if (has('robot', 'insaan', 'human', 'ai ho', 'asli', 'nakli', 'machine')) {
+      return {
+        text: "Main ek AI voice agent hu jise Nova.ai ke engineers ne banaya hai! Lekin main real humans ki tarah natural tone aur sub-200 millisecond latency me baat karti hu. Meri voice sunkar aapko kaisa lag raha hai?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 4. Founder / Team / Snehil
+    if (has('founder', 'snehil', 'kisne banaya', 'owner', 'ceo', 'team', 'maker')) {
+      return {
+        text: "Mujhe Nova.ai ki engineering team ne build kiya hai, jisme hamare founders aur Snehil sir lead karte hain. Hum high-performance autonomous voice systems banate hain. Kya aap hamari core team se connect karna chahte hain?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 5. Office / Location
+    if (has('kahan', 'office', 'location', 'kahan se', 'rehte ho', 'city')) {
+      return {
+        text: "Nova.ai ek global enterprise AI company hai jiske engineering hubs India aur US me hain. Aur abhi aap hamare cloud voice network ke through direct phone par mujhse baat kar rahe hain!",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 6. Language switch
+    if (has('hindi me', 'hindi bolo', 'hindi aati', 'hindi')) {
+      return {
+        text: "Haan bilkul! Main Hindi, English aur Hinglish teeno me fluently baat karti hu. Aap Hindi me koi bhi sawal poochiye, main poori tarah aapki madad karungi.",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 7. Company overview
+    if (has('company', 'nova', 'kya hai', 'kya karti', 'about')) {
       return {
         text: "Nova.ai ek enterprise AI deployment aur engineering company hai. Hum enterprises ke liye sub-200 millisecond voice agents aur autonomous workflows deploy karte hain. Kya aap hamare voice agents ke bare me janna chahte hain?",
         voice: "Polly.Kajal-Neural",
         lang: "hi-IN"
       };
     }
-    if (q.includes('service') || q.includes('product') || q.includes('kaam') || q.includes('feature')) {
+
+    // 8. Services / Products
+    if (has('service', 'product', 'kaam', 'feature', 'features', 'solutions', 'karti ho')) {
       return {
-        text: "Hum teen core areas me specialize karte hain: Speech-to-Speech Voice Intelligence, Multimodal Enterprise Vision systems, aur Autonomous AI Workforce. Inme se kis cheez me aapki company ko interest hai?",
+        text: "Hum teen core areas me solutions dete hain: pehla, Speech-to-Speech Voice Intelligence jaise main hu; dusra, Multimodal Enterprise Vision systems; aur teesra, Autonomous AI Workforce jo aapke CRM aur workflows ko handle karta hai. Inme se aapke business ke liye kya best rahega?",
         voice: "Polly.Kajal-Neural",
         lang: "hi-IN"
       };
     }
-    if (q.includes('price') || q.includes('cost') || q.includes('paisa') || q.includes('kharcha')) {
+
+    // 9. Pricing / Cost
+    if (has('price', 'pricing', 'cost', 'paisa', 'kharcha', 'kitna lagega', 'rate')) {
       return {
-        text: "Hamara pricing aapke call volume aur workflow complexity par depend karta hai. Most enterprises ko 90 din ke andar positive return on investment mil jata hai. Aap hamari website par ROI calculator bhi dekh sakte hain.",
+        text: "Hamara pricing aapke call volume aur workflow complexity par depend karta hai. Most enterprises ko 90 din ke andar positive return on investment mil jata hai. Aap hamari website nova-ai-thlt.onrender.com par ROI calculator bhi dekh sakte hain.",
         voice: "Polly.Kajal-Neural",
         lang: "hi-IN"
       };
     }
+
+    // 10. Technology / Latency
+    if (has('technology', 'tech', 'speed', 'latency', 'kaise kaam', 'engine', 'model')) {
+      return {
+        text: "Hum sub-200 millisecond ultra-low latency par operate karte hain. Iska matlab hai ki hum real human conversation ki speed par bina kisi pause ke respond kar sakte hain. Yeh enterprise customer support aur sales ke liye game changer hai.",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 11. Demo / Schedule / Contact
+    if (has('demo', 'baat karni', 'meeting', 'contact', 'call karna', 'connect')) {
+      return {
+        text: "Aap hamari website nova-ai-thlt.onrender.com par jakar direct 'Let's talk' par click karke hamare founding engineers ke sath ek live demo schedule kar sakte hain. Kya aap chahte hain ki hamari team aapse contact kare?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 12. Affirmation: Haan / Sahi / Theek
+    if (has('haan', 'theek', 'achha', 'bilkul', 'sahi', 'zaroor')) {
+      return {
+        text: "Bohot badhiya! Aap batayein ki aapke business me sabse zyada calls kis cheez ki aati hain—customer support ya outbound sales? Hum uske hisab se solution customize kar sakte hain.",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 13. Negation: Nahi / Kuch nahi
+    if (has('nahi', 'kuch nahi', 'rehne do', 'mat karo')) {
+      return {
+        text: "Koi baat nahi! Agar aage chalkar aapko AI voice calling ya automation ki zaroorat ho, toh aap kabhi bhi nova-ai-thlt.onrender.com par humse jud sakte hain. Aapka din shubh ho!",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 14. Shukriya / Thanks
+    if (has('shukriya', 'dhanyawad', 'thanks')) {
+      return {
+        text: "Aapka bohot bohot shukriya! Aapse baat karke bohot accha laga. Nova.ai par aane ke liye dhanyawad, take care!",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 15. Alvida / Bye
+    if (has('bye', 'alvida', 'tata')) {
+      return {
+        text: "Alvida! Nova.ai se connect karne ke liye bohot shukriya. Have a great day!",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // Hindi Fallbacks (Rotated so it never repeats the same monotone paragraph)
+    riyaFallbackCounter++;
+    const hindiFallbacks = [
+      "Yeh ek dilchasp sawal hai! Main Nova.ai ki AI voice agent hu aur enterprises ke liye voice workflows handle karti hu. Aap hamari technology ya business automation me se kiske bare me aur janna chahte hain?",
+      "Maine aapki baat suni! Nova.ai par hum custom voice intelligence deploy karte hain jo 200 millisecond se kam samay me respond karti hai. Kya aap apne business me customer support automate karna chahte hain?",
+      "Zaroor! Main Nova.ai ke solutions ke bare me guide kar sakti hu. Aap hamare voice models, pricing, ya live demo ke bare me pooch sakte hain. Aapko kis cheez ki information chahiye?"
+    ];
+
     return {
-      text: "Yeh bohot accha sawal hai! Nova.ai par hamare engineers custom voice systems aur autonomous enterprise AI build karte hain. Aap apne business ke liye kis tarah ka automation dhundh rahe hain?",
+      text: hindiFallbacks[riyaFallbackCounter % hindiFallbacks.length],
       voice: "Polly.Kajal-Neural",
       lang: "hi-IN"
     };
   }
 
+  // -------------------------------------------------------------
   // English Intents (Default)
-  if (q.includes('company') || q.includes('who are you') || q.includes('what is nova') || q.includes('tell me about')) {
+  // -------------------------------------------------------------
+
+  // 1. Identity & Name
+  if (has('your name', 'what is your name', 'who are you', 'what are you', 'tell me who you are')) {
     return {
-      text: "Nova.ai is an enterprise AI deployment and engineering company. We architect and deploy sub-200 millisecond conversational voice agents and autonomous workflows that integrate directly into your software stack. Would you like to know more about our voice agents, or our enterprise workflow automation?",
+      text: "My name is Riya! I am Nova.ai's autonomous voice agent. I can listen, understand, and speak naturally in real-time with sub-200 millisecond latency. Would you like to know how our voice technology works?",
       voice: "Polly.Ruth-Generative",
       lang: "en-US"
     };
   }
 
-  if (q.includes('service') || q.includes('product') || q.includes('feature') || q.includes('what do you do') || q.includes('offer') || q.includes('build')) {
+  // 2. Well-being / How are you
+  if (has('how are you', 'how r u', 'how is it going', "how's it going", 'how do you do')) {
     return {
-      text: "We specialize in three core areas: sub-200 millisecond Speech-to-Speech Voice Intelligence for customer operations, Multimodal Enterprise Vision systems, and Autonomous AI Workforce for end-to-end task execution. Which of these areas are you most interested in?",
+      text: "I am doing wonderfully, thank you for asking! I'm live on the phone line and ready to help. How are you doing today, and what can I assist you with?",
       voice: "Polly.Ruth-Generative",
       lang: "en-US"
     };
   }
 
-  if (q.includes('price') || q.includes('pricing') || q.includes('cost') || q.includes('charge') || q.includes('rate') || q.includes('roi')) {
+  // 3. Are you real or AI / Robot
+  if (has('are you real', 'are you human', 'are you a robot', 'are you ai', 'are you an ai', 'are you a bot', 'robot')) {
+    return {
+      text: "I am an artificial intelligence voice agent developed by Nova.ai, but I'm engineered to understand and speak just as naturally as a human. What do you think of my voice quality so far?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 4. Founders / Team / Snehil
+  if (has('founder', 'who founded', 'ceo', 'who made you', 'who created you', 'snehil', 'team', 'creator')) {
+    return {
+      text: "I was created by the engineering team at Nova.ai, led by our founders including Snehil. We design enterprise voice architectures built for mission-critical operations. Would you like to connect with our founding team?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 5. Office Location / Where are you
+  if (has('location', 'office', 'where are you', 'where are you from', 'headquarters', 'where do you live', 'where is nova')) {
+    return {
+      text: "Nova.ai operates globally with engineering hubs in India and the United States, providing enterprise voice infrastructure to companies worldwide. You are speaking with me live over our cellular telephony gateway right now!",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 6. Language preference
+  if (has('speak hindi', 'can you speak hindi', 'do you know hindi')) {
+    return {
+      text: "Haan bilkul! Main Hindi aur English dono bhashao me fluently baat kar sakti hu. Aap Hindi me koi bhi sawal poochiye!",
+      voice: "Polly.Kajal-Neural",
+      lang: "hi-IN"
+    };
+  }
+
+  // 7. Company overview
+  if (has('company', 'what is nova', 'tell me about your company', 'about nova', 'what does nova do', 'tell me about nova')) {
+    return {
+      text: "Nova.ai is an enterprise AI deployment and engineering company. We architect and deploy sub-200 millisecond conversational voice agents and autonomous workflows that integrate directly into your software stack. Would you like to know more about our voice agents or our enterprise workflow automation?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 8. Services / Products
+  if (has('service', 'services', 'product', 'products', 'feature', 'features', 'what do you do', 'offer', 'offerings', 'solutions')) {
+    return {
+      text: "We specialize in three core areas: first, sub-200 millisecond Speech-to-Speech Voice Intelligence for customer support and sales; second, Multimodal Enterprise Vision systems; and third, Autonomous AI Workforce for end-to-end task automation. Which of these areas are you most interested in?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 9. Pricing & Cost
+  if (has('price', 'pricing', 'cost', 'charge', 'rate', 'how much', 'fee', 'roi')) {
     return {
       text: "Our enterprise solutions are tailored to your call volume and workflow complexity. Most of our enterprise clients see a positive return on investment within 90 days. You can explore our interactive ROI calculator on our website, or schedule a strategy consultation with our engineers.",
       voice: "Polly.Ruth-Generative",
@@ -485,7 +685,8 @@ function generateRiyaAnswer(query = '') {
     };
   }
 
-  if (q.includes('voice') || q.includes('latency') || q.includes('speech') || q.includes('call') || q.includes('telephony') || q.includes('riya')) {
+  // 10. Technology & Latency
+  if (has('voice', 'latency', 'speed', 'speech', 'telephony', 'webrtc', 'technology', 'engine', 'model', 'models')) {
     return {
       text: "Our speech-to-speech engine delivers ultra-low sub-200 millisecond latency, speaks over 100 languages with native fluency, and integrates seamlessly into CRM and telephony systems like Twilio and LiveKit. Would you like to discuss a custom voice deployment for your company?",
       voice: "Polly.Ruth-Generative",
@@ -493,25 +694,70 @@ function generateRiyaAnswer(query = '') {
     };
   }
 
-  if (q.includes('contact') || q.includes('meet') || q.includes('demo') || q.includes('talk') || q.includes('hire') || q.includes('email') || q.includes('phone') || q.includes('website')) {
+  // 11. Demo & Contact
+  if (has('contact', 'meet', 'demo', 'hire', 'email', 'schedule', 'book', 'talk to human', 'consultation')) {
     return {
-      text: "You can schedule an engineering deep dive with our founding team directly on our website at nova-ai-thlt.onrender.com by clicking Let's talk. We can build a custom proof of concept for your business in days.",
+      text: "You can schedule an engineering deep dive with our founding team directly on our website at nova-ai-thlt.onrender.com by clicking 'Let's talk'. We can build a custom proof of concept for your business in days.",
       voice: "Polly.Ruth-Generative",
       lang: "en-US"
     };
   }
 
-  if (q.includes('thank') || q.includes('thanks') || q.includes('good') || q.includes('great') || q.includes('bye') || q.includes('okay') || q.includes('ok')) {
+  // 12. Greetings
+  if (has('hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'greetings')) {
     return {
-      text: "You are very welcome! It was a pleasure speaking with you. Whenever you are ready to deploy autonomous voice AI for your enterprise, visit us at nova-ai-thlt.onrender.com. Have a fantastic day!",
+      text: "Hello there! It is great to hear from you. I'm Riya from Nova.ai. How can I help your business or answer your questions today?",
       voice: "Polly.Ruth-Generative",
       lang: "en-US"
     };
   }
 
-  // Default English response
+  // 13. Affirmations
+  if (has('yes', 'yeah', 'sure', 'definitely', 'interested', 'awesome', 'sounds good')) {
+    return {
+      text: "Wonderful! To help point you in the right direction, could you tell me a little about your business or what department—like customer support or outbound sales—you'd like to automate first?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 14. Negations
+  if (has('no', 'nope', 'not really', 'not interested', 'nothing')) {
+    return {
+      text: "No problem at all! If your company ever needs scalable voice intelligence in the future, feel free to visit us at nova-ai-thlt.onrender.com. Thank you for your time, and have a great day!",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 15. Thanks
+  if (has('thank', 'thanks', 'thank you', 'appreciate')) {
+    return {
+      text: "You are very welcome! It was a pleasure speaking with you. Whenever you are ready to deploy autonomous voice AI for your enterprise, visit us at nova-ai-thlt.onrender.com. Have a fantastic day ahead!",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 16. Bye
+  if (has('bye', 'goodbye', 'see you', 'take care')) {
+    return {
+      text: "Goodbye! Thank you for speaking with Nova.ai voice intelligence. Take care and have a wonderful day!",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // English Fallbacks (Rotated so it never repeats the same monotone paragraph)
+  riyaFallbackCounter++;
+  const englishFallbacks = [
+    "That is an interesting question! As Nova's autonomous voice agent, I can walk you through our sub-200ms voice technology, enterprise pricing, or custom CRM integrations. Which of those would you like to explore?",
+    "I hear you! At Nova.ai, our engineers build custom autonomous voice systems and enterprise workflows designed for mission-critical operations. What specific operational challenge is your business looking to solve?",
+    "Certainly! I can answer anything about Nova's voice intelligence, our multimodal vision systems, or our autonomous workforce tools. Would you like a quick overview of how we deploy voice agents for companies?"
+  ];
+
   return {
-    text: "That is a great question. At Nova.ai, our engineers build custom autonomous voice systems and enterprise workflows designed for mission-critical operations. What specific challenge or operational goal is your business looking to solve?",
+    text: englishFallbacks[riyaFallbackCounter % englishFallbacks.length],
     voice: "Polly.Ruth-Generative",
     lang: "en-US"
   };
@@ -526,7 +772,7 @@ const handleTwimlRiya = (req, res) => {
   res.type('text/xml');
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Gather input="speech" timeout="5" speechTimeout="auto" action="${RIYA_ACTION_URL}" method="POST">
+  <Gather input="speech" timeout="6" speechTimeout="auto" speechModel="phone_call" enhanced="true" language="en-IN" action="${RIYA_ACTION_URL}" method="POST">
     <Say voice="Polly.Ruth-Generative" language="en-US">Hey! I'm Riya from Nova.ai. How can I help your business today?</Say>
   </Gather>
   <Say voice="Polly.Ruth-Generative" language="en-US">Thank you for connecting with Nova.ai. We engineer and deploy autonomous voice intelligence for enterprises. Have a wonderful day!</Say>
@@ -542,7 +788,7 @@ const handleTwimlRiyaRespond = (req, res) => {
   res.type('text/xml');
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Gather input="speech" timeout="5" speechTimeout="auto" action="${RIYA_ACTION_URL}" method="POST">
+  <Gather input="speech" timeout="6" speechTimeout="auto" speechModel="phone_call" enhanced="true" language="en-IN" action="${RIYA_ACTION_URL}" method="POST">
     <Say voice="${resObj.voice}" language="${resObj.lang}">${cleanAnswer}</Say>
   </Gather>
   <Say voice="${resObj.voice}" language="${resObj.lang}">Thank you for speaking with Nova.ai voice intelligence. Have a wonderful day!</Say>
