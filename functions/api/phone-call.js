@@ -19,11 +19,15 @@ export async function onRequestPost(context) {
   }
 
   const cleanDigits = phoneNumber.replace(/[^0-9]/g, '');
-  const prefix = countryCode.trim();
+  const prefixDigits = (countryCode || '+91').replace(/[^0-9]/g, '');
   let fullNumber = phoneNumber.trim();
 
-  if (!fullNumber.startsWith('+')) {
-    fullNumber = prefix + (cleanDigits.startsWith(prefix.replace('+', '')) ? cleanDigits.slice(prefix.length - 1) : cleanDigits);
+  if (fullNumber.startsWith('+')) {
+    fullNumber = '+' + cleanDigits;
+  } else if (cleanDigits.startsWith(prefixDigits) && cleanDigits.length > 10) {
+    fullNumber = '+' + cleanDigits;
+  } else {
+    fullNumber = '+' + prefixDigits + cleanDigits;
   }
 
   const mockCallId = 'call_' + Math.random().toString(36).substring(2, 10);

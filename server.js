@@ -184,11 +184,15 @@ app.post('/api/phone-call', async (req, res) => {
     }
 
     const cleanDigits = phoneNumber.replace(/[^0-9]/g, '');
-    const prefix = (countryCode || '+91').trim();
+    const prefixDigits = (countryCode || '+91').replace(/[^0-9]/g, '');
     let fullNumber = phoneNumber.trim();
 
-    if (!fullNumber.startsWith('+')) {
-      fullNumber = prefix + (cleanDigits.startsWith(prefix.replace('+', '')) ? cleanDigits.slice(prefix.length - 1) : cleanDigits);
+    if (fullNumber.startsWith('+')) {
+      fullNumber = '+' + cleanDigits;
+    } else if (cleanDigits.startsWith(prefixDigits) && cleanDigits.length > 10) {
+      fullNumber = '+' + cleanDigits;
+    } else {
+      fullNumber = '+' + prefixDigits + cleanDigits;
     }
 
     if (cleanDigits.length < 7 || cleanDigits.length > 15) {
