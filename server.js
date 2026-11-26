@@ -427,6 +427,136 @@ app.get('/api/call-status/:callId', (req, res) => {
  */
 let riyaFallbackCounter = 0;
 
+/**
+ * Real-time LLM Generator (Gemini, Groq, or OpenAI)
+ */
+async function queryLLM(userSpeech) {
+  const geminiKey = process.env.GEMINI_API_KEY;
+  const groqKey = process.env.GROQ_API_KEY;
+  const openaiKey = process.env.OPENAI_API_KEY;
+
+  if (!geminiKey && !groqKey && !openaiKey) return null;
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 2400);
+
+  try {
+    if (groqKey) {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${groqKey}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-8b-instant',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are Riya, a friendly enterprise voice AI specialist at Nova.ai speaking directly on a live mobile phone call. Listen carefully to what the user said and reply directly to their statement or question in 1-2 spoken sentences (maximum 30 words). If the user speaks Hindi or Hinglish, reply in warm, natural conversational Hinglish. If English, reply in natural English. Directly address their specific business context or question. Plain text only, no formatting, no markdown, no asterisks, no quotes.'
+            },
+            { role: 'user', content: userSpeech }
+          ],
+          max_tokens: 60,
+          temperature: 0.7
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const d = await res.json();
+        const text = d.choices?.[0]?.message?.content?.trim();
+        if (text) {
+          const isHindi = /kya|hai|haan|kaise|kaisi|batao|karta|karte|madad|shukriya|namaste|naam|kuch|kaun|chahiye|puchna|bhai|bolo|kahan|theek|achha|nahi|kaunsi|kisko|kitna|paisa|kharcha/.test(text.toLowerCase());
+          return {
+            text,
+            voice: isHindi ? 'Polly.Kajal-Neural' : 'Polly.Ruth-Generative',
+            lang: isHindi ? 'hi-IN' : 'en-US'
+          };
+        }
+      }
+    }
+
+    if (geminiKey) {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `You are Riya, a friendly voice AI specialist at Nova.ai speaking on a live phone call.
+The user just said: "${userSpeech}".
+Respond directly to what they said in 1-2 short spoken sentences (max 30 words).
+If the user spoke in Hindi or Hinglish, reply in warm natural conversational Hinglish. If in English, reply in natural conversational English.
+Directly address their specific domain or question. Plain text speech only, no markdown, no quotes, no bullet points.`
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 60
+          }
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const d = await res.json();
+        const text = d.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+        if (text) {
+          const isHindi = /kya|hai|haan|kaise|kaisi|batao|karta|karte|madad|shukriya|namaste|naam|kuch|kaun|chahiye|puchna|bhai|bolo|kahan|theek|achha|nahi|kaunsi|kisko|kitna|paisa|kharcha/.test(text.toLowerCase());
+          return {
+            text,
+            voice: isHindi ? 'Polly.Kajal-Neural' : 'Polly.Ruth-Generative',
+            lang: isHindi ? 'hi-IN' : 'en-US'
+          };
+        }
+      }
+    }
+
+    if (openaiKey) {
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${openaiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are Riya, a friendly voice AI specialist at Nova.ai speaking on a live phone call. Reply in 1-2 short spoken sentences (max 30 words) in the exact same language (English or natural Hindi/Hinglish). Directly address what the user said. Plain text only.'
+            },
+            { role: 'user', content: userSpeech }
+          ],
+          max_tokens: 60,
+          temperature: 0.7
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const d = await res.json();
+        const text = d.choices?.[0]?.message?.content?.trim();
+        if (text) {
+          const isHindi = /kya|hai|haan|kaise|kaisi|batao|karta|karte|madad|shukriya|namaste|naam|kuch|kaun|chahiye|puchna|bhai|bolo|kahan|theek|achha|nahi|kaunsi|kisko|kitna|paisa|kharcha/.test(text.toLowerCase());
+          return {
+            text,
+            voice: isHindi ? 'Polly.Kajal-Neural' : 'Polly.Ruth-Generative',
+            lang: isHindi ? 'hi-IN' : 'en-US'
+          };
+        }
+      }
+    }
+  } catch (err) {
+    // If LLM fails or times out, gracefully fall back to context engine
+  } finally {
+    clearTimeout(timeoutId);
+  }
+
+  return null;
+}
+
 function generateRiyaAnswer(query = '') {
   const rawQ = (query || '').trim();
   const q = rawQ.toLowerCase();
@@ -447,9 +577,81 @@ function generateRiyaAnswer(query = '') {
   }
 
   // Detect Hindi / Hinglish keywords
-  const isHindi = has('kya', 'hai', 'haan', 'kaise', 'kaisi', 'batao', 'karta', 'karte', 'madad', 'shukriya', 'namaste', 'naam', 'kuch', 'kaun', 'chahiye', 'puchna', 'bhai', 'bolo', 'kahan', 'theek', 'achha', 'nahi', 'kaunsi', 'kisko', 'kitna', 'paisa', 'kharcha', 'dhanyawad', 'alvida');
+  const isHindi = has('kya', 'hai', 'haan', 'kaise', 'kaisi', 'batao', 'karta', 'karte', 'karti', 'madad', 'shukriya', 'namaste', 'naam', 'kuch', 'kaun', 'chahiye', 'puchna', 'bhai', 'bolo', 'kahan', 'theek', 'achha', 'nahi', 'kaunsi', 'kisko', 'kitna', 'paisa', 'kharcha', 'dhanyawad', 'alvida', 'meri', 'mera', 'humara', 'hamari', 'bechte', 'kapde', 'kapda');
 
   if (isHindi) {
+    // 0. Industry Specific: E-Commerce / Clothes / Fashion / Retail
+    if (has('ecommerce', 'e commerce', 'commarce', 'clothes', 'clothing', 'cloth', 'kapde', 'kapda', 'fashion', 'apparel', 't-shirt', 'shirt', 'shoes', 'footwear', 'saree', 'kurti')) {
+      return {
+        text: "Bohot badhiya! Clothes aur e-commerce business ke liye hamari voice AI automated order confirmation, return aur exchange requests, aur live delivery tracking seedha phone par handle kar sakti hai. Kya aap COD confirmation ya customer support calls automate karna chahte hain?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 0. Industry Specific: Real Estate / Property
+    if (has('real estate', 'property', 'plot', 'plots', 'flat', 'flats', 'builder', 'broker', 'makaan', 'ghar')) {
+      return {
+        text: "Real estate me hamari voice AI prospective property buyers ko instantly qualify karti hai, project details share karti hai aur site visit schedule kar deti hai. Kya aap buyer leads qualify karna chahte hain?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 0. Industry Specific: Healthcare / Hospital / Clinic / Doctor
+    if (has('hospital', 'clinic', 'doctor', 'doctori', 'healthcare', 'dental', 'patient', 'mariz', 'dawa')) {
+      return {
+        text: "Healthcare aur clinics ke liye Riya doctor appointment booking, patient reminder calls aur OPD timing queries seamlessly handle karti hai. Kya aap patient appointments automate karna chahte hain?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 0. Industry Specific: Finance / Loans / Insurance
+    if (has('finance', 'loan', 'loans', 'insurance', 'emi', 'credit', 'banking', 'policy', 'bima')) {
+      return {
+        text: "Finance aur loans me hamari voice AI EMI reminders, loan eligibility check, aur insurance renewals handle karti hai. Aap kis tarah ki financial calling automate karna chahte hain?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 0. Industry Specific: Education / Coaching / Institute
+    if (has('coaching', 'school', 'college', 'institute', 'tuition', 'student', 'students', 'admission', 'course')) {
+      return {
+        text: "Coaching aur education institutes ke liye Riya student admission inquiries, course fees, aur parent counseling follow-ups autonomously handle karti hai. Kya aap admission counseling automate karna chahte hain?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 0. Industry Specific: Hotel / Restaurant / Food
+    if (has('hotel', 'restaurant', 'food', 'cafe', 'khana', 'swiggy', 'zomato', 'delivery', 'table')) {
+      return {
+        text: "Restaurants aur hotels ke liye Riya table reservations, food delivery status, aur room booking inquiries instantly handle karti hai. Kya aap reservations automate karna chahte hain?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 0. Industry Specific: Logistics / Courier
+    if (has('logistics', 'courier', 'transport', 'parcel', 'shipment', 'tracking')) {
+      return {
+        text: "Logistics aur delivery ke liye hamari voice AI live parcel tracking, delivery address verification, aur reschedule requests call par handle karti hai. Kya aap delivery tracking automate karna chahte hain?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 0. User Talking about THEIR Business ("meri company", "humara business", etc.)
+    if (has('meri company', 'mera business', 'humari company', 'hamara business', 'hum bechte', 'i sell', 'mera kaam')) {
+      return {
+        text: "Yeh sunkar bohot accha laga! Aapke business ke hisaab se hum custom AI voice agent deploy kar sakte hain jo customer support aur sales calling 24/7 bina rukawat handle karegi. Aapke paas daily kis type ki calls zyada aati hain?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
     // 1. Identity & Name
     if (has('naam', 'kaun ho', 'kya naam', 'aap kaun', 'tum kaun')) {
       return {
@@ -504,8 +706,8 @@ function generateRiyaAnswer(query = '') {
       };
     }
 
-    // 7. Company overview
-    if (has('company', 'nova', 'kya hai', 'kya karti', 'about')) {
+    // 7. Company overview (Only triggered when asking about NOVA's company)
+    if (has('aapki company', 'tumhari company', 'nova kya hai', 'nova kya karti', 'about nova', 'nova company')) {
       return {
         text: "Nova.ai ek enterprise AI deployment aur engineering company hai. Hum enterprises ke liye sub-200 millisecond voice agents aur autonomous workflows deploy karte hain. Kya aap hamare voice agents ke bare me janna chahte hain?",
         voice: "Polly.Kajal-Neural",
@@ -514,7 +716,7 @@ function generateRiyaAnswer(query = '') {
     }
 
     // 8. Services / Products
-    if (has('service', 'product', 'kaam', 'feature', 'features', 'solutions', 'karti ho')) {
+    if (has('service', 'product', 'kaam', 'feature', 'features', 'solutions', 'karti ho', 'kya karte ho')) {
       return {
         text: "Hum teen core areas me solutions dete hain: pehla, Speech-to-Speech Voice Intelligence jaise main hu; dusra, Multimodal Enterprise Vision systems; aur teesra, Autonomous AI Workforce jo aapke CRM aur workflows ko handle karta hai. Inme se aapke business ke liye kya best rahega?",
         voice: "Polly.Kajal-Neural",
@@ -604,6 +806,78 @@ function generateRiyaAnswer(query = '') {
   // English Intents (Default)
   // -------------------------------------------------------------
 
+  // 0. Industry Specific: E-Commerce / Clothes / Fashion / Retail
+  if (has('ecommerce', 'e commerce', 'clothes', 'clothing', 'cloth', 'apparel', 'fashion', 't-shirt', 'shirts', 'shoes', 'footwear', 'garments', 'online store', 'shopping site')) {
+    return {
+      text: "That's fantastic! For a clothing and fashion e-commerce brand, our voice AI can autonomously handle order status calls, return and exchange requests, and COD verification 24/7. Would you like to automate order tracking or customer support calls?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 0. Industry Specific: Real Estate / Property
+  if (has('real estate', 'property', 'properties', 'plots', 'apartments', 'homes', 'builder', 'broker', 'construction', 'realtor')) {
+    return {
+      text: "In real estate, our voice AI automatically qualifies prospective buyers, answers project details, and books on-site visits with zero delay. Would you like to automate buyer inquiries?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 0. Industry Specific: Healthcare / Clinic / Hospital / Doctor
+  if (has('hospital', 'clinic', 'healthcare', 'doctor', 'patient', 'patients', 'medical', 'dental', 'appointment')) {
+    return {
+      text: "For clinics and healthcare providers, our voice AI automates patient appointment scheduling, reminder calls, and clinic inquiries 24/7. Would you like to automate patient appointments?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 0. Industry Specific: Finance / Loans / Banking / Insurance
+  if (has('finance', 'financial', 'loan', 'loans', 'insurance', 'banking', 'emi', 'credit', 'policy')) {
+    return {
+      text: "In financial services, our voice AI automates loan pre-qualification, EMI reminder calls, and insurance renewals securely. What type of financial calling are you looking to automate?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 0. Industry Specific: Education / Coaching / Institute
+  if (has('school', 'college', 'university', 'coaching', 'institute', 'education', 'edtech', 'students', 'admission', 'courses')) {
+    return {
+      text: "For education and coaching institutes, our voice AI handles course inquiries, admission counseling, and student follow-up calls autonomously. Would you like to automate student enrollment inquiries?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 0. Industry Specific: Restaurant / Hotel / Hospitality
+  if (has('hotel', 'restaurant', 'food', 'cafe', 'hospitality', 'resort', 'dining', 'table reservation')) {
+    return {
+      text: "For restaurants and hotels, our voice AI manages table reservations, order status, and guest bookings instantly. Would you like to automate guest reservations?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 0. Industry Specific: Logistics / Courier / Transport
+  if (has('logistics', 'courier', 'transport', 'shipping', 'delivery', 'parcels', 'freight')) {
+    return {
+      text: "For logistics and courier businesses, our voice AI handles shipment tracking, address verification, and delivery rescheduling directly over the phone. Would you like to automate delivery tracking?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
+  // 0. User Talking about THEIR Business ("my company", "our business", "i sell", etc.)
+  if (has('my company', 'our company', 'my business', 'our business', 'i run a', 'we run a', 'we sell', 'i sell', 'our brand', 'my brand')) {
+    return {
+      text: "That's wonderful to hear! We can deploy a custom voice AI agent tailored specifically to your business to handle customer calls 24/7. What is the most common reason customers call your business today?",
+      voice: "Polly.Ruth-Generative",
+      lang: "en-US"
+    };
+  }
+
   // 1. Identity & Name
   if (has('your name', 'what is your name', 'who are you', 'what are you', 'tell me who you are')) {
     return {
@@ -658,8 +932,8 @@ function generateRiyaAnswer(query = '') {
     };
   }
 
-  // 7. Company overview
-  if (has('company', 'what is nova', 'tell me about your company', 'about nova', 'what does nova do', 'tell me about nova')) {
+  // 7. Company overview (Only triggered when asking about NOVA's company)
+  if (has('your company', 'tell me about your company', 'what is nova', 'about nova', 'what does nova do', 'tell me about nova', 'nova company')) {
     return {
       text: "Nova.ai is an enterprise AI deployment and engineering company. We architect and deploy sub-200 millisecond conversational voice agents and autonomous workflows that integrate directly into your software stack. Would you like to know more about our voice agents or our enterprise workflow automation?",
       voice: "Polly.Ruth-Generative",
@@ -779,10 +1053,18 @@ const handleTwimlRiya = (req, res) => {
 </Response>`);
 };
 
-const handleTwimlRiyaRespond = (req, res) => {
+const handleTwimlRiyaRespond = async (req, res) => {
   const speech = (req.body && (req.body.SpeechResult || req.body.speech)) || req.query.SpeechResult || '';
   console.log(`🎙️ [Twilio Speech Received] User said: "${speech}"`);
-  const resObj = generateRiyaAnswer(speech);
+
+  // 1. Try real LLM if configured in environment
+  let resObj = await queryLLM(speech);
+
+  // 2. Fall back to smart domain intelligence engine
+  if (!resObj) {
+    resObj = generateRiyaAnswer(speech);
+  }
+
   const cleanAnswer = resObj.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   res.type('text/xml');
