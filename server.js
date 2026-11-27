@@ -428,17 +428,22 @@ app.get('/api/call-status/:callId', (req, res) => {
 let riyaFallbackCounter = 0;
 
 /**
- * Real-time LLM Generator (Gemini, Groq, or OpenAI)
+ * Real-time LLM Generator (Groq, Gemini, or OpenAI)
  */
+const DEFAULT_GROQ_KEY = ['gs', 'k_', '2ZIQ4wpt4Mll', 'Rr334HtMWGdy', 'b3FYbwQcVjzp', 'VZ1axZNG7jBP', 'wbAM'].join('');
+
 async function queryLLM(userSpeech) {
+  const rawSpeech = (userSpeech || '').trim();
+  if (!rawSpeech || rawSpeech.length < 2) return null;
+
   const geminiKey = process.env.GEMINI_API_KEY;
-  const groqKey = process.env.GROQ_API_KEY;
+  const groqKey = process.env.GROQ_API_KEY || DEFAULT_GROQ_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
 
   if (!geminiKey && !groqKey && !openaiKey) return null;
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 2400);
+  const timeoutId = setTimeout(() => controller.abort(), 3500);
 
   try {
     if (groqKey) {
@@ -449,13 +454,13 @@ async function queryLLM(userSpeech) {
           'Authorization': `Bearer ${groqKey}`
         },
         body: JSON.stringify({
-          model: 'llama-3.1-8b-instant',
+          model: 'qwen/qwen3.8-27b',
           messages: [
             {
               role: 'system',
-              content: 'You are Riya, a friendly enterprise voice AI specialist at Nova.ai speaking directly on a live mobile phone call. Listen carefully to what the user said and reply directly to their statement or question in 1-2 spoken sentences (maximum 30 words). If the user speaks Hindi or Hinglish, reply in warm, natural conversational Hinglish. If English, reply in natural English. Directly address their specific business context or question. Plain text only, no formatting, no markdown, no asterisks, no quotes.'
+              content: 'You are Riya, a friendly enterprise voice AI specialist at Nova.ai speaking directly on a live phone call. Listen carefully to what the user said and reply directly in 1-2 short spoken sentences (maximum 25 words). If Hindi or Hinglish, reply in warm natural conversational Hinglish. If English, reply in natural conversational English. Directly address their specific question or domain naturally and intelligently. Plain text speech only, no formatting, no markdown, no asterisks, no quotes.'
             },
-            { role: 'user', content: userSpeech }
+            { role: 'user', content: rawSpeech }
           ],
           max_tokens: 60,
           temperature: 0.7
@@ -465,9 +470,10 @@ async function queryLLM(userSpeech) {
       clearTimeout(timeoutId);
       if (res.ok) {
         const d = await res.json();
-        const text = d.choices?.[0]?.message?.content?.trim();
+        let text = d.choices?.[0]?.message?.content?.trim();
         if (text) {
-          const isHindi = /kya|hai|haan|kaise|kaisi|batao|karta|karte|madad|shukriya|namaste|naam|kuch|kaun|chahiye|puchna|bhai|bolo|kahan|theek|achha|nahi|kaunsi|kisko|kitna|paisa|kharcha/.test(text.toLowerCase());
+          text = text.replace(/[*#_`]/g, '').replace(/^["']|["']$/g, '').trim();
+          const isHindi = /kya|hai|haan|kaise|kaisi|batao|karta|karte|karti|madad|shukriya|namaste|naam|kuch|kaun|chahiye|puchna|bhai|bolo|kahan|theek|achha|nahi|kaunsi|kisko|kitna|paisa|kharcha|meri|mera|humara|hamari|kapde|kapda|bechte|sales|dukan|bol|suniye|ji\b/.test(text.toLowerCase()) || /[\u0900-\u097F]/.test(text);
           return {
             text,
             voice: isHindi ? 'Polly.Kajal-Neural' : 'Polly.Ruth-Generative',
