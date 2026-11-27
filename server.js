@@ -563,27 +563,62 @@ function generateRiyaAnswer(query = '') {
 
   // Helper for whole-word / phrase matching to eliminate substring false positives
   const has = (...words) => words.some(w => {
-    if (w.includes(' ')) return q.includes(w);
     return new RegExp('(^|[^a-z0-9])' + w + '([^a-z0-9]|$)', 'i').test(q);
   });
 
   // If user said nothing or speech recognition caught empty audio / silence
   if (!rawQ || q.length < 2) {
     return {
-      text: "I'm sorry, I didn't quite catch that. Could you please repeat your question? I'm listening.",
+      text: "I'm listening, please go ahead and tell me what you'd like to know!",
       voice: "Polly.Ruth-Generative",
       lang: "en-US"
     };
   }
 
   // Detect Hindi / Hinglish keywords
-  const isHindi = has('kya', 'hai', 'haan', 'kaise', 'kaisi', 'batao', 'karta', 'karte', 'karti', 'madad', 'shukriya', 'namaste', 'naam', 'kuch', 'kaun', 'chahiye', 'puchna', 'bhai', 'bolo', 'kahan', 'theek', 'achha', 'nahi', 'kaunsi', 'kisko', 'kitna', 'paisa', 'kharcha', 'dhanyawad', 'alvida', 'meri', 'mera', 'humara', 'hamari', 'bechte', 'kapde', 'kapda');
+  const isHindi = has('kya', 'hai', 'haan', 'kaise', 'kaisi', 'batao', 'karta', 'karte', 'karti', 'madad', 'shukriya', 'namaste', 'naam', 'kuch', 'kaun', 'chahiye', 'puchna', 'bhai', 'bolo', 'kahan', 'theek', 'achha', 'nahi', 'kaunsi', 'kisko', 'kitna', 'paisa', 'kharcha', 'dhanyawad', 'alvida', 'meri', 'mera', 'humara', 'hamari', 'bechte', 'kapde', 'kapda', 'ho', 'jayega', 'hoga', 'karein', 'karo', 'karna', 'ka', 'ki', 'ke', 'se', 'mein', 'par', 'ko', 'batayein', 'sakte', 'bataiye');
 
   if (isHindi) {
     // 0. Industry Specific: E-Commerce / Clothes / Fashion / Retail
     if (has('ecommerce', 'e commerce', 'commarce', 'clothes', 'clothing', 'cloth', 'kapde', 'kapda', 'fashion', 'apparel', 't-shirt', 'shirt', 'shoes', 'footwear', 'saree', 'kurti')) {
       return {
         text: "Bohot badhiya! Clothes aur e-commerce business ke liye hamari voice AI automated order confirmation, return aur exchange requests, aur live delivery tracking seedha phone par handle kar sakti hai. Kya aap COD confirmation ya customer support calls automate karna chahte hain?",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 0. E-Commerce Sub-queries: COD / Cash on Delivery (Checked BEFORE delivery)
+    if (has('cod', 'cash on delivery', 'rto', 'confirmation', 'order confirm')) {
+      return {
+        text: "Order aate hi Riya customer ko instant automated call karti hai, address verify karti hai aur order confirm karwati hai. Isse fake orders aur RTO 40 percent tak kam ho jate hain.",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 0. E-Commerce Sub-queries: Return / Exchange
+    if (has('return', 'exchange', 'wapas', 'badalna', 'badli')) {
+      return {
+        text: "Customer phone par hi return ya exchange ka reason batakar pickup request book kar sakta hai, aur hamari AI turant aapke logistics partner se courier pickup schedule kar deti hai.",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 0. E-Commerce Sub-queries: Delivery / Tracking
+    if (has('delivery', 'tracking', 'track', 'pahunch', 'kahan pahuncha', 'kab aayega', 'parcel')) {
+      return {
+        text: "Customer call par apna mobile number ya order ID batayega, aur hamari AI live courier tracking status aur expected delivery date instantly bolkar bata degi.",
+        voice: "Polly.Kajal-Neural",
+        lang: "hi-IN"
+      };
+    }
+
+    // 0. E-Commerce Sub-queries: Shopify / Integration
+    if (has('shopify', 'woocommerce', 'integration', 'integrate', 'website se')) {
+      return {
+        text: "Hum Shopify, WooCommerce, ya aapki custom website ke sath simple API aur webhooks ke zariye sirf ek se do din me complete integration deploy kar dete hain.",
         voice: "Polly.Kajal-Neural",
         lang: "hi-IN"
       };
@@ -1046,7 +1081,7 @@ const handleTwimlRiya = (req, res) => {
   res.type('text/xml');
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Gather input="speech" timeout="6" speechTimeout="auto" speechModel="phone_call" enhanced="true" language="en-IN" action="${RIYA_ACTION_URL}" method="POST">
+  <Gather input="speech" timeout="5" speechTimeout="auto" language="en-IN" action="${RIYA_ACTION_URL}" method="POST">
     <Say voice="Polly.Ruth-Generative" language="en-US">Hey! I'm Riya from Nova.ai. How can I help your business today?</Say>
   </Gather>
   <Say voice="Polly.Ruth-Generative" language="en-US">Thank you for connecting with Nova.ai. We engineer and deploy autonomous voice intelligence for enterprises. Have a wonderful day!</Say>
@@ -1055,7 +1090,7 @@ const handleTwimlRiya = (req, res) => {
 
 const handleTwimlRiyaRespond = async (req, res) => {
   const speech = (req.body && (req.body.SpeechResult || req.body.speech)) || req.query.SpeechResult || '';
-  console.log(`🎙️ [Twilio Speech Received] User said: "${speech}"`);
+  console.log(`🎙️ [Twilio Speech Received] User said: "${speech}" | Confidence: ${req.body && req.body.Confidence}`);
 
   // 1. Try real LLM if configured in environment
   let resObj = await queryLLM(speech);
@@ -1070,7 +1105,7 @@ const handleTwimlRiyaRespond = async (req, res) => {
   res.type('text/xml');
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Gather input="speech" timeout="6" speechTimeout="auto" speechModel="phone_call" enhanced="true" language="en-IN" action="${RIYA_ACTION_URL}" method="POST">
+  <Gather input="speech" timeout="5" speechTimeout="auto" language="en-IN" action="${RIYA_ACTION_URL}" method="POST">
     <Say voice="${resObj.voice}" language="${resObj.lang}">${cleanAnswer}</Say>
   </Gather>
   <Say voice="${resObj.voice}" language="${resObj.lang}">Thank you for speaking with Nova.ai voice intelligence. Have a wonderful day!</Say>
